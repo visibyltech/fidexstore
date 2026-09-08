@@ -1,0 +1,98 @@
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
+import { Heart, Star, ShoppingCart, Check } from "lucide-react";
+import { useCart } from "../../context/CartContext";
+
+export type ShopProduct = {
+  id: number;
+  category: string;
+  name: string;
+  image: string;
+  price: number;
+  oldPrice?: number;
+  rating: number;
+  reviews: number;
+};
+
+const ShopProductCard = ({ product }: { product: ShopProduct }) => {
+  const { addToCart } = useCart();
+  const [added, setAdded] = useState(false);
+
+  const discount = product.oldPrice
+    ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
+    : 0;
+
+  const handleAddToCart = () => {
+    addToCart({ id: product.id, name: product.name, image: product.image, price: product.price });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1500);
+  };
+
+  return (
+    <div>
+      <div className="relative aspect-square overflow-hidden rounded-2xl bg-white">
+        {discount > 0 && (
+          <span className="absolute top-3 left-3 z-10 rounded-md bg-gold px-2 py-1 text-[10px] font-semibold text-black uppercase">
+            Sale
+          </span>
+        )}
+        <button className="absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white transition hover:bg-gold hover:text-black">
+          <Heart className="h-4 w-4" />
+        </button>
+        <Image src={product.image} alt={product.name} fill className="object-cover" />
+      </div>
+
+      <p className="mt-3 text-xs tracking-wide text-white/40 uppercase">{product.category}</p>
+      <h4 className="mt-0.5 text-sm font-semibold">{product.name}</h4>
+
+      <div className="mt-1 flex items-center gap-1">
+        <div className="flex items-center gap-0.5">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Star
+              key={i}
+              className={`h-3 w-3 ${
+                i < product.rating ? "fill-gold text-gold" : "text-white/20"
+              }`}
+            />
+          ))}
+        </div>
+        <span className="text-xs text-white/40">({product.reviews})</span>
+      </div>
+
+      <div className="mt-1 flex items-center gap-2">
+        {product.oldPrice && (
+          <span className="text-xs text-white/40 line-through">
+            ₦{product.oldPrice.toLocaleString()}
+          </span>
+        )}
+        <span className="text-sm font-semibold text-gold">
+          ₦{product.price.toLocaleString()}
+        </span>
+        {discount > 0 && (
+          <span className="text-xs font-medium text-green-500">-{discount}%</span>
+        )}
+      </div>
+
+      <button
+        onClick={handleAddToCart}
+        className={`mt-3 flex w-full items-center justify-center gap-2 rounded-md py-2 text-xs font-semibold uppercase transition ${
+          added ? "bg-green-500 text-black" : "bg-gold text-black hover:bg-gold/90"
+        }`}
+      >
+        {added ? (
+          <>
+            <Check className="h-3.5 w-3.5" /> Added
+          </>
+        ) : (
+          <>
+            <ShoppingCart className="h-3.5 w-3.5" /> Add to Cart
+          </>
+        )}
+      </button>
+    </div>
+  );
+};
+
+export default ShopProductCard;

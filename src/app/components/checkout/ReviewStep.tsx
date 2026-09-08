@@ -1,0 +1,224 @@
+"use client";
+
+import { useState } from "react";
+import { CreditCard, UploadCloud, Zap, ShieldCheck, Loader2 } from "lucide-react";
+import { PaymentMethod } from "./PaymentMethodStep";
+import { CartItem } from "../../context/CartContext";
+import { DeliveryDetails } from "./DeliveryForm";
+
+type ReviewStepProps = {
+  paymentMethod: PaymentMethod;
+  items: CartItem[];
+  delivery: DeliveryDetails;
+  deliveryFee: number;
+  subtotal: number;
+  total: number;
+  onBack: () => void;
+  onPlaceOrder: () => void;
+};
+
+const ReviewStep = ({
+  paymentMethod,
+  items,
+  delivery,
+  deliveryFee,
+  subtotal,
+  total,
+  onBack,
+  onPlaceOrder,
+}: ReviewStepProps) => {
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [acceptedPrivacy, setAcceptedPrivacy] = useState(false);
+  const [receiptName, setReceiptName] = useState<string | null>(null);
+  const [klumpStatus, setKlumpStatus] = useState<"idle" | "verifying" | "failed">("idle");
+
+  const requiresReceipt = paymentMethod === "bank-transfer";
+  const canPlaceOrder =
+    acceptedTerms && acceptedPrivacy && (!requiresReceipt || receiptName !== null);
+
+  const handleKlumpCheckout = () => {
+    if (typeof Klump === "undefined") {
+      setKlumpStatus("failed");
+      return;
+    }
+
+    const reference = `RTD-${Date.now()}`;
+    const [firstName, ...rest] = delivery.fullName.trim().split(" ");
+    const lastName = rest.join(" ") || firstName;
+    const origin = window.location.origin;
+
+    new Klump({
+      publicKey: process.env.NEXT_PUBLIC_KLUMP_PUBLIC_KEY ?? "",
+      data: {
+        amount: subtotal + deliveryFee,
+        shipping_fee: deliveryFee,
+        currency: "NGN",
+        first_name: firstName,
+        last_name: lastName,
+        email: delivery.email,
+        phone: delivery.phone,
+        merchant_reference: reference,
+        items: items.map((item) => ({
+          name: item.name,
+          unit_price: item.price,
+          quantity: item.qty,
+          image_url: `${origin}${item.image}`,
+        })),
+      },
+      onSuccess: async (data) => {
+        setKlumpStatus("verifying");
+        try {
+          const res = await fetch(
+            `/api/klump/verify?reference=${data.reference ?? reference}`
+          );
+          const result = await res.json();
+          if (result?.data?.status === "successful") {
+            onPlaceOrder();
+          } else {
+            setKlumpStatus("failed");
+          }
+        } catch {
+          setKlumpStatus("failed");
+        }
+      },
+      onError: () => setKlumpStatus("failed"),
+      onLoad: () => {},
+      onOpen: () => {},
+      onClose: () => {},
+    });
+  };
+
+  const handlePlaceOrder = () => {
+    if (paymentMethod === "klump") {
+      handleKlumpCheckout();
+    } else {
+      onPlaceOrder();
+    }
+  };
+
+  return (
+    <div className="flex-1 rounded-2xl bg-white/5 p-6">
+      <h2 className="text-lg font-semibold">Review & Pay</h2>
+
+      {paymentMethod === "bank-transfer" && (
+        <div className="mt-6 rounded-xl border border-gold/40 bg-gold/5 p-5">
+          <div className="flex items-center gap-2 text-gold">
+            <CreditCard className="h-4 w-4" />
+            <h3 className="text-sm font-semibold">Bank Account Details</h3>
+          </div>
+          <p className="mt-2 text-sm text-white/70">
+            Please transfer the exact amount of{" "}
+            <span className="font-semibold text-white">₦{total.toLocaleString()}</span> to the
+            account below. Your order will not ship until we receive payment.
+          </p>
+
+          <div className="mt-4 space-y-2 rounded-lg bg-black/30 p-4 text-sm">
+            <div className="flex justify-between">
+              <span className="text-white/50">Bank Name</span>
+              <span className="font-semibold">GTBank</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-white/50">Account Name</span>
+              <span className="font-semibold">Richmond Trust Devices</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-white/50">Account Number</span>
+              <span className="font-semibold">0123456789</span>
+            </div>
+          </div>
+
+          <label className="mt-4 block text-xs font-semibold tracking-wide text-white/60 uppercase">
+            Upload Payment Receipt *
+          </label>
+          <label className="mt-2 flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-white/20 py-8 text-sm text-white/50 transition hover:border-gold hover:text-gold">
+            <UploadCloud className="h-5 w-5" />
+            {receiptName ?? "Click to upload screenshot"}
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => setReceiptName(e.target.files?.[0]?.name ?? null)}
+            />
+          </label>
+        </div>
+      )}
+
+      {paymentMethod === "installments" && (
+        <div className="mt-6 rounded-xl border border-gold/40 bg-gold/5 p-5 text-sm text-white/70">
+          <h3 className="text-sm font-semibold text-gold">Installment Plan</h3>
+          <p className="mt-2">
+            Pay <span className="font-semibold text-white">₦{Math.round(total / 2).toLocaleString()}</span>{" "}
+            now, and the remaining{" "}
+            <span className="font-semibold text-white">₦{Math.round(total / 2).toLocaleString()}</span>{" "}
+            within 30 days. Our team will contact you to confirm the schedule.
+          </p>
+        </div>
+      )}
+
+      {paymentMethod === "klump" && (
+        <div className="mt-6 rounded-xl border border-gold/40 bg-gold/5 p-5 text-sm text-white/70">
+          <div className="flex items-center gap-2 text-gold">
+            <ShieldCheck className="h-4 w-4" />
+            <h3 className="text-sm font-semibold">Klump Buy Now, Pay Later</h3>
+          </div>
+          <p className="mt-2">
+            Clicking &ldquo;Place Order&rdquo; opens the secure Klump checkout widget for{" "}
+            <span className="font-semibold text-white">₦{total.toLocaleString()}</span>. Choose a
+            payment plan there to complete your purchase.
+          </p>
+          {klumpStatus === "verifying" && (
+            <p className="mt-3 flex items-center gap-2 text-gold">
+              <Loader2 className="h-4 w-4 animate-spin" /> Verifying your payment...
+            </p>
+          )}
+          {klumpStatus === "failed" && (
+            <p className="mt-3 text-red-400">
+              We couldn&apos;t confirm this payment. Please try again or contact support.
+            </p>
+          )}
+        </div>
+      )}
+
+      <div className="mt-6 space-y-3">
+        <label className="flex cursor-pointer items-start gap-2 text-sm text-white/70">
+          <input
+            type="checkbox"
+            checked={acceptedTerms}
+            onChange={(e) => setAcceptedTerms(e.target.checked)}
+            className="mt-0.5 accent-gold"
+          />
+          I accept the <span className="font-semibold text-white">Terms & Conditions</span>{" "}
+          including the No-Return & No-Refund policy.
+        </label>
+        <label className="flex cursor-pointer items-start gap-2 text-sm text-white/70">
+          <input
+            type="checkbox"
+            checked={acceptedPrivacy}
+            onChange={(e) => setAcceptedPrivacy(e.target.checked)}
+            className="mt-0.5 accent-gold"
+          />
+          I accept the <span className="font-semibold text-white">Privacy Policy</span> and consent
+          to data processing under Nigerian NDPR.
+        </label>
+      </div>
+
+      <div className="mt-6 flex gap-3">
+        <button
+          onClick={onBack}
+          className="rounded-md bg-white/10 px-6 py-3 text-sm font-semibold transition hover:bg-white/15"
+        >
+          Back
+        </button>
+        <button
+          onClick={handlePlaceOrder}
+          disabled={!canPlaceOrder || klumpStatus === "verifying"}
+          className="flex flex-1 items-center justify-center gap-2 rounded-md bg-gold px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold/90 disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <Zap className="h-4 w-4" /> Place Order — ₦{total.toLocaleString()}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default ReviewStep;
