@@ -46,7 +46,7 @@ const ShopPageClient = () => {
       if (minPrice) params.set("minPrice", minPrice);
       if (maxPrice) params.set("maxPrice", maxPrice);
       params.set("sort", sort);
-      params.set("limit", "24");
+      params.set("limit", "50");
 
       setLoading(true);
       fetch(`/api/products?${params.toString()}`, { signal: controller.signal })
