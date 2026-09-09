@@ -1,9 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, Heart, ShoppingCart, ChevronDown } from "lucide-react";
+import { Search, Heart, ShoppingCart, ChevronDown, Menu, X } from "lucide-react";
 import { useCart } from "../context/CartContext";
 
 const links = [
@@ -25,24 +26,94 @@ const deviceCategories = [
 const Navbar = () => {
   const pathname = usePathname();
   const { itemCount } = useCart();
+  const [open, setOpen] = useState(false);
 
   return (
     <div>
-      <div className="flex items-center justify-between gap-6 border-b border-white/10 bg-white/5 px-10 py-2 text-xs text-white/60">
+      <div className="flex items-center justify-between gap-6 border-b border-white/10 bg-white/5 px-4 py-2 text-xs text-white/60 md:px-10">
         <div className="flex-1 overflow-hidden">
           <div className="flex w-max animate-marquee gap-16">
             <p className="whitespace-nowrap">
-              Free shipping on orders over ₦50,000 | 30-Day Warranty on all devices
+              Free shipping on orders over ₦200,000 | 30-Day Warranty on all devices
             </p>
             <p className="whitespace-nowrap">
-              Free shipping on orders over ₦50,000 | 30-Day Warranty on all devices
+              Free shipping on orders over ₦200,000 | 30-Day Warranty on all devices
             </p>
           </div>
         </div>
         <p className="shrink-0 cursor-pointer hover:text-gold">Sign In</p>
       </div>
 
-      <div className="flex items-center justify-between px-10 py-4">
+      {/* mobile row */}
+      <div className="grid grid-cols-3 items-center px-4 py-4 md:hidden">
+        <button
+          onClick={() => setOpen((v) => !v)}
+          aria-label="Toggle menu"
+          className="justify-self-start text-white/80"
+        >
+          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
+
+        <Link href="/" className="justify-self-center">
+          <Image src="/logo-icon.png" alt="Richmond Trust Devices" width={70} height={26} priority />
+        </Link>
+
+        <Link href="/cart" className="relative justify-self-end text-white/80">
+          <ShoppingCart className="h-5 w-5" />
+          {itemCount > 0 && (
+            <span className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-gold text-[10px] font-semibold text-black">
+              {itemCount}
+            </span>
+          )}
+        </Link>
+      </div>
+
+      {open && (
+        <div className="flex flex-col gap-1 border-t border-white/10 bg-black px-4 py-4 md:hidden">
+          <Link
+            href="/"
+            onClick={() => setOpen(false)}
+            className={`rounded-lg px-3 py-2 text-sm font-medium ${
+              pathname === "/" ? "text-gold" : "text-white/80"
+            }`}
+          >
+            Home
+          </Link>
+
+          <p className="px-3 pt-2 text-xs font-semibold tracking-wide text-white/40">Devices</p>
+          {deviceCategories.map((category) => (
+            <Link
+              key={category}
+              href="/shop"
+              onClick={() => setOpen(false)}
+              className="rounded-lg px-3 py-2 text-sm text-white/70 hover:text-gold"
+            >
+              {category}
+            </Link>
+          ))}
+
+          {links.slice(1).map((link) => (
+            <Link
+              key={link.name}
+              href={link.href}
+              onClick={() => setOpen(false)}
+              className={`mt-1 rounded-lg px-3 py-2 text-sm font-medium ${
+                pathname === link.href && link.href !== "/" ? "text-gold" : "text-white/80"
+              }`}
+            >
+              {link.name}
+            </Link>
+          ))}
+
+          <div className="mt-2 flex items-center gap-6 border-t border-white/10 px-3 pt-4 text-white/80">
+            <Search className="h-5 w-5" />
+            <Heart className="h-5 w-5" />
+          </div>
+        </div>
+      )}
+
+      {/* desktop row */}
+      <div className="hidden items-center justify-between px-10 py-4 md:flex">
         <Link href="/">
           <Image src="/logo-icon.png" alt="Richmond Trust Devices" width={90} height={34} priority />
         </Link>

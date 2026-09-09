@@ -1,5 +1,10 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Check, ShoppingCart } from "lucide-react";
+import { useCart } from "../context/CartContext";
 
 export type Product = {
   id: number;
@@ -16,6 +21,53 @@ type ProductPanelProps = {
   showDots?: boolean;
 };
 
+const ProductCard = ({ product }: { product: Product }) => {
+  const { addToCart } = useCart();
+  const [added, setAdded] = useState(false);
+
+  const handleAddToCart = () => {
+    addToCart({ id: product.id, name: product.name, image: product.image, price: product.price });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1500);
+  };
+
+  return (
+    <div>
+      <div className="relative aspect-square overflow-hidden rounded-2xl">
+        <Image
+          src={product.image}
+          alt={product.name}
+          fill
+          className="object-cover"
+        />
+      </div>
+      <p className="mt-3 text-xs font-medium tracking-wide text-white/70 uppercase">
+        {product.name}
+      </p>
+      <p className="mt-1 text-sm font-semibold text-gold">
+        ₦{product.price.toLocaleString()}
+      </p>
+
+      <button
+        onClick={handleAddToCart}
+        className={`mt-3 flex w-full items-center justify-center gap-2 rounded-md py-2 text-xs font-semibold uppercase transition ${
+          added ? "bg-green-500 text-black" : "bg-gold text-black hover:bg-gold/90"
+        }`}
+      >
+        {added ? (
+          <>
+            <Check className="h-3.5 w-3.5" /> Added
+          </>
+        ) : (
+          <>
+            <ShoppingCart className="h-3.5 w-3.5" /> Add to Cart
+          </>
+        )}
+      </button>
+    </div>
+  );
+};
+
 const ProductPanel = ({ heading, subtitle, products, ctaLabel, showDots }: ProductPanelProps) => {
   return (
     <div className="mx-10 mt-16 rounded-3xl bg-white/4 px-6 py-10 md:px-10">
@@ -26,22 +78,7 @@ const ProductPanel = ({ heading, subtitle, products, ctaLabel, showDots }: Produ
 
       <div className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5">
         {products.map((product) => (
-          <div key={product.id}>
-            <div className="relative aspect-square overflow-hidden rounded-2xl">
-              <Image
-                src={product.image}
-                alt={product.name}
-                fill
-                className="object-cover"
-              />
-            </div>
-            <p className="mt-3 text-xs font-medium tracking-wide text-white/70 uppercase">
-              {product.name}
-            </p>
-            <p className="mt-1 text-sm font-semibold text-gold">
-              ₦{product.price.toLocaleString()}
-            </p>
-          </div>
+          <ProductCard key={product.id} product={product} />
         ))}
       </div>
 
