@@ -1,14 +1,7 @@
-import { Star } from "lucide-react";
+"use client";
 
-const categories = [
-  "All Products",
-  "Smartphones",
-  "Laptops",
-  "Wearables",
-  "Audio",
-  "Power Banks",
-  "Accessories",
-];
+import { Star } from "lucide-react";
+import type { ApiCategory } from "@/types/api";
 
 const brands = [
   { name: "Samsung", count: 8 },
@@ -19,20 +12,47 @@ const brands = [
   { name: "Ambrane", count: 3 },
 ];
 
-const ShopSidebar = () => {
+type ShopSidebarProps = {
+  categories: ApiCategory[];
+  selectedCategory: string | null;
+  onSelectCategory: (slug: string | null) => void;
+  minPrice: string;
+  maxPrice: string;
+  onMinPriceChange: (value: string) => void;
+  onMaxPriceChange: (value: string) => void;
+};
+
+const ShopSidebar = ({
+  categories,
+  selectedCategory,
+  onSelectCategory,
+  minPrice,
+  maxPrice,
+  onMinPriceChange,
+  onMaxPriceChange,
+}: ShopSidebarProps) => {
   return (
     <aside className="w-full shrink-0 md:w-64">
       <div>
         <h3 className="text-sm font-semibold tracking-wide uppercase">Categories</h3>
         <div className="mt-4 flex flex-col gap-3 text-sm">
-          {categories.map((category, i) => (
+          <p
+            onClick={() => onSelectCategory(null)}
+            className={`w-fit cursor-pointer transition hover:text-gold ${
+              selectedCategory === null ? "font-medium text-gold" : "text-white/60"
+            }`}
+          >
+            All Products
+          </p>
+          {categories.map((category) => (
             <p
-              key={category}
+              key={category.slug}
+              onClick={() => onSelectCategory(category.slug)}
               className={`w-fit cursor-pointer transition hover:text-gold ${
-                i === 0 ? "font-medium text-gold" : "text-white/60"
+                selectedCategory === category.slug ? "font-medium text-gold" : "text-white/60"
               }`}
             >
-              {category}
+              {category.name}
             </p>
           ))}
         </div>
@@ -55,13 +75,19 @@ const ShopSidebar = () => {
         <h3 className="text-sm font-semibold tracking-wide uppercase">Price (₦)</h3>
         <div className="mt-4 flex items-center gap-2">
           <input
-            type="text"
+            type="number"
+            min={0}
+            value={minPrice}
+            onChange={(e) => onMinPriceChange(e.target.value)}
             placeholder="Min"
             className="w-full rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm placeholder:text-white/40 focus:outline-none"
           />
           <span className="text-white/40">-</span>
           <input
-            type="text"
+            type="number"
+            min={0}
+            value={maxPrice}
+            onChange={(e) => onMaxPriceChange(e.target.value)}
             placeholder="Max"
             className="w-full rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm placeholder:text-white/40 focus:outline-none"
           />

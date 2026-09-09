@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get("search");
   const minPrice = searchParams.get("minPrice");
   const maxPrice = searchParams.get("maxPrice");
+  const onSale = searchParams.get("onSale");
   const sort = searchParams.get("sort") ?? "newest";
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
   const limit = Math.min(50, Math.max(1, Number(searchParams.get("limit")) || 20));
@@ -38,6 +39,9 @@ export async function GET(request: NextRequest) {
   if (maxPrice && Number.isFinite(Number(maxPrice))) {
     values.push(Number(maxPrice));
     conditions.push(`p.price <= $${values.length}`);
+  }
+  if (onSale === "true") {
+    conditions.push("p.old_price IS NOT NULL");
   }
 
   const orderBy = SORT_COLUMNS[sort] ?? SORT_COLUMNS.newest;

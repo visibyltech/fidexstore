@@ -1,10 +1,21 @@
+"use client";
+
 import { SlidersHorizontal, LayoutGrid, List } from "lucide-react";
 
 type ShopToolbarProps = {
   total: number;
+  sort: string;
+  onSortChange: (sort: string) => void;
 };
 
-const ShopToolbar = ({ total }: ShopToolbarProps) => {
+const SORT_OPTIONS = [
+  { value: "newest", label: "Recommended" },
+  { value: "price_asc", label: "Price: Low to High" },
+  { value: "price_desc", label: "Price: High to Low" },
+  { value: "rating", label: "Top Rated" },
+];
+
+const ShopToolbar = ({ total, sort, onSortChange }: ShopToolbarProps) => {
   return (
     <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-white/5 px-5 py-3">
       <p className="text-sm text-white/60">
@@ -19,11 +30,16 @@ const ShopToolbar = ({ total }: ShopToolbarProps) => {
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2 text-sm text-white/60">
           Sort by:
-          <select className="rounded-md border border-white/10 bg-white/5 px-3 py-1.5 text-white focus:outline-none">
-            <option>Recommended</option>
-            <option>Price: Low to High</option>
-            <option>Price: High to Low</option>
-            <option>Newest</option>
+          <select
+            value={sort}
+            onChange={(e) => onSortChange(e.target.value)}
+            className="rounded-md border border-white/10 bg-white/5 px-3 py-1.5 text-white focus:outline-none"
+          >
+            {SORT_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
         </div>
 

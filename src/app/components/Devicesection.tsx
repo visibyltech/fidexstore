@@ -1,19 +1,43 @@
-import ProductPanel, { Product } from "./ProductPanel";
+"use client";
 
-const devices: Product[] = [
-  { id: 1, name: "Samsung Galaxy S21", price: 300000, image: "/hero2.jpg" },
-  { id: 2, name: "iPhone Collection", price: 450000, image: "/hero3.jpg" },
-  { id: 3, name: "Premium Phone Set", price: 280000, image: "/hero1.jpg" },
-  { id: 4, name: "MacBook Air", price: 650000, image: "/crop-laptop.jpg" },
-  { id: 5, name: "Smartwatch Pro", price: 120000, image: "/crop-watch.jpg" },
-];
+import { useEffect, useState } from "react";
+import ProductPanel, { Product } from "./ProductPanel";
+import type { ApiProduct } from "@/types/api";
 
 const Devicesection = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch("/api/products?sort=rating&limit=5")
+      .then((res) => res.json())
+      .then((data) => {
+        if (cancelled) return;
+        const items: ApiProduct[] = data.products ?? [];
+        setProducts(
+          items.map((p) => ({
+            id: p.id,
+            name: p.name,
+            price: p.price,
+            image: p.image ?? "",
+          }))
+        );
+      })
+      .catch(() => {
+        if (!cancelled) setProducts([]);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <ProductPanel
       heading="Best Sellers"
       subtitle="Explore our diverse range of devices trusted by thousands."
-      products={devices}
+      products={products}
       ctaLabel="Shop Now"
     />
   );
