@@ -10,7 +10,8 @@ export async function GET(request: NextRequest) {
   const sql = getSql();
   const products = await sql`
     SELECT p.id, p.name, p.slug, p.description, p.image, p.price, p.old_price,
-           p.rating, p.reviews_count, p.stock, p.is_active, p.category_id, c.slug AS category
+           p.rating, p.reviews_count, p.stock, p.is_active, p.category_id,
+           c.slug AS category, c.name AS category_name
     FROM products p
     JOIN categories c ON c.id = p.category_id
     ORDER BY p.created_at DESC

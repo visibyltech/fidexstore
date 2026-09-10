@@ -29,13 +29,16 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) setItems(JSON.parse(stored));
-    } catch {
-      // ignore corrupted storage
-    }
-    setHydrated(true);
+    Promise.resolve().then(() => {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) setItems(JSON.parse(stored));
+      } catch {
+        // ignore corrupted storage
+      } finally {
+        setHydrated(true);
+      }
+    });
   }, []);
 
   useEffect(() => {
