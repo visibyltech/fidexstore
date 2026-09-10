@@ -30,7 +30,7 @@ const Footer = () => {
       <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
         <div>
           <Link href="/">
-            <Image src="/logo-icon.png" alt="Richmond Trust Devices" width={110} height={40} />
+            <Image src="/logo-icon.png" alt="Richmond Trust Devices" width={110} height={48} />
           </Link>
           <p className="mt-4 max-w-xs text-sm text-white/60">
             Your trusted partner for premium smartphones, laptops, and

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CreditCard, UploadCloud, Zap, ShieldCheck, Loader2 } from "lucide-react";
+import { CreditCard, UploadCloud, Zap, ShieldCheck, Loader2, Truck } from "lucide-react";
 import { PaymentMethod } from "./PaymentMethodStep";
 import { CartItem } from "../../context/CartContext";
 import { DeliveryDetails } from "./DeliveryForm";
@@ -22,6 +22,15 @@ const BANK_ACCOUNTS = [
   { bank: "Globus Bank", accountName: "Richmond Trust Devices", accountNumber: "2003633137" },
 ];
 
+const INSTALLMENT_PLANS = [
+  { weeks: 2, interestRate: 3 },
+  { weeks: 4, interestRate: 6 },
+  { weeks: 6, interestRate: 9 },
+  { weeks: 8, interestRate: 12 },
+];
+
+const DEPOSIT_RATE = 0.3;
+
 const ReviewStep = ({
   paymentMethod,
   items,
@@ -35,13 +44,24 @@ const ReviewStep = ({
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [acceptedPrivacy, setAcceptedPrivacy] = useState(false);
   const [receiptName, setReceiptName] = useState<string | null>(null);
+  const [installmentWeeks, setInstallmentWeeks] = useState(4);
   const [klumpStatus, setKlumpStatus] = useState<
     "idle" | "verifying" | "failed" | "not-configured"
   >("idle");
 
-  const requiresReceipt = paymentMethod === "bank-transfer";
+  const selectedPlan =
+    INSTALLMENT_PLANS.find((plan) => plan.weeks === installmentWeeks) ?? INSTALLMENT_PLANS[1];
+  const installmentInterest = Math.round(total * (selectedPlan.interestRate / 100));
+  const installmentTotalPayable = total + installmentInterest;
+  const installmentDeposit = Math.round(installmentTotalPayable * DEPOSIT_RATE);
+  const installmentRemaining = installmentTotalPayable - installmentDeposit;
+  const installmentWeeklyPayment = Math.round(installmentRemaining / selectedPlan.weeks);
+
+  const requiresReceipt = paymentMethod === "bank-transfer" || paymentMethod === "installments";
   const canPlaceOrder =
     acceptedTerms && acceptedPrivacy && (!requiresReceipt || receiptName !== null);
+
+  const orderTotal = paymentMethod === "installments" ? installmentTotalPayable : total;
 
   const handleKlumpCheckout = () => {
     const publicKey = process.env.NEXT_PUBLIC_KLUMP_PUBLIC_KEY;
@@ -155,14 +175,94 @@ const ReviewStep = ({
       )}
 
       {paymentMethod === "installments" && (
-        <div className="mt-6 rounded-xl border border-gold/40 bg-gold/5 p-5 text-sm text-white/70">
-          <h3 className="text-sm font-semibold text-gold">Installment Plan</h3>
-          <p className="mt-2">
-            Pay <span className="font-semibold text-white">₦{Math.round(total / 2).toLocaleString()}</span>{" "}
-            now, and the remaining{" "}
-            <span className="font-semibold text-white">₦{Math.round(total / 2).toLocaleString()}</span>{" "}
-            within 30 days. Our team will contact you to confirm the schedule.
+        <div className="mt-6 rounded-xl border border-gold/40 bg-gold/5 p-5">
+          <div className="flex items-center gap-2 text-gold">
+            <Truck className="h-4 w-4" />
+            <h3 className="text-sm font-semibold">Installment Plan Details</h3>
+          </div>
+          <p className="mt-2 text-sm text-white/70">
+            Choose a payment plan that works for you. A {DEPOSIT_RATE * 100}% upfront deposit is
+            required before shipping.
           </p>
+
+          <label className="mt-4 block text-xs font-semibold tracking-wide text-white/60 uppercase">
+            Select Duration
+          </label>
+          <select
+            value={installmentWeeks}
+            onChange={(e) => setInstallmentWeeks(Number(e.target.value))}
+            className="mt-2 w-full rounded-md border border-white/10 bg-white/5 px-4 py-3 text-sm focus:border-gold focus:outline-none"
+          >
+            {INSTALLMENT_PLANS.map((plan) => (
+              <option key={plan.weeks} value={plan.weeks} className="bg-black">
+                {plan.weeks} Weeks ({plan.interestRate}% Interest)
+              </option>
+            ))}
+          </select>
+
+          <div className="mt-4 space-y-2 rounded-lg bg-black/30 p-4 text-sm">
+            <div className="flex justify-between">
+              <span className="text-white/50">Subtotal (inc. Delivery)</span>
+              <span className="font-semibold">₦{total.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-white/50">Interest ({selectedPlan.interestRate}%)</span>
+              <span className="font-semibold">+₦{installmentInterest.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between border-t border-white/10 pt-2">
+              <span className="font-semibold text-white/70">Total Payable</span>
+              <span className="font-semibold text-gold">
+                ₦{installmentTotalPayable.toLocaleString()}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-green-400">Upfront Deposit ({DEPOSIT_RATE * 100}%)</span>
+              <span className="font-semibold text-green-400">
+                ₦{installmentDeposit.toLocaleString()}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-white/50">Remaining ({selectedPlan.weeks} payments)</span>
+              <span className="font-semibold">
+                ₦{installmentWeeklyPayment.toLocaleString()} / week
+              </span>
+            </div>
+          </div>
+
+          <label className="mt-4 block text-xs font-semibold tracking-wide text-white/60 uppercase">
+            Upload Initial Deposit Receipt *
+          </label>
+          <p className="mt-1 text-sm text-white/70">
+            Please transfer your deposit of{" "}
+            <span className="font-semibold text-white">
+              ₦{installmentDeposit.toLocaleString()}
+            </span>{" "}
+            to the account below.
+          </p>
+
+          <div className="mt-3 space-y-2 rounded-lg bg-black/30 p-4 text-sm">
+            <div className="flex justify-between">
+              <span className="text-white/50">Account Name</span>
+              <span className="font-semibold">{BANK_ACCOUNTS[0].accountName}</span>
+            </div>
+            {BANK_ACCOUNTS.map((account) => (
+              <div key={account.accountNumber} className="flex justify-between">
+                <span className="text-white/50">{account.bank}</span>
+                <span className="font-semibold">{account.accountNumber}</span>
+              </div>
+            ))}
+          </div>
+
+          <label className="mt-3 flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-white/20 py-8 text-sm text-white/50 transition hover:border-gold hover:text-gold">
+            <UploadCloud className="h-5 w-5" />
+            {receiptName ?? "Click to upload screenshot"}
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => setReceiptName(e.target.files?.[0]?.name ?? null)}
+            />
+          </label>
         </div>
       )}
 
@@ -231,7 +331,7 @@ const ReviewStep = ({
           disabled={!canPlaceOrder || klumpStatus === "verifying"}
           className="flex flex-1 items-center justify-center gap-2 rounded-md bg-gold px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold/90 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          <Zap className="h-4 w-4" /> Place Order — ₦{total.toLocaleString()}
+          <Zap className="h-4 w-4" /> Place Order — ₦{orderTotal.toLocaleString()}
         </button>
       </div>
     </div>

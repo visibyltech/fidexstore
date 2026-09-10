@@ -76,7 +76,7 @@ const Navbar = () => {
         </button>
 
         <Link href="/" className="justify-self-center">
-          <Image src="/logo-icon.png" alt="Richmond Trust Devices" width={70} height={26} priority />
+          <Image src="/logo-icon.png" alt="Richmond Trust Devices" width={70} height={30} priority />
         </Link>
 
         <Link href="/cart" className="relative justify-self-end text-white/80">
@@ -174,7 +174,7 @@ const Navbar = () => {
       {/* desktop row */}
       <div className="hidden items-center justify-between px-10 py-4 md:flex">
         <Link href="/">
-          <Image src="/logo-icon.png" alt="Richmond Trust Devices" width={90} height={34} priority />
+          <Image src="/logo-icon.png" alt="Richmond Trust Devices" width={90} height={39} priority />
         </Link>
 
         <div className="flex items-center gap-10 rounded-full bg-white/5 px-8 py-3 text-sm font-medium tracking-wide">
