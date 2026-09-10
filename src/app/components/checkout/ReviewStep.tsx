@@ -17,6 +17,11 @@ type ReviewStepProps = {
   onPlaceOrder: () => void;
 };
 
+const BANK_ACCOUNTS = [
+  { bank: "GTBank", accountName: "Richmond Trust Devices", accountNumber: "0123456789" },
+  { bank: "Globus Bank", accountName: "Richmond Trust Devices", accountNumber: "2003633137" },
+];
+
 const ReviewStep = ({
   paymentMethod,
   items,
@@ -120,19 +125,23 @@ const ReviewStep = ({
             account below. Your order will not ship until we receive payment.
           </p>
 
-          <div className="mt-4 space-y-2 rounded-lg bg-black/30 p-4 text-sm">
-            <div className="flex justify-between">
-              <span className="text-white/50">Bank Name</span>
-              <span className="font-semibold">GTBank</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-white/50">Account Name</span>
-              <span className="font-semibold">Richmond Trust Devices</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-white/50">Account Number</span>
-              <span className="font-semibold">0123456789</span>
-            </div>
+          <div className="mt-4 space-y-3">
+            {BANK_ACCOUNTS.map((account) => (
+              <div key={account.accountNumber} className="space-y-2 rounded-lg bg-black/30 p-4 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-white/50">Bank Name</span>
+                  <span className="font-semibold">{account.bank}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-white/50">Account Name</span>
+                  <span className="font-semibold">{account.accountName}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-white/50">Account Number</span>
+                  <span className="font-semibold">{account.accountNumber}</span>
+                </div>
+              </div>
+            ))}
           </div>
 
           <label className="mt-4 block text-xs font-semibold tracking-wide text-white/60 uppercase">

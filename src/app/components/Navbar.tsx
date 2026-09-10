@@ -10,9 +10,9 @@ import { useAuth } from "../context/AuthContext";
 
 const links = [
   { name: "Home", href: "/" },
-  { name: "Services", href: "/" },
+  { name: "Services", href: "/services" },
   { name: "Shop", href: "/shop" },
-  { name: "Contact", href: "/" },
+  { name: "Contact", href: "/contact" },
 ];
 
 const deviceCategories = [
@@ -50,6 +50,9 @@ const Navbar = () => {
                 Admin Panel
               </Link>
             )}
+            <Link href="/account" className="hover:text-gold">
+              My Account
+            </Link>
             <span className="hidden text-white/40 sm:inline">Hi, {user.name.split(" ")[0]}</span>
             <button onClick={() => logout()} className="cursor-pointer hover:text-gold">
               Sign Out
@@ -139,6 +142,13 @@ const Navbar = () => {
                   Admin Panel
                 </Link>
               )}
+              <Link
+                href="/account"
+                onClick={() => setOpen(false)}
+                className="rounded-lg py-2 text-sm text-white/70 hover:text-gold"
+              >
+                My Account
+              </Link>
               <button
                 onClick={() => {
                   logout();

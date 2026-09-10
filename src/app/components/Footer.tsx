@@ -3,14 +3,14 @@
 import { useState, FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, Phone, Clock, Check } from "lucide-react";
+import { MapPin, Phone, Clock, Mail, Check } from "lucide-react";
 
 const quickLinks = [
   { name: "Home", href: "/" },
   { name: "Shop", href: "/shop" },
   { name: "Devices", href: "/shop" },
-  { name: "Services", href: "/" },
-  { name: "Contact", href: "/" },
+  { name: "Services", href: "/services" },
+  { name: "Contact", href: "/contact" },
 ];
 
 const Footer = () => {
@@ -45,6 +45,10 @@ const Footer = () => {
             <div className="flex items-center gap-3">
               <Phone className="h-4 w-4 shrink-0 text-gold" />
               0813 933 0064
+            </div>
+            <div className="flex items-center gap-3">
+              <Mail className="h-4 w-4 shrink-0 text-gold" />
+              richmondtrustd@gmail.com
             </div>
             <div className="flex items-start gap-3">
               <Clock className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
