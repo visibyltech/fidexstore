@@ -27,8 +27,8 @@ export default function CheckoutPage() {
 
   const total = subtotal + (items.length > 0 ? DELIVERY_FEE : 0);
 
-  const handlePlaceOrder = () => {
-    setOrderNumber(`RTD-${Math.floor(100000 + Math.random() * 900000)}`);
+  const handlePlaceOrder = (placedOrderNumber: string) => {
+    setOrderNumber(placedOrderNumber);
     setOrderPlaced(true);
     clearCart();
   };

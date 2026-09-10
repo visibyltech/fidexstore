@@ -39,3 +39,42 @@ CREATE TABLE IF NOT EXISTS products (
 
 CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id);
 CREATE INDEX IF NOT EXISTS idx_products_is_active ON products(is_active);
+
+-- An order's receipt (bank-transfer proof or installment deposit proof) is
+-- stored inline as base64 in receipt_data — small images, no external
+-- storage configured. Klump orders have no receipt (Klump verifies itself).
+CREATE TABLE IF NOT EXISTS orders (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'completed')),
+  payment_method TEXT NOT NULL CHECK (payment_method IN ('bank-transfer', 'installments', 'klump')),
+  full_name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  address TEXT NOT NULL,
+  city TEXT NOT NULL,
+  subtotal INTEGER NOT NULL,
+  delivery_fee INTEGER NOT NULL,
+  total INTEGER NOT NULL,
+  installment_weeks INTEGER,
+  installment_interest_rate INTEGER,
+  installment_deposit INTEGER,
+  receipt_filename TEXT,
+  receipt_mime_type TEXT,
+  receipt_data TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS order_items (
+  id SERIAL PRIMARY KEY,
+  order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  product_id INTEGER REFERENCES products(id) ON DELETE SET NULL,
+  name TEXT NOT NULL,
+  image TEXT,
+  price INTEGER NOT NULL,
+  qty INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
+CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
+CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);

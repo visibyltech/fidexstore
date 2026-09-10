@@ -14,7 +14,7 @@ type ReviewStepProps = {
   subtotal: number;
   total: number;
   onBack: () => void;
-  onPlaceOrder: () => void;
+  onPlaceOrder: (orderNumber: string) => void;
 };
 
 const BANK_ACCOUNTS = [
@@ -43,11 +43,13 @@ const ReviewStep = ({
 }: ReviewStepProps) => {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [acceptedPrivacy, setAcceptedPrivacy] = useState(false);
-  const [receiptName, setReceiptName] = useState<string | null>(null);
+  const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [installmentWeeks, setInstallmentWeeks] = useState(4);
   const [klumpStatus, setKlumpStatus] = useState<
     "idle" | "verifying" | "failed" | "not-configured"
   >("idle");
+  const [submitting, setSubmitting] = useState(false);
+  const [orderError, setOrderError] = useState("");
 
   const selectedPlan =
     INSTALLMENT_PLANS.find((plan) => plan.weeks === installmentWeeks) ?? INSTALLMENT_PLANS[1];
@@ -59,9 +61,55 @@ const ReviewStep = ({
 
   const requiresReceipt = paymentMethod === "bank-transfer" || paymentMethod === "installments";
   const canPlaceOrder =
-    acceptedTerms && acceptedPrivacy && (!requiresReceipt || receiptName !== null);
+    acceptedTerms && acceptedPrivacy && (!requiresReceipt || receiptFile !== null);
 
   const orderTotal = paymentMethod === "installments" ? installmentTotalPayable : total;
+
+  const submitOrder = async (): Promise<{ orderNumber: string } | { error: string }> => {
+    const formData = new FormData();
+    formData.set("paymentMethod", paymentMethod);
+    formData.set("fullName", delivery.fullName);
+    formData.set("email", delivery.email);
+    formData.set("phone", delivery.phone);
+    formData.set("address", delivery.address);
+    formData.set("city", delivery.city);
+    formData.set("subtotal", String(subtotal));
+    formData.set("deliveryFee", String(deliveryFee));
+    formData.set("total", String(orderTotal));
+    formData.set(
+      "items",
+      JSON.stringify(
+        items.map((item) => ({
+          id: item.id,
+          name: item.name,
+          image: item.image,
+          price: item.price,
+          qty: item.qty,
+        }))
+      )
+    );
+
+    if (paymentMethod === "installments") {
+      formData.set("installmentWeeks", String(selectedPlan.weeks));
+      formData.set("installmentInterestRate", String(selectedPlan.interestRate));
+      formData.set("installmentDeposit", String(installmentDeposit));
+    }
+
+    if (receiptFile) {
+      formData.set("receipt", receiptFile);
+    }
+
+    try {
+      const res = await fetch("/api/orders", { method: "POST", body: formData });
+      const data = await res.json();
+      if (!res.ok) {
+        return { error: data.error ?? "Failed to place order" };
+      }
+      return { orderNumber: data.order.orderNumber };
+    } catch {
+      return { error: "Failed to place order. Check your connection and try again." };
+    }
+  };
 
   const handleKlumpCheckout = () => {
     const publicKey = process.env.NEXT_PUBLIC_KLUMP_PUBLIC_KEY;
@@ -106,7 +154,13 @@ const ReviewStep = ({
           );
           const result = await res.json();
           if (result?.data?.status === "successful") {
-            onPlaceOrder();
+            const outcome = await submitOrder();
+            if ("error" in outcome) {
+              setOrderError(outcome.error);
+              setKlumpStatus("failed");
+            } else {
+              onPlaceOrder(outcome.orderNumber);
+            }
           } else {
             setKlumpStatus("failed");
           }
@@ -121,11 +175,22 @@ const ReviewStep = ({
     });
   };
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
+    setOrderError("");
+
     if (paymentMethod === "klump") {
       handleKlumpCheckout();
+      return;
+    }
+
+    setSubmitting(true);
+    const outcome = await submitOrder();
+    setSubmitting(false);
+
+    if ("error" in outcome) {
+      setOrderError(outcome.error);
     } else {
-      onPlaceOrder();
+      onPlaceOrder(outcome.orderNumber);
     }
   };
 
@@ -163,12 +228,12 @@ const ReviewStep = ({
           </label>
           <label className="mt-2 flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-white/20 py-8 text-sm text-white/50 transition hover:border-gold hover:text-gold">
             <UploadCloud className="h-5 w-5" />
-            {receiptName ?? "Click to upload screenshot"}
+            {receiptFile?.name ?? "Click to upload screenshot"}
             <input
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={(e) => setReceiptName(e.target.files?.[0]?.name ?? null)}
+              onChange={(e) => setReceiptFile(e.target.files?.[0] ?? null)}
             />
           </label>
         </div>
@@ -255,12 +320,12 @@ const ReviewStep = ({
 
           <label className="mt-3 flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-white/20 py-8 text-sm text-white/50 transition hover:border-gold hover:text-gold">
             <UploadCloud className="h-5 w-5" />
-            {receiptName ?? "Click to upload screenshot"}
+            {receiptFile?.name ?? "Click to upload screenshot"}
             <input
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={(e) => setReceiptName(e.target.files?.[0]?.name ?? null)}
+              onChange={(e) => setReceiptFile(e.target.files?.[0] ?? null)}
             />
           </label>
         </div>
@@ -296,6 +361,10 @@ const ReviewStep = ({
         </div>
       )}
 
+      {orderError && (
+        <p className="mt-4 rounded-md bg-red-500/10 px-4 py-2 text-sm text-red-400">{orderError}</p>
+      )}
+
       <div className="mt-6 space-y-3">
         <label className="flex cursor-pointer items-start gap-2 text-sm text-white/70">
           <input
@@ -328,10 +397,11 @@ const ReviewStep = ({
         </button>
         <button
           onClick={handlePlaceOrder}
-          disabled={!canPlaceOrder || klumpStatus === "verifying"}
+          disabled={!canPlaceOrder || submitting || klumpStatus === "verifying"}
           className="flex flex-1 items-center justify-center gap-2 rounded-md bg-gold px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold/90 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          <Zap className="h-4 w-4" /> Place Order — ₦{orderTotal.toLocaleString()}
+          <Zap className="h-4 w-4" />{" "}
+          {submitting ? "Placing Order…" : `Place Order — ₦${orderTotal.toLocaleString()}`}
         </button>
       </div>
     </div>
