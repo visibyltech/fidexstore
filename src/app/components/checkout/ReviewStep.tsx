@@ -30,13 +30,21 @@ const ReviewStep = ({
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [acceptedPrivacy, setAcceptedPrivacy] = useState(false);
   const [receiptName, setReceiptName] = useState<string | null>(null);
-  const [klumpStatus, setKlumpStatus] = useState<"idle" | "verifying" | "failed">("idle");
+  const [klumpStatus, setKlumpStatus] = useState<
+    "idle" | "verifying" | "failed" | "not-configured"
+  >("idle");
 
   const requiresReceipt = paymentMethod === "bank-transfer";
   const canPlaceOrder =
     acceptedTerms && acceptedPrivacy && (!requiresReceipt || receiptName !== null);
 
   const handleKlumpCheckout = () => {
+    const publicKey = process.env.NEXT_PUBLIC_KLUMP_PUBLIC_KEY;
+    if (!publicKey) {
+      setKlumpStatus("not-configured");
+      return;
+    }
+
     if (typeof Klump === "undefined") {
       setKlumpStatus("failed");
       return;
@@ -48,7 +56,7 @@ const ReviewStep = ({
     const origin = window.location.origin;
 
     new Klump({
-      publicKey: process.env.NEXT_PUBLIC_KLUMP_PUBLIC_KEY ?? "",
+      publicKey,
       data: {
         amount: subtotal + deliveryFee,
         shipping_fee: deliveryFee,
@@ -169,6 +177,12 @@ const ReviewStep = ({
           {klumpStatus === "verifying" && (
             <p className="mt-3 flex items-center gap-2 text-gold">
               <Loader2 className="h-4 w-4 animate-spin" /> Verifying your payment...
+            </p>
+          )}
+          {klumpStatus === "not-configured" && (
+            <p className="mt-3 text-red-400">
+              Klump payments aren&apos;t set up yet on this store. Please choose a different
+              payment method or contact support.
             </p>
           )}
           {klumpStatus === "failed" && (
