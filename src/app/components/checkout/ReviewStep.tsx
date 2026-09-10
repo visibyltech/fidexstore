@@ -125,21 +125,15 @@ const ReviewStep = ({
             account below. Your order will not ship until we receive payment.
           </p>
 
-          <div className="mt-4 space-y-3">
+          <div className="mt-4 space-y-2 rounded-lg bg-black/30 p-4 text-sm">
+            <div className="flex justify-between">
+              <span className="text-white/50">Account Name</span>
+              <span className="font-semibold">{BANK_ACCOUNTS[0].accountName}</span>
+            </div>
             {BANK_ACCOUNTS.map((account) => (
-              <div key={account.accountNumber} className="space-y-2 rounded-lg bg-black/30 p-4 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-white/50">Bank Name</span>
-                  <span className="font-semibold">{account.bank}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-white/50">Account Name</span>
-                  <span className="font-semibold">{account.accountName}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-white/50">Account Number</span>
-                  <span className="font-semibold">{account.accountNumber}</span>
-                </div>
+              <div key={account.accountNumber} className="flex justify-between">
+                <span className="text-white/50">{account.bank}</span>
+                <span className="font-semibold">{account.accountNumber}</span>
               </div>
             ))}
           </div>
