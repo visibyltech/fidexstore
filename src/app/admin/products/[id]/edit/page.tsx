@@ -31,20 +31,25 @@ export default function EditProductPage() {
       });
   }, [params.id]);
 
-  const handleSubmit = async (values: ProductFormValues) => {
+  const handleSubmit = async (values: ProductFormValues, imageFile: File | null) => {
+    const formData = new FormData();
+    formData.set("name", values.name);
+    formData.set("categoryId", values.categoryId);
+    formData.set("price", values.price);
+    if (values.oldPrice) formData.set("oldPrice", values.oldPrice);
+    formData.set("description", values.description);
+    formData.set("stock", values.stock);
+    formData.set("isActive", String(values.isActive));
+
+    if (imageFile) {
+      formData.set("imageFile", imageFile);
+    } else if (values.image) {
+      formData.set("imageUrl", values.image);
+    }
+
     const res = await fetch(`/api/admin/products/${params.id}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: values.name,
-        categoryId: Number(values.categoryId),
-        price: Number(values.price),
-        oldPrice: values.oldPrice ? Number(values.oldPrice) : null,
-        description: values.description || null,
-        image: values.image || null,
-        stock: Number(values.stock),
-        isActive: values.isActive,
-      }),
+      body: formData,
     });
     const data = await res.json();
     if (!res.ok) return { error: data.error ?? "Failed to update product" };

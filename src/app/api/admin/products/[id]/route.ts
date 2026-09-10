@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSql } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { slugify } from "@/lib/slug";
+import { readImageFile } from "@/lib/image-upload";
 
 export async function GET(
   request: NextRequest,
@@ -46,10 +47,11 @@ export async function PATCH(
     return NextResponse.json({ error: "Product not found" }, { status: 404 });
   }
 
-  const body = await request.json().catch(() => null);
+  const formData = await request.formData();
 
-  if (body?.categoryId != null) {
-    const categoryId = Number(body.categoryId);
+  const categoryIdRaw = formData.get("categoryId");
+  if (categoryIdRaw != null && String(categoryIdRaw).trim()) {
+    const categoryId = Number(categoryIdRaw);
     if (!Number.isInteger(categoryId)) {
       return NextResponse.json({ error: "Invalid categoryId" }, { status: 400 });
     }
@@ -59,22 +61,50 @@ export async function PATCH(
     }
   }
 
-  const name = typeof body?.name === "string" && body.name.trim() ? body.name.trim() : existing.name;
-  const categoryId = body?.categoryId != null ? Number(body.categoryId) : existing.category_id;
-  const slug = typeof body?.slug === "string" && body.slug.trim() ? slugify(body.slug) : existing.slug;
-  const description = typeof body?.description === "string" ? body.description : existing.description;
-  const image = typeof body?.image === "string" ? body.image : existing.image;
-  const price = body?.price != null && Number.isFinite(Number(body.price)) ? Number(body.price) : existing.price;
+  const nameRaw = String(formData.get("name") ?? "").trim();
+  const name = nameRaw || existing.name;
+  const categoryId = categoryIdRaw != null && String(categoryIdRaw).trim() ? Number(categoryIdRaw) : existing.category_id;
+  const slugRaw = String(formData.get("slug") ?? "").trim();
+  const slug = slugRaw ? slugify(slugRaw) : existing.slug;
+  const descriptionRaw = formData.get("description");
+  const description =
+    typeof descriptionRaw === "string" && descriptionRaw.trim() ? descriptionRaw : existing.description;
+  const priceRaw = formData.get("price");
+  const price =
+    priceRaw != null && Number.isFinite(Number(priceRaw)) ? Number(priceRaw) : existing.price;
+  const oldPriceRaw = formData.get("oldPrice");
   const oldPrice =
-    body?.oldPrice !== undefined
-      ? body.oldPrice === null
-        ? null
-        : Number.isFinite(Number(body.oldPrice))
-          ? Number(body.oldPrice)
-          : existing.old_price
+    oldPriceRaw != null && String(oldPriceRaw).trim()
+      ? Number.isFinite(Number(oldPriceRaw))
+        ? Number(oldPriceRaw)
+        : existing.old_price
       : existing.old_price;
-  const stock = Number.isInteger(body?.stock) ? body.stock : existing.stock;
-  const isActive = typeof body?.isActive === "boolean" ? body.isActive : existing.is_active;
+  const stockRaw = formData.get("stock");
+  const stock = stockRaw != null && Number.isInteger(Number(stockRaw)) ? Number(stockRaw) : existing.stock;
+  const isActiveRaw = formData.get("isActive");
+  const isActive = isActiveRaw != null ? isActiveRaw === "true" : existing.is_active;
+
+  let image = existing.image;
+  let imageData = existing.image_data;
+  let imageMimeType = existing.image_mime_type;
+
+  const imageFile = formData.get("imageFile");
+  if (imageFile instanceof File && imageFile.size > 0) {
+    const result = await readImageFile(imageFile);
+    if ("error" in result) {
+      return NextResponse.json({ error: result.error }, { status: 400 });
+    }
+    imageData = result.data;
+    imageMimeType = result.mimeType;
+    image = `/api/products/${productId}/image`;
+  } else {
+    const imageUrlRaw = formData.get("imageUrl");
+    if (typeof imageUrlRaw === "string" && imageUrlRaw.trim()) {
+      image = imageUrlRaw.trim();
+      imageData = null;
+      imageMimeType = null;
+    }
+  }
 
   if (slug !== existing.slug) {
     const [slugTaken] = await sql`SELECT id FROM products WHERE slug = ${slug} AND id != ${productId}`;
@@ -90,6 +120,8 @@ export async function PATCH(
       slug = ${slug},
       description = ${description},
       image = ${image},
+      image_data = ${imageData},
+      image_mime_type = ${imageMimeType},
       price = ${price},
       old_price = ${oldPrice},
       stock = ${stock},

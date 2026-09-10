@@ -3,20 +3,22 @@
 import ProductForm, { ProductFormValues } from "../ProductForm";
 
 export default function NewProductPage() {
-  const handleSubmit = async (values: ProductFormValues) => {
-    const res = await fetch("/api/admin/products", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: values.name,
-        categoryId: Number(values.categoryId),
-        price: Number(values.price),
-        oldPrice: values.oldPrice ? Number(values.oldPrice) : null,
-        description: values.description || null,
-        image: values.image || null,
-        stock: Number(values.stock),
-      }),
-    });
+  const handleSubmit = async (values: ProductFormValues, imageFile: File | null) => {
+    const formData = new FormData();
+    formData.set("name", values.name);
+    formData.set("categoryId", values.categoryId);
+    formData.set("price", values.price);
+    if (values.oldPrice) formData.set("oldPrice", values.oldPrice);
+    if (values.description) formData.set("description", values.description);
+    formData.set("stock", values.stock);
+
+    if (imageFile) {
+      formData.set("imageFile", imageFile);
+    } else if (values.image) {
+      formData.set("imageUrl", values.image);
+    }
+
+    const res = await fetch("/api/admin/products", { method: "POST", body: formData });
     const data = await res.json();
     if (!res.ok) return { error: data.error ?? "Failed to create product" };
   };

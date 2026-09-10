@@ -26,7 +26,13 @@ CREATE TABLE IF NOT EXISTS products (
   name TEXT NOT NULL,
   slug TEXT NOT NULL UNIQUE,
   description TEXT,
+  -- `image` is the URL/path rendered everywhere (relative path, external
+  -- URL, or the internal /api/products/[id]/image route for an uploaded
+  -- file). image_data/image_mime_type are only set when the admin uploaded
+  -- a file directly rather than linking to an external image.
   image TEXT,
+  image_data TEXT,
+  image_mime_type TEXT,
   price INTEGER NOT NULL,
   old_price INTEGER,
   rating NUMERIC(2, 1) NOT NULL DEFAULT 0,

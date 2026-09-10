@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSql } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { slugify } from "@/lib/slug";
+import { readImageFile } from "@/lib/image-upload";
 
 export async function GET(request: NextRequest) {
   const { user, response } = await requireAdmin(request);
@@ -23,10 +24,10 @@ export async function POST(request: NextRequest) {
   const { user, response } = await requireAdmin(request);
   if (!user) return response;
 
-  const body = await request.json().catch(() => null);
-  const name = typeof body?.name === "string" ? body.name.trim() : "";
-  const categoryId = Number(body?.categoryId);
-  const price = Number(body?.price);
+  const formData = await request.formData();
+  const name = String(formData.get("name") ?? "").trim();
+  const categoryId = Number(formData.get("categoryId"));
+  const price = Number(formData.get("price"));
 
   if (!name || !Number.isInteger(categoryId) || !Number.isFinite(price)) {
     return NextResponse.json(
@@ -35,11 +36,19 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const slug = typeof body?.slug === "string" && body.slug.trim() ? slugify(body.slug) : slugify(name);
-  const description = typeof body?.description === "string" ? body.description : null;
-  const image = typeof body?.image === "string" ? body.image : null;
-  const oldPrice = body?.oldPrice != null && Number.isFinite(Number(body.oldPrice)) ? Number(body.oldPrice) : null;
-  const stock = Number.isInteger(body?.stock) ? body.stock : 0;
+  const slugInput = String(formData.get("slug") ?? "").trim();
+  const slug = slugInput ? slugify(slugInput) : slugify(name);
+  const descriptionRaw = formData.get("description");
+  const description =
+    typeof descriptionRaw === "string" && descriptionRaw.trim() ? descriptionRaw : null;
+  const imageUrlRaw = formData.get("imageUrl");
+  const imageUrl =
+    typeof imageUrlRaw === "string" && imageUrlRaw.trim() ? imageUrlRaw.trim() : null;
+  const oldPriceRaw = formData.get("oldPrice");
+  const oldPrice =
+    oldPriceRaw != null && Number.isFinite(Number(oldPriceRaw)) ? Number(oldPriceRaw) : null;
+  const stockRaw = Number(formData.get("stock"));
+  const stock = Number.isInteger(stockRaw) ? stockRaw : 0;
 
   const sql = getSql();
 
@@ -53,10 +62,36 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "A product with this slug already exists" }, { status: 409 });
   }
 
+  let imageData: string | null = null;
+  let imageMimeType: string | null = null;
+
+  const imageFile = formData.get("imageFile");
+  if (imageFile instanceof File && imageFile.size > 0) {
+    const result = await readImageFile(imageFile);
+    if ("error" in result) {
+      return NextResponse.json({ error: result.error }, { status: 400 });
+    }
+    imageData = result.data;
+    imageMimeType = result.mimeType;
+  }
+
   const [product] = await sql`
-    INSERT INTO products (category_id, name, slug, description, image, price, old_price, stock)
-    VALUES (${categoryId}, ${name}, ${slug}, ${description}, ${image}, ${price}, ${oldPrice}, ${stock})
+    INSERT INTO products (
+      category_id, name, slug, description, image, image_data, image_mime_type, price, old_price, stock
+    ) VALUES (
+      ${categoryId}, ${name}, ${slug}, ${description}, ${imageUrl}, ${imageData}, ${imageMimeType}, ${price}, ${oldPrice}, ${stock}
+    )
     RETURNING id, name, slug, description, image, price, old_price, stock, is_active, category_id
   `;
+
+  if (imageData) {
+    const [updated] = await sql`
+      UPDATE products SET image = ${`/api/products/${product.id}/image`}
+      WHERE id = ${product.id}
+      RETURNING id, name, slug, description, image, price, old_price, stock, is_active, category_id
+    `;
+    return NextResponse.json({ product: updated }, { status: 201 });
+  }
+
   return NextResponse.json({ product }, { status: 201 });
 }
