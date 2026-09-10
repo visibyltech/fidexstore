@@ -3,6 +3,30 @@ import { getSql } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { slugify } from "@/lib/slug";
 
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { user, response } = await requireAdmin(request);
+  if (!user) return response;
+
+  const { id } = await params;
+  const productId = Number(id);
+  if (!Number.isInteger(productId)) {
+    return NextResponse.json({ error: "Invalid product id" }, { status: 400 });
+  }
+
+  const sql = getSql();
+  const [product] = await sql`
+    SELECT id, name, slug, description, image, price, old_price, stock, is_active, category_id
+    FROM products WHERE id = ${productId}
+  `;
+  if (!product) {
+    return NextResponse.json({ error: "Product not found" }, { status: 404 });
+  }
+  return NextResponse.json({ product });
+}
+
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

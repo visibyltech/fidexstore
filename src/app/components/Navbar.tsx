@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Search, Heart, ShoppingCart, ChevronDown, Menu, X } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 
 const links = [
   { name: "Home", href: "/" },
@@ -26,6 +27,7 @@ const deviceCategories = [
 const Navbar = () => {
   const pathname = usePathname();
   const { itemCount } = useCart();
+  const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
 
   return (
@@ -41,7 +43,23 @@ const Navbar = () => {
             </p>
           </div>
         </div>
-        <p className="shrink-0 cursor-pointer hover:text-gold">Sign In</p>
+        {user ? (
+          <div className="flex shrink-0 items-center gap-4">
+            {user.role === "admin" && (
+              <Link href="/admin" className="hover:text-gold">
+                Admin Panel
+              </Link>
+            )}
+            <span className="hidden text-white/40 sm:inline">Hi, {user.name.split(" ")[0]}</span>
+            <button onClick={() => logout()} className="cursor-pointer hover:text-gold">
+              Sign Out
+            </button>
+          </div>
+        ) : (
+          <Link href="/login" className="shrink-0 hover:text-gold">
+            Sign In
+          </Link>
+        )}
       </div>
 
       {/* mobile row */}
@@ -109,6 +127,37 @@ const Navbar = () => {
             <Search className="h-5 w-5" />
             <Heart className="h-5 w-5" />
           </div>
+
+          {user ? (
+            <div className="mt-3 flex flex-col gap-1 border-t border-white/10 px-3 pt-4">
+              {user.role === "admin" && (
+                <Link
+                  href="/admin"
+                  onClick={() => setOpen(false)}
+                  className="rounded-lg py-2 text-sm text-white/70 hover:text-gold"
+                >
+                  Admin Panel
+                </Link>
+              )}
+              <button
+                onClick={() => {
+                  logout();
+                  setOpen(false);
+                }}
+                className="rounded-lg py-2 text-left text-sm text-white/70 hover:text-gold"
+              >
+                Sign Out ({user.name.split(" ")[0]})
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              onClick={() => setOpen(false)}
+              className="mt-3 block rounded-lg border-t border-white/10 px-3 pt-4 text-sm text-white/70 hover:text-gold"
+            >
+              Sign In
+            </Link>
+          )}
         </div>
       )}
 
