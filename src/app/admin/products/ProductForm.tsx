@@ -84,39 +84,39 @@ const ProductForm = ({ initialValues, submitLabel, onSubmit }: ProductFormProps)
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-xl rounded-2xl bg-white/5 p-6">
+    <form onSubmit={handleSubmit} className="max-w-xl rounded-2xl bg-black/5 p-6">
       {error && (
-        <p className="mb-4 rounded-md bg-red-500/10 px-4 py-2 text-sm text-red-400">{error}</p>
+        <p className="mb-4 rounded-md bg-red-500/10 px-4 py-2 text-sm text-red-600">{error}</p>
       )}
 
       <div className="space-y-4">
         <div>
-          <label className="text-xs font-semibold tracking-wide text-white/60 uppercase">
+          <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
             Name
           </label>
           <input
             required
             value={values.name}
             onChange={(e) => set("name", e.target.value)}
-            className="mt-2 w-full rounded-md border border-white/10 bg-white/5 px-4 py-3 text-sm placeholder:text-white/30 focus:border-gold focus:outline-none"
+            className="mt-2 w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
           />
         </div>
 
         <div>
-          <label className="text-xs font-semibold tracking-wide text-white/60 uppercase">
+          <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
             Category
           </label>
           <select
             required
             value={values.categoryId}
             onChange={(e) => set("categoryId", e.target.value)}
-            className="mt-2 w-full rounded-md border border-white/10 bg-white/5 px-4 py-3 text-sm focus:border-gold focus:outline-none"
+            className="mt-2 w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm focus:border-gold focus:outline-none"
           >
-            <option value="" disabled className="bg-black">
+            <option value="" disabled className="bg-white">
               Select a category
             </option>
             {categories.map((category) => (
-              <option key={category.id} value={category.id} className="bg-black">
+              <option key={category.id} value={category.id} className="bg-white">
                 {category.name}
               </option>
             ))}
@@ -125,7 +125,7 @@ const ProductForm = ({ initialValues, submitLabel, onSubmit }: ProductFormProps)
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="text-xs font-semibold tracking-wide text-white/60 uppercase">
+            <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
               Price (₦)
             </label>
             <input
@@ -134,11 +134,11 @@ const ProductForm = ({ initialValues, submitLabel, onSubmit }: ProductFormProps)
               min={0}
               value={values.price}
               onChange={(e) => set("price", e.target.value)}
-              className="mt-2 w-full rounded-md border border-white/10 bg-white/5 px-4 py-3 text-sm focus:border-gold focus:outline-none"
+              className="mt-2 w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm focus:border-gold focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs font-semibold tracking-wide text-white/60 uppercase">
+            <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
               Old Price (₦)
             </label>
             <input
@@ -147,23 +147,23 @@ const ProductForm = ({ initialValues, submitLabel, onSubmit }: ProductFormProps)
               value={values.oldPrice}
               onChange={(e) => set("oldPrice", e.target.value)}
               placeholder="Optional"
-              className="mt-2 w-full rounded-md border border-white/10 bg-white/5 px-4 py-3 text-sm placeholder:text-white/30 focus:border-gold focus:outline-none"
+              className="mt-2 w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
             />
           </div>
         </div>
 
         <div>
-          <label className="text-xs font-semibold tracking-wide text-white/60 uppercase">
+          <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
             Product Image
           </label>
           <div className="mt-2 flex items-center gap-4">
             {previewSrc && (
-              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-white/10">
+              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-black/10">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={previewSrc} alt="Preview" className="h-full w-full object-cover" />
               </div>
             )}
-            <label className="flex flex-1 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-white/20 py-6 text-sm text-white/50 transition hover:border-gold hover:text-gold">
+            <label className="flex flex-1 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-black/20 py-6 text-sm text-black/50 transition hover:border-gold hover:text-gold">
               <UploadCloud className="h-5 w-5" />
               {imageFile?.name ?? "Click to upload an image"}
               <input
@@ -179,40 +179,40 @@ const ProductForm = ({ initialValues, submitLabel, onSubmit }: ProductFormProps)
             <button
               type="button"
               onClick={() => handleFileChange(null)}
-              className="mt-2 flex items-center gap-1 text-xs text-white/50 hover:text-gold"
+              className="mt-2 flex items-center gap-1 text-xs text-black/50 hover:text-gold"
             >
               <X className="h-3 w-3" /> Remove selected file, use a URL instead
             </button>
           ) : (
             <>
-              <label className="mt-3 block text-xs font-semibold tracking-wide text-white/60 uppercase">
+              <label className="mt-3 block text-xs font-semibold tracking-wide text-black/60 uppercase">
                 Or Image URL
               </label>
               <input
                 value={values.image}
                 onChange={(e) => set("image", e.target.value)}
                 placeholder="https://images.example.com/product.jpg"
-                className="mt-2 w-full rounded-md border border-white/10 bg-white/5 px-4 py-3 text-sm placeholder:text-white/30 focus:border-gold focus:outline-none"
+                className="mt-2 w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
               />
             </>
           )}
         </div>
 
         <div>
-          <label className="text-xs font-semibold tracking-wide text-white/60 uppercase">
+          <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
             Description
           </label>
           <textarea
             rows={3}
             value={values.description}
             onChange={(e) => set("description", e.target.value)}
-            className="mt-2 w-full rounded-md border border-white/10 bg-white/5 px-4 py-3 text-sm placeholder:text-white/30 focus:border-gold focus:outline-none"
+            className="mt-2 w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="text-xs font-semibold tracking-wide text-white/60 uppercase">
+            <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
               Stock
             </label>
             <input
@@ -221,11 +221,11 @@ const ProductForm = ({ initialValues, submitLabel, onSubmit }: ProductFormProps)
               min={0}
               value={values.stock}
               onChange={(e) => set("stock", e.target.value)}
-              className="mt-2 w-full rounded-md border border-white/10 bg-white/5 px-4 py-3 text-sm focus:border-gold focus:outline-none"
+              className="mt-2 w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm focus:border-gold focus:outline-none"
             />
           </div>
           <div className="flex items-end pb-3">
-            <label className="flex items-center gap-2 text-sm text-white/70">
+            <label className="flex items-center gap-2 text-sm text-black/70">
               <input
                 type="checkbox"
                 checked={values.isActive}

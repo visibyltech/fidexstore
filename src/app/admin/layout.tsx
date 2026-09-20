@@ -17,14 +17,14 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   if (loading) {
-    return <div className="mx-10 mt-16 mb-16 text-center text-sm text-white/50">Loading…</div>;
+    return <div className="mx-10 mt-16 mb-16 text-center text-sm text-black/50">Loading…</div>;
   }
 
   if (!user) {
     return (
-      <div className="mx-10 mt-16 mb-16 rounded-3xl bg-white/5 py-16 text-center">
+      <div className="mx-10 mt-16 mb-16 rounded-3xl bg-black/5 py-16 text-center">
         <h1 className="text-xl font-semibold">Sign in required</h1>
-        <p className="mt-2 text-sm text-white/60">
+        <p className="mt-2 text-sm text-black/60">
           You need to sign in with an admin account to access this page.
         </p>
         <Link
@@ -39,9 +39,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   if (user.role !== "admin") {
     return (
-      <div className="mx-10 mt-16 mb-16 rounded-3xl bg-white/5 py-16 text-center">
+      <div className="mx-10 mt-16 mb-16 rounded-3xl bg-black/5 py-16 text-center">
         <h1 className="text-xl font-semibold">Access denied</h1>
-        <p className="mt-2 text-sm text-white/60">This area is for administrators only.</p>
+        <p className="mt-2 text-sm text-black/60">This area is for administrators only.</p>
       </div>
     );
   }
@@ -50,13 +50,13 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     <div className="mx-10 mt-8 mb-16">
       <h1 className="text-2xl font-semibold">Admin Panel</h1>
 
-      <div className="mt-6 flex gap-2 border-b border-white/10 pb-4">
+      <div className="mt-6 flex gap-2 border-b border-black/10 pb-4">
         {links.map((link) => (
           <Link
             key={link.href}
             href={link.href}
             className={`rounded-md px-4 py-2 text-sm font-medium transition ${
-              pathname === link.href ? "bg-gold text-black" : "text-white/60 hover:text-gold"
+              pathname === link.href ? "bg-gold text-black" : "text-black/60 hover:text-gold"
             }`}
           >
             {link.label}

@@ -96,44 +96,44 @@ export default function AdminCategoriesPage() {
       <h2 className="text-lg font-semibold">Categories ({categories.length})</h2>
 
       {error && (
-        <p className="mt-4 rounded-md bg-red-500/10 px-4 py-2 text-sm text-red-400">{error}</p>
+        <p className="mt-4 rounded-md bg-red-500/10 px-4 py-2 text-sm text-red-600">{error}</p>
       )}
 
       <form
         onSubmit={handleCreate}
-        className="mt-6 flex flex-wrap items-end gap-3 rounded-2xl bg-white/5 p-4"
+        className="mt-6 flex flex-wrap items-end gap-3 rounded-2xl bg-black/5 p-4"
       >
         <div>
-          <label className="text-xs font-semibold tracking-wide text-white/60 uppercase">
+          <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
             Name
           </label>
           <input
             required
             value={newCategory.name}
             onChange={(e) => setNewCategory((v) => ({ ...v, name: e.target.value }))}
-            className="mt-2 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm focus:border-gold focus:outline-none"
+            className="mt-2 rounded-md border border-black/10 bg-black/5 px-3 py-2 text-sm focus:border-gold focus:outline-none"
           />
         </div>
         <div>
-          <label className="text-xs font-semibold tracking-wide text-white/60 uppercase">
+          <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
             Slug (optional)
           </label>
           <input
             value={newCategory.slug}
             onChange={(e) => setNewCategory((v) => ({ ...v, slug: e.target.value }))}
             placeholder="auto from name"
-            className="mt-2 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm placeholder:text-white/30 focus:border-gold focus:outline-none"
+            className="mt-2 rounded-md border border-black/10 bg-black/5 px-3 py-2 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
           />
         </div>
         <div>
-          <label className="text-xs font-semibold tracking-wide text-white/60 uppercase">
+          <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
             Image URL
           </label>
           <input
             value={newCategory.image}
             onChange={(e) => setNewCategory((v) => ({ ...v, image: e.target.value }))}
             placeholder="https://images.example.com/category.jpg"
-            className="mt-2 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm placeholder:text-white/30 focus:border-gold focus:outline-none"
+            className="mt-2 rounded-md border border-black/10 bg-black/5 px-3 py-2 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
           />
         </div>
         <button
@@ -145,7 +145,7 @@ export default function AdminCategoriesPage() {
       </form>
 
       {loading ? (
-        <p className="mt-8 text-sm text-white/50">Loading…</p>
+        <p className="mt-8 text-sm text-black/50">Loading…</p>
       ) : (
         <div className="mt-6 space-y-3">
           {categories.map((category) => {
@@ -153,9 +153,9 @@ export default function AdminCategoriesPage() {
             return (
               <div
                 key={category.id}
-                className="flex flex-wrap items-center gap-3 rounded-2xl bg-white/5 p-4"
+                className="flex flex-wrap items-center gap-3 rounded-2xl bg-black/5 p-4"
               >
-                <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-white/10">
+                <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-black/10">
                   {draft.image && (
                     <Image src={draft.image} alt={draft.name} fill className="object-cover" />
                   )}
@@ -163,18 +163,18 @@ export default function AdminCategoriesPage() {
                 <input
                   value={draft.name}
                   onChange={(e) => updateDraft(category.id, "name", e.target.value)}
-                  className="min-w-40 flex-1 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm focus:border-gold focus:outline-none"
+                  className="min-w-40 flex-1 rounded-md border border-black/10 bg-black/5 px-3 py-2 text-sm focus:border-gold focus:outline-none"
                 />
                 <input
                   value={draft.slug}
                   onChange={(e) => updateDraft(category.id, "slug", e.target.value)}
-                  className="min-w-32 flex-1 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/60 focus:border-gold focus:outline-none"
+                  className="min-w-32 flex-1 rounded-md border border-black/10 bg-black/5 px-3 py-2 text-sm text-black/60 focus:border-gold focus:outline-none"
                 />
                 <input
                   value={draft.image ?? ""}
                   onChange={(e) => updateDraft(category.id, "image", e.target.value)}
                   placeholder="Image URL"
-                  className="min-w-40 flex-1 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm placeholder:text-white/30 focus:border-gold focus:outline-none"
+                  className="min-w-40 flex-1 rounded-md border border-black/10 bg-black/5 px-3 py-2 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
                 />
                 <button
                   onClick={() => handleSave(category.id)}
@@ -185,7 +185,7 @@ export default function AdminCategoriesPage() {
                 </button>
                 <button
                   onClick={() => handleDelete(category.id, category.name)}
-                  className="text-white/50 hover:text-red-400"
+                  className="text-black/50 hover:text-red-600"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>

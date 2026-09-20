@@ -8,10 +8,10 @@ const OrderSummary = () => {
   const total = subtotal + (items.length > 0 ? DELIVERY_FEE : 0);
 
   return (
-    <div className="h-fit w-full rounded-2xl bg-white/5 p-6 md:w-80">
+    <div className="h-fit w-full rounded-2xl bg-black/5 p-6 md:w-80">
       <h3 className="text-sm font-semibold tracking-wide uppercase">Order Summary</h3>
 
-      <div className="mt-4 flex flex-col gap-4 border-b border-white/10 pb-4">
+      <div className="mt-4 flex flex-col gap-4 border-b border-black/10 pb-4">
         {items.map((item) => (
           <div key={item.id} className="flex items-center gap-3">
             <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg">
@@ -19,7 +19,7 @@ const OrderSummary = () => {
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium">{item.name}</p>
-              <p className="text-xs text-white/50">Qty: {item.qty}</p>
+              <p className="text-xs text-black/50">Qty: {item.qty}</p>
             </div>
             <p className="text-sm font-semibold text-gold">
               ₦{(item.price * item.qty).toLocaleString()}
@@ -29,17 +29,17 @@ const OrderSummary = () => {
       </div>
 
       <div className="mt-4 space-y-2 text-sm">
-        <div className="flex justify-between text-white/60">
+        <div className="flex justify-between text-black/60">
           <span>Subtotal</span>
           <span>₦{subtotal.toLocaleString()}</span>
         </div>
-        <div className="flex justify-between text-white/60">
+        <div className="flex justify-between text-black/60">
           <span>Delivery</span>
           <span>{items.length > 0 ? `₦${DELIVERY_FEE.toLocaleString()}` : "₦0"}</span>
         </div>
       </div>
 
-      <div className="mt-4 flex justify-between border-t border-white/10 pt-4 text-base font-semibold">
+      <div className="mt-4 flex justify-between border-t border-black/10 pt-4 text-base font-semibold">
         <span>Total</span>
         <span className="text-gold">₦{total.toLocaleString()}</span>
       </div>

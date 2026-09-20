@@ -23,7 +23,7 @@ const Navbar = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between gap-6 border-b border-white/10 bg-white/5 px-4 py-2 text-xs text-white/60 md:px-10">
+      <div className="flex items-center justify-between gap-6 border-b border-black/10 bg-black/5 px-4 py-2 text-xs text-black/60 md:px-10">
         <div className="flex-1 overflow-hidden">
           <div className="flex w-max animate-marquee gap-16">
             <p className="whitespace-nowrap">
@@ -44,7 +44,7 @@ const Navbar = () => {
             <Link href="/account" className="hover:text-gold">
               My Account
             </Link>
-            <span className="hidden text-white/40 sm:inline">Hi, {user.name.split(" ")[0]}</span>
+            <span className="hidden text-black/40 sm:inline">Hi, {user.name.split(" ")[0]}</span>
             <button onClick={() => logout()} className="cursor-pointer hover:text-gold">
               Sign Out
             </button>
@@ -61,14 +61,14 @@ const Navbar = () => {
         <button
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
-          className="justify-self-start text-white/80"
+          className="justify-self-start text-black/80"
         >
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
 
         <Logo className="justify-self-center" />
 
-        <Link href="/cart" className="relative justify-self-end text-white/80">
+        <Link href="/cart" className="relative justify-self-end text-black/80">
           <ShoppingCart className="h-5 w-5" />
           {itemCount > 0 && (
             <span className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-gold text-[10px] font-semibold text-black">
@@ -79,24 +79,24 @@ const Navbar = () => {
       </div>
 
       {open && (
-        <div className="flex flex-col gap-1 border-t border-white/10 bg-black px-4 py-4 md:hidden">
+        <div className="flex flex-col gap-1 border-t border-black/10 bg-white px-4 py-4 md:hidden">
           <Link
             href="/"
             onClick={() => setOpen(false)}
             className={`rounded-lg px-3 py-2 text-sm font-medium ${
-              pathname === "/" ? "text-gold" : "text-white/80"
+              pathname === "/" ? "text-gold" : "text-black/80"
             }`}
           >
             Home
           </Link>
 
-          <p className="px-3 pt-2 text-xs font-semibold tracking-wide text-white/40">Shop</p>
+          <p className="px-3 pt-2 text-xs font-semibold tracking-wide text-black/40">Shop</p>
           {shoeCategories.map((category) => (
             <Link
               key={category}
               href={`/shop?category=${category.toLowerCase().replace(/\s+/g, "-")}`}
               onClick={() => setOpen(false)}
-              className="rounded-lg px-3 py-2 text-sm text-white/70 hover:text-gold"
+              className="rounded-lg px-3 py-2 text-sm text-black/70 hover:text-gold"
             >
               {category}
             </Link>
@@ -108,25 +108,25 @@ const Navbar = () => {
               href={link.href}
               onClick={() => setOpen(false)}
               className={`mt-1 rounded-lg px-3 py-2 text-sm font-medium ${
-                pathname === link.href && link.href !== "/" ? "text-gold" : "text-white/80"
+                pathname === link.href && link.href !== "/" ? "text-gold" : "text-black/80"
               }`}
             >
               {link.name}
             </Link>
           ))}
 
-          <div className="mt-2 flex items-center gap-6 border-t border-white/10 px-3 pt-4 text-white/80">
+          <div className="mt-2 flex items-center gap-6 border-t border-black/10 px-3 pt-4 text-black/80">
             <Search className="h-5 w-5" />
             <Heart className="h-5 w-5" />
           </div>
 
           {user ? (
-            <div className="mt-3 flex flex-col gap-1 border-t border-white/10 px-3 pt-4">
+            <div className="mt-3 flex flex-col gap-1 border-t border-black/10 px-3 pt-4">
               {user.role === "admin" && (
                 <Link
                   href="/admin"
                   onClick={() => setOpen(false)}
-                  className="rounded-lg py-2 text-sm text-white/70 hover:text-gold"
+                  className="rounded-lg py-2 text-sm text-black/70 hover:text-gold"
                 >
                   Admin Panel
                 </Link>
@@ -134,7 +134,7 @@ const Navbar = () => {
               <Link
                 href="/account"
                 onClick={() => setOpen(false)}
-                className="rounded-lg py-2 text-sm text-white/70 hover:text-gold"
+                className="rounded-lg py-2 text-sm text-black/70 hover:text-gold"
               >
                 My Account
               </Link>
@@ -143,7 +143,7 @@ const Navbar = () => {
                   logout();
                   setOpen(false);
                 }}
-                className="rounded-lg py-2 text-left text-sm text-white/70 hover:text-gold"
+                className="rounded-lg py-2 text-left text-sm text-black/70 hover:text-gold"
               >
                 Sign Out ({user.name.split(" ")[0]})
               </button>
@@ -152,7 +152,7 @@ const Navbar = () => {
             <Link
               href="/login"
               onClick={() => setOpen(false)}
-              className="mt-3 block rounded-lg border-t border-white/10 px-3 pt-4 text-sm text-white/70 hover:text-gold"
+              className="mt-3 block rounded-lg border-t border-black/10 px-3 pt-4 text-sm text-black/70 hover:text-gold"
             >
               Sign In
             </Link>
@@ -164,11 +164,11 @@ const Navbar = () => {
       <div className="hidden items-center justify-between px-10 py-4 md:flex">
         <Logo />
 
-        <div className="flex items-center gap-10 rounded-full bg-white/5 px-8 py-3 text-sm font-medium tracking-wide">
+        <div className="flex items-center gap-10 rounded-full bg-black/5 px-8 py-3 text-sm font-medium tracking-wide">
           <Link
             href="/"
             className={`cursor-pointer transition hover:text-gold ${
-              pathname === "/" ? "text-gold" : "text-white/80"
+              pathname === "/" ? "text-gold" : "text-black/80"
             }`}
           >
             Home
@@ -177,19 +177,19 @@ const Navbar = () => {
           <div className="group relative">
             <Link
               href="/shop"
-              className="flex cursor-pointer items-center gap-1 text-white/80 transition hover:text-gold"
+              className="flex cursor-pointer items-center gap-1 text-black/80 transition hover:text-gold"
             >
               Shop
               <ChevronDown className="h-3.5 w-3.5" />
             </Link>
 
             <div className="invisible absolute top-full left-1/2 z-20 w-48 -translate-x-1/2 pt-3 opacity-0 transition group-hover:visible group-hover:opacity-100">
-              <div className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-black p-2 shadow-lg">
+              <div className="flex flex-col gap-1 rounded-2xl border border-black/10 bg-white p-2 shadow-lg">
                 {shoeCategories.map((category) => (
                   <Link
                     key={category}
                     href={`/shop?category=${category.toLowerCase().replace(/\s+/g, "-")}`}
-                    className="rounded-lg px-3 py-2 text-sm text-white/70 transition hover:bg-white/5 hover:text-gold"
+                    className="rounded-lg px-3 py-2 text-sm text-black/70 transition hover:bg-black/5 hover:text-gold"
                   >
                     {category}
                   </Link>
@@ -206,7 +206,7 @@ const Navbar = () => {
                 key={link.name}
                 href={link.href}
                 className={`cursor-pointer transition hover:text-gold ${
-                  isActive ? "text-gold" : "text-white/80"
+                  isActive ? "text-gold" : "text-black/80"
                 }`}
               >
                 {link.name}
@@ -215,7 +215,7 @@ const Navbar = () => {
           })}
         </div>
 
-        <div className="flex items-center gap-5 text-white/80">
+        <div className="flex items-center gap-5 text-black/80">
           <Search className="h-5 w-5 cursor-pointer transition hover:text-gold" />
           <Heart className="h-5 w-5 cursor-pointer transition hover:text-gold" />
           <Link href="/cart" className="relative">

@@ -34,7 +34,7 @@ const ShopSidebar = ({
           <p
             onClick={() => onSelectCategory(null)}
             className={`w-fit cursor-pointer transition hover:text-gold ${
-              selectedCategory === null ? "font-medium text-gold" : "text-white/60"
+              selectedCategory === null ? "font-medium text-gold" : "text-black/60"
             }`}
           >
             All Products
@@ -44,7 +44,7 @@ const ShopSidebar = ({
               key={category.slug}
               onClick={() => onSelectCategory(category.slug)}
               className={`w-fit cursor-pointer transition hover:text-gold ${
-                selectedCategory === category.slug ? "font-medium text-gold" : "text-white/60"
+                selectedCategory === category.slug ? "font-medium text-gold" : "text-black/60"
               }`}
             >
               {category.name}
@@ -53,7 +53,7 @@ const ShopSidebar = ({
         </div>
       </div>
 
-      <div className="mt-8 border-t border-white/10 pt-8">
+      <div className="mt-8 border-t border-black/10 pt-8">
         <h3 className="text-sm font-semibold tracking-wide uppercase">Price (₦)</h3>
         <div className="mt-4 flex items-center gap-2">
           <input
@@ -62,23 +62,23 @@ const ShopSidebar = ({
             value={minPrice}
             onChange={(e) => onMinPriceChange(e.target.value)}
             placeholder="Min"
-            className="w-full rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm placeholder:text-white/40 focus:outline-none"
+            className="w-full rounded-md border border-black/10 bg-black/5 px-3 py-2 text-sm placeholder:text-black/40 focus:outline-none"
           />
-          <span className="text-white/40">-</span>
+          <span className="text-black/40">-</span>
           <input
             type="number"
             min={0}
             value={maxPrice}
             onChange={(e) => onMaxPriceChange(e.target.value)}
             placeholder="Max"
-            className="w-full rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm placeholder:text-white/40 focus:outline-none"
+            className="w-full rounded-md border border-black/10 bg-black/5 px-3 py-2 text-sm placeholder:text-black/40 focus:outline-none"
           />
         </div>
       </div>
 
-      <div className="mt-8 border-t border-white/10 pt-8">
+      <div className="mt-8 border-t border-black/10 pt-8">
         <h3 className="text-sm font-semibold tracking-wide uppercase">Customer Rating</h3>
-        <div className="mt-4 flex flex-col gap-3 text-sm text-white/70">
+        <div className="mt-4 flex flex-col gap-3 text-sm text-black/70">
           {[5, 4, 3].map((rating) => (
             <label key={rating} className="flex cursor-pointer items-center gap-2">
               <input
@@ -92,7 +92,7 @@ const ShopSidebar = ({
                   <Star
                     key={i}
                     className={`h-3.5 w-3.5 ${
-                      i < rating ? "fill-gold text-gold" : "text-white/20"
+                      i < rating ? "fill-gold text-gold" : "text-black/20"
                     }`}
                   />
                 ))}

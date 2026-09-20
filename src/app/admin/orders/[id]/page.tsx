@@ -82,18 +82,18 @@ export default function AdminOrderDetailPage() {
   };
 
   if (loading) {
-    return <p className="text-sm text-white/50">Loading…</p>;
+    return <p className="text-sm text-black/50">Loading…</p>;
   }
 
   if (!order) {
-    return <p className="text-sm text-white/50">Order not found.</p>;
+    return <p className="text-sm text-black/50">Order not found.</p>;
   }
 
   return (
     <div>
       <Link
         href="/admin/orders"
-        className="flex w-fit items-center gap-2 text-sm text-white/60 hover:text-gold"
+        className="flex w-fit items-center gap-2 text-sm text-black/60 hover:text-gold"
       >
         <ArrowLeft className="h-4 w-4" /> Back to Orders
       </Link>
@@ -101,18 +101,18 @@ export default function AdminOrderDetailPage() {
       <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <h2 className="text-lg font-semibold">Order RTD-{order.id}</h2>
+            <h2 className="text-lg font-semibold">Order CC-{order.id}</h2>
             <span
               className={`rounded-full px-2 py-1 text-xs ${
                 order.status === "completed"
-                  ? "bg-green-500/10 text-green-400"
+                  ? "bg-green-500/10 text-green-600"
                   : "bg-gold/10 text-gold"
               }`}
             >
               {order.status === "completed" ? "Completed" : "Pending"}
             </span>
           </div>
-          <p className="mt-1 text-sm text-white/50">
+          <p className="mt-1 text-sm text-black/50">
             Placed {new Date(order.created_at).toLocaleString()}
           </p>
         </div>
@@ -121,7 +121,7 @@ export default function AdminOrderDetailPage() {
           disabled={updating}
           className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 ${
             order.status === "completed"
-              ? "bg-white/10 text-white hover:bg-white/15"
+              ? "bg-black/10 text-black hover:bg-black/15"
               : "bg-gold text-black hover:bg-gold/90"
           }`}
         >
@@ -131,68 +131,68 @@ export default function AdminOrderDetailPage() {
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <div className="rounded-2xl bg-white/5 p-6">
-          <h3 className="text-sm font-semibold tracking-wide text-white/70 uppercase">
+        <div className="rounded-2xl bg-black/5 p-6">
+          <h3 className="text-sm font-semibold tracking-wide text-black/70 uppercase">
             Customer
           </h3>
           <div className="mt-3 space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-white/50">Name</span>
+              <span className="text-black/50">Name</span>
               <span className="font-semibold">{order.full_name}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-white/50">Email</span>
+              <span className="text-black/50">Email</span>
               <span className="font-semibold">{order.email}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-white/50">Phone</span>
+              <span className="text-black/50">Phone</span>
               <span className="font-semibold">{order.phone}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-white/50">Address</span>
+              <span className="text-black/50">Address</span>
               <span className="text-right font-semibold">
                 {order.address}, {order.city}
               </span>
             </div>
             {order.user_id && (
               <div className="flex justify-between">
-                <span className="text-white/50">Account</span>
+                <span className="text-black/50">Account</span>
                 <span className="font-semibold">Registered user (#{order.user_id})</span>
               </div>
             )}
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white/5 p-6">
-          <h3 className="text-sm font-semibold tracking-wide text-white/70 uppercase">Payment</h3>
+        <div className="rounded-2xl bg-black/5 p-6">
+          <h3 className="text-sm font-semibold tracking-wide text-black/70 uppercase">Payment</h3>
           <div className="mt-3 space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-white/50">Method</span>
+              <span className="text-black/50">Method</span>
               <span className="font-semibold">{PAYMENT_LABELS[order.payment_method]}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-white/50">Subtotal</span>
+              <span className="text-black/50">Subtotal</span>
               <span className="font-semibold">₦{order.subtotal.toLocaleString()}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-white/50">Delivery</span>
+              <span className="text-black/50">Delivery</span>
               <span className="font-semibold">₦{order.delivery_fee.toLocaleString()}</span>
             </div>
-            <div className="flex justify-between border-t border-white/10 pt-2">
-              <span className="font-semibold text-white/70">Total</span>
+            <div className="flex justify-between border-t border-black/10 pt-2">
+              <span className="font-semibold text-black/70">Total</span>
               <span className="font-semibold text-gold">₦{order.total.toLocaleString()}</span>
             </div>
             {order.payment_method === "installments" && (
               <>
                 <div className="flex justify-between">
-                  <span className="text-white/50">Plan</span>
+                  <span className="text-black/50">Plan</span>
                   <span className="font-semibold">
                     {order.installment_weeks} weeks ({order.installment_interest_rate}% interest)
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-green-400">Deposit Required</span>
-                  <span className="font-semibold text-green-400">
+                  <span className="text-green-600">Deposit Required</span>
+                  <span className="font-semibold text-green-600">
                     ₦{order.installment_deposit?.toLocaleString()}
                   </span>
                 </div>
@@ -202,13 +202,13 @@ export default function AdminOrderDetailPage() {
         </div>
       </div>
 
-      <div className="mt-4 rounded-2xl bg-white/5 p-6">
-        <h3 className="text-sm font-semibold tracking-wide text-white/70 uppercase">Items</h3>
+      <div className="mt-4 rounded-2xl bg-black/5 p-6">
+        <h3 className="text-sm font-semibold tracking-wide text-black/70 uppercase">Items</h3>
         <div className="mt-3 space-y-3">
           {items.map((item) => (
             <div key={item.id} className="flex items-center justify-between text-sm">
               <span>
-                {item.name} <span className="text-white/40">× {item.qty}</span>
+                {item.name} <span className="text-black/40">× {item.qty}</span>
               </span>
               <span className="font-semibold">₦{(item.price * item.qty).toLocaleString()}</span>
             </div>
@@ -217,19 +217,19 @@ export default function AdminOrderDetailPage() {
       </div>
 
       {order.has_receipt && (
-        <div className="mt-4 rounded-2xl bg-white/5 p-6">
-          <h3 className="text-sm font-semibold tracking-wide text-white/70 uppercase">
+        <div className="mt-4 rounded-2xl bg-black/5 p-6">
+          <h3 className="text-sm font-semibold tracking-wide text-black/70 uppercase">
             Payment Receipt
           </h3>
           {order.receipt_filename && (
-            <p className="mt-1 text-xs text-white/50">{order.receipt_filename}</p>
+            <p className="mt-1 text-xs text-black/50">{order.receipt_filename}</p>
           )}
-          <div className="mt-3 overflow-hidden rounded-lg border border-white/10">
+          <div className="mt-3 overflow-hidden rounded-lg border border-black/10">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`/api/admin/orders/${order.id}/receipt`}
               alt="Payment receipt"
-              className="max-h-[600px] w-full object-contain bg-black"
+              className="max-h-[600px] w-full object-contain bg-black/5"
             />
           </div>
         </div>

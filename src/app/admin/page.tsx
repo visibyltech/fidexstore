@@ -29,24 +29,24 @@ export default function AdminDashboard() {
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-      <Link href="/admin/orders" className="rounded-2xl bg-white/5 p-6 transition hover:bg-white/10">
-        <p className="text-xs font-semibold tracking-wide text-white/50 uppercase">Orders</p>
+      <Link href="/admin/orders" className="rounded-2xl bg-black/5 p-6 transition hover:bg-black/10">
+        <p className="text-xs font-semibold tracking-wide text-black/50 uppercase">Orders</p>
         <p className="mt-2 text-3xl font-semibold text-gold">{counts?.orders ?? "…"}</p>
-        <p className="mt-4 text-sm text-white/60">
+        <p className="mt-4 text-sm text-black/60">
           {counts ? `${counts.pendingOrders} pending → ` : "Manage orders →"}
         </p>
       </Link>
 
-      <Link href="/admin/products" className="rounded-2xl bg-white/5 p-6 transition hover:bg-white/10">
-        <p className="text-xs font-semibold tracking-wide text-white/50 uppercase">Products</p>
+      <Link href="/admin/products" className="rounded-2xl bg-black/5 p-6 transition hover:bg-black/10">
+        <p className="text-xs font-semibold tracking-wide text-black/50 uppercase">Products</p>
         <p className="mt-2 text-3xl font-semibold text-gold">{counts?.products ?? "…"}</p>
-        <p className="mt-4 text-sm text-white/60">Manage products →</p>
+        <p className="mt-4 text-sm text-black/60">Manage products →</p>
       </Link>
 
-      <Link href="/admin/categories" className="rounded-2xl bg-white/5 p-6 transition hover:bg-white/10">
-        <p className="text-xs font-semibold tracking-wide text-white/50 uppercase">Categories</p>
+      <Link href="/admin/categories" className="rounded-2xl bg-black/5 p-6 transition hover:bg-black/10">
+        <p className="text-xs font-semibold tracking-wide text-black/50 uppercase">Categories</p>
         <p className="mt-2 text-3xl font-semibold text-gold">{counts?.categories ?? "…"}</p>
-        <p className="mt-4 text-sm text-white/60">Manage categories →</p>
+        <p className="mt-4 text-sm text-black/60">Manage categories →</p>
       </Link>
     </div>
   );

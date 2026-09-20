@@ -41,7 +41,7 @@ const ProductCard = ({ product }: { product: Product }) => {
           className="object-cover"
         />
       </div>
-      <p className="mt-3 text-xs font-medium tracking-wide text-white/70 uppercase">
+      <p className="mt-3 text-xs font-medium tracking-wide text-black/70 uppercase">
         {product.name}
       </p>
       <p className="mt-1 text-sm font-semibold text-gold">
@@ -70,10 +70,10 @@ const ProductCard = ({ product }: { product: Product }) => {
 
 const ProductPanel = ({ heading, subtitle, products, ctaLabel, showDots }: ProductPanelProps) => {
   return (
-    <div className="mx-10 mt-16 rounded-3xl bg-white/4 px-6 py-10 md:px-10">
+    <div className="mx-10 mt-16 rounded-3xl bg-black/4 px-6 py-10 md:px-10">
       <div className="text-center">
         <h2 className="text-2xl font-semibold tracking-wide uppercase">{heading}</h2>
-        <p className="mt-2 text-sm text-white/50">{subtitle}</p>
+        <p className="mt-2 text-sm text-black/50">{subtitle}</p>
       </div>
 
       <div className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5">
@@ -98,7 +98,7 @@ const ProductPanel = ({ heading, subtitle, products, ctaLabel, showDots }: Produ
           {Array.from({ length: 5 }).map((_, i) => (
             <span
               key={i}
-              className={`h-2 w-2 rounded-full ${i === 0 ? "bg-gold" : "bg-white/20"}`}
+              className={`h-2 w-2 rounded-full ${i === 0 ? "bg-gold" : "bg-black/20"}`}
             />
           ))}
         </div>

@@ -18,14 +18,14 @@ const TrustSection = () => {
         <h2 className="text-3xl font-semibold tracking-tight">
           Good Style. <span className="text-gold">Better Prices.</span>
         </h2>
-        <p className="mt-4 text-white/60">
+        <p className="mt-4 text-black/60">
           At Chined Closet, every pair — new or thrifted — is carefully
           selected before it reaches you, so you can shop with confidence.
         </p>
 
         <ul className="mt-6 space-y-3">
           {points.map((point) => (
-            <li key={point} className="flex items-start gap-3 text-sm text-white/80">
+            <li key={point} className="flex items-start gap-3 text-sm text-black/80">
               <Check className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
               {point}
             </li>

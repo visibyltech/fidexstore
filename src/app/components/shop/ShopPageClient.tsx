@@ -93,9 +93,9 @@ const ShopPageClient = () => {
           <ShopToolbar total={visibleProducts.length} sort={sort} onSortChange={setSort} />
 
           {loading ? (
-            <p className="mt-8 text-center text-sm text-white/50">Loading products…</p>
+            <p className="mt-8 text-center text-sm text-black/50">Loading products…</p>
           ) : visibleProducts.length === 0 ? (
-            <p className="mt-8 text-center text-sm text-white/50">No products match your filters.</p>
+            <p className="mt-8 text-center text-sm text-black/50">No products match your filters.</p>
           ) : (
             <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
               {visibleProducts.map((product) => (

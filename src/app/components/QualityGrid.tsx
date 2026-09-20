@@ -11,7 +11,7 @@ const QualityGrid = () => {
           className="object-cover"
         />
         <div className="absolute inset-0 bg-black/50" />
-        <p className="absolute bottom-8 left-8 text-2xl font-semibold tracking-wide uppercase">
+        <p className="absolute bottom-8 left-8 text-2xl font-semibold tracking-wide text-white uppercase">
           Fresh Off The Rack
         </p>
       </div>

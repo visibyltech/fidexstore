@@ -35,10 +35,10 @@ export default function CheckoutPage() {
 
   if (orderPlaced) {
     return (
-      <div className="mx-10 mt-8 mb-16 flex flex-col items-center rounded-3xl bg-white/5 py-24 text-center">
+      <div className="mx-10 mt-8 mb-16 flex flex-col items-center rounded-3xl bg-black/5 py-24 text-center">
         <CheckCircle2 className="h-16 w-16 text-gold" />
         <h1 className="mt-6 text-2xl font-semibold">Order Placed Successfully!</h1>
-        <p className="mt-2 text-sm text-white/60">
+        <p className="mt-2 text-sm text-black/60">
           Your order <span className="font-semibold text-gold">{orderNumber}</span> has been
           received. We&apos;ll reach out with confirmation shortly.
         </p>
@@ -54,9 +54,9 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="mx-10 mt-8 mb-16 flex flex-col items-center rounded-3xl bg-white/5 py-24 text-center">
+      <div className="mx-10 mt-8 mb-16 flex flex-col items-center rounded-3xl bg-black/5 py-24 text-center">
         <h1 className="text-xl font-semibold">Your cart is empty</h1>
-        <p className="mt-2 text-sm text-white/60">Add items to your cart before checking out.</p>
+        <p className="mt-2 text-sm text-black/60">Add items to your cart before checking out.</p>
         <Link
           href="/shop"
           className="mt-6 flex items-center gap-2 rounded-md bg-gold px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold/90"

@@ -56,11 +56,11 @@ export default function EditProductPage() {
   };
 
   if (notFound) {
-    return <p className="text-sm text-white/50">Product not found.</p>;
+    return <p className="text-sm text-black/50">Product not found.</p>;
   }
 
   if (!initialValues) {
-    return <p className="text-sm text-white/50">Loading…</p>;
+    return <p className="text-sm text-black/50">Loading…</p>;
   }
 
   return (

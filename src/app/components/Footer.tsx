@@ -24,16 +24,16 @@ const Footer = () => {
   };
 
   return (
-    <footer className="mt-16 border-t border-white/10 bg-white/[0.02] px-10 pt-14 pb-6">
+    <footer className="mt-16 border-t border-black/10 bg-black/[0.02] px-10 pt-14 pb-6">
       <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
         <div>
           <Logo withTagline />
-          <p className="mt-4 max-w-xs text-sm text-white/60">
+          <p className="mt-4 max-w-xs text-sm text-black/60">
             New and thrift shoes for men, women, and children — carefully
             selected, gently loved, always in style.
           </p>
 
-          <div className="mt-6 space-y-3 text-sm text-white/70">
+          <div className="mt-6 space-y-3 text-sm text-black/70">
             <div className="flex items-start gap-3">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
               11, Demurin Street, off Ikorodu Road, Ketu, Lagos.
@@ -63,7 +63,7 @@ const Footer = () => {
 
         <div>
           <h4 className="text-sm font-semibold tracking-wide uppercase">Quick Links</h4>
-          <div className="mt-4 flex flex-col gap-3 text-sm text-white/60">
+          <div className="mt-4 flex flex-col gap-3 text-sm text-black/60">
             {quickLinks.map((link) => (
               <Link
                 key={link.name}
@@ -78,7 +78,7 @@ const Footer = () => {
 
         <div>
           <h4 className="text-sm font-semibold tracking-wide uppercase">Stay Updated</h4>
-          <p className="mt-4 text-sm text-white/60">
+          <p className="mt-4 text-sm text-black/60">
             Subscribe to hear about new arrivals and fresh thrift drops first.
           </p>
 
@@ -89,7 +89,7 @@ const Footer = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="w-full rounded-md border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-gold focus:outline-none"
+              className="w-full rounded-md border border-black/10 bg-black/5 px-4 py-2 text-sm text-black placeholder:text-black/40 focus:border-gold focus:outline-none"
             />
             <button
               type="submit"
@@ -111,7 +111,7 @@ const Footer = () => {
             {["Fb", "Ig", "Tw"].map((label) => (
               <div
                 key={label}
-                className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-white/10 text-xs font-semibold transition hover:bg-gold hover:text-black"
+                className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-black/10 text-xs font-semibold transition hover:bg-gold hover:text-black"
               >
                 {label}
               </div>
@@ -120,7 +120,7 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="mt-12 border-t border-white/10 pt-6 text-center text-xs text-white/40">
+      <div className="mt-12 border-t border-black/10 pt-6 text-center text-xs text-black/40">
         © 2026 Chined Closet. All Rights Reserved.
       </div>
     </footer>

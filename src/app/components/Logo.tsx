@@ -14,7 +14,7 @@ const Logo = ({ withTagline = false, className = "" }: LogoProps) => {
       <span className="flex flex-col leading-none">
         <span className="text-sm font-semibold tracking-[0.15em] uppercase">Chined Closet</span>
         {withTagline && (
-          <span className="mt-1.5 text-[10px] tracking-widest text-white/50">
+          <span className="mt-1.5 text-[10px] tracking-widest text-black/50">
             Good Style. Better Prices.
           </span>
         )}

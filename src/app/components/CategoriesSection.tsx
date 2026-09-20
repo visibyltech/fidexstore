@@ -29,7 +29,7 @@ const CategoriesSection = () => {
     <div className="mx-10 mt-16">
       <div className="text-center">
         <h2 className="text-2xl font-semibold tracking-wide uppercase">Shop by Category</h2>
-        <p className="mt-2 text-sm text-white/50">
+        <p className="mt-2 text-sm text-black/50">
           Trendy heels, smart sneakers, and cute kicks — new and thrifted, for the whole family.
         </p>
       </div>
@@ -37,12 +37,12 @@ const CategoriesSection = () => {
       <div className="mt-8 grid grid-cols-3 gap-4 sm:grid-cols-6">
         {categories.map((category) => (
           <Link key={category.slug} href={`/shop?category=${category.slug}`} className="text-center">
-            <div className="relative aspect-square overflow-hidden rounded-full border border-white/10">
+            <div className="relative aspect-square overflow-hidden rounded-full border border-black/10">
               {category.image && (
                 <Image src={category.image} alt={category.name} fill className="object-cover" />
               )}
             </div>
-            <p className="mt-2 text-xs font-medium tracking-wide text-white/70 uppercase">
+            <p className="mt-2 text-xs font-medium tracking-wide text-black/70 uppercase">
               {category.name}
             </p>
           </Link>

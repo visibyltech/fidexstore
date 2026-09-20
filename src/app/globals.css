@@ -7,8 +7,8 @@
 }
 
 body {
-  background-color: black;
-  color: white;
+  background-color: #ffffff;
+  color: #1a1a1a;
 }
 
 @keyframes marquee {

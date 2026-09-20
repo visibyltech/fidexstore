@@ -15,14 +15,14 @@ const CheckoutStepper = ({ currentStep }: { currentStep: number }) => {
             <div className="flex flex-col items-center gap-2">
               <div
                 className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold ${
-                  isCompleted || isActive ? "bg-gold text-black" : "bg-white/10 text-white/50"
+                  isCompleted || isActive ? "bg-gold text-black" : "bg-black/10 text-black/50"
                 }`}
               >
                 {isCompleted ? <Check className="h-4 w-4" /> : stepNumber}
               </div>
               <span
                 className={`text-xs font-medium ${
-                  isActive ? "text-gold" : "text-white/50"
+                  isActive ? "text-gold" : "text-black/50"
                 }`}
               >
                 {step}
@@ -30,7 +30,7 @@ const CheckoutStepper = ({ currentStep }: { currentStep: number }) => {
             </div>
 
             {i < steps.length - 1 && (
-              <div className={`mx-3 h-px flex-1 ${isCompleted ? "bg-gold" : "bg-white/10"}`} />
+              <div className={`mx-3 h-px flex-1 ${isCompleted ? "bg-gold" : "bg-black/10"}`} />
             )}
           </div>
         );

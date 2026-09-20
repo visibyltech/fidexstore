@@ -32,7 +32,7 @@ type PaymentMethodStepProps = {
 
 const PaymentMethodStep = ({ selected, onSelect, onBack, onContinue }: PaymentMethodStepProps) => {
   return (
-    <div className="flex-1 rounded-2xl bg-white/5 p-6">
+    <div className="flex-1 rounded-2xl bg-black/5 p-6">
       <div className="flex items-center gap-2">
         <CreditCard className="h-5 w-5 text-gold" />
         <h2 className="text-lg font-semibold">Payment Method</h2>
@@ -47,12 +47,12 @@ const PaymentMethodStep = ({ selected, onSelect, onBack, onContinue }: PaymentMe
             <label
               key={method.id}
               className={`flex cursor-pointer items-center gap-4 rounded-xl border p-4 transition ${
-                isSelected ? "border-gold bg-gold/5" : "border-white/10 hover:border-white/30"
+                isSelected ? "border-gold bg-gold/5" : "border-black/10 hover:border-black/30"
               }`}
             >
               <div
                 className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
-                  isSelected ? "bg-gold/20 text-gold" : "bg-white/10 text-white/50"
+                  isSelected ? "bg-gold/20 text-gold" : "bg-black/10 text-black/50"
                 }`}
               >
                 <Icon className="h-5 w-5" />
@@ -60,7 +60,7 @@ const PaymentMethodStep = ({ selected, onSelect, onBack, onContinue }: PaymentMe
 
               <div className="flex-1">
                 <p className="text-sm font-semibold">{method.title}</p>
-                <p className="text-xs text-white/50">{method.subtitle}</p>
+                <p className="text-xs text-black/50">{method.subtitle}</p>
               </div>
 
               <input
@@ -78,7 +78,7 @@ const PaymentMethodStep = ({ selected, onSelect, onBack, onContinue }: PaymentMe
       <div className="mt-6 flex gap-3">
         <button
           onClick={onBack}
-          className="rounded-md bg-white/10 px-6 py-3 text-sm font-semibold transition hover:bg-white/15"
+          className="rounded-md bg-black/10 px-6 py-3 text-sm font-semibold transition hover:bg-black/15"
         >
           Back
         </button>

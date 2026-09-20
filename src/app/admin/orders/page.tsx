@@ -38,14 +38,14 @@ export default function AdminOrdersPage() {
       <h2 className="text-lg font-semibold">Orders ({orders.length})</h2>
 
       {loading ? (
-        <p className="mt-8 text-sm text-white/50">Loading…</p>
+        <p className="mt-8 text-sm text-black/50">Loading…</p>
       ) : orders.length === 0 ? (
-        <p className="mt-8 text-sm text-white/50">No orders yet.</p>
+        <p className="mt-8 text-sm text-black/50">No orders yet.</p>
       ) : (
-        <div className="mt-6 overflow-x-auto rounded-2xl bg-white/5">
+        <div className="mt-6 overflow-x-auto rounded-2xl bg-black/5">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-white/10 text-xs tracking-wide text-white/50 uppercase">
+              <tr className="border-b border-black/10 text-xs tracking-wide text-black/50 uppercase">
                 <th className="px-4 py-3">Order</th>
                 <th className="px-4 py-3">Customer</th>
                 <th className="px-4 py-3">Payment</th>
@@ -57,13 +57,13 @@ export default function AdminOrdersPage() {
             </thead>
             <tbody>
               {orders.map((order) => (
-                <tr key={order.id} className="border-b border-white/5 last:border-0">
-                  <td className="px-4 py-3 font-medium">RTD-{order.id}</td>
+                <tr key={order.id} className="border-b border-black/5 last:border-0">
+                  <td className="px-4 py-3 font-medium">CC-{order.id}</td>
                   <td className="px-4 py-3">
-                    <p className="text-white">{order.full_name}</p>
-                    <p className="text-xs text-white/50">{order.email}</p>
+                    <p className="text-black">{order.full_name}</p>
+                    <p className="text-xs text-black/50">{order.email}</p>
                   </td>
-                  <td className="px-4 py-3 text-white/60">
+                  <td className="px-4 py-3 text-black/60">
                     {PAYMENT_LABELS[order.payment_method]}
                   </td>
                   <td className="px-4 py-3 text-gold">₦{order.total.toLocaleString()}</td>
@@ -71,20 +71,20 @@ export default function AdminOrdersPage() {
                     <span
                       className={`rounded-full px-2 py-1 text-xs ${
                         order.status === "completed"
-                          ? "bg-green-500/10 text-green-400"
+                          ? "bg-green-500/10 text-green-600"
                           : "bg-gold/10 text-gold"
                       }`}
                     >
                       {order.status === "completed" ? "Completed" : "Pending"}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-white/60">
+                  <td className="px-4 py-3 text-black/60">
                     {new Date(order.created_at).toLocaleDateString()}
                   </td>
                   <td className="px-4 py-3">
                     <Link
                       href={`/admin/orders/${order.id}`}
-                      className="flex items-center justify-end text-white/60 hover:text-gold"
+                      className="flex items-center justify-end text-black/60 hover:text-gold"
                     >
                       <Eye className="h-4 w-4" />
                     </Link>
