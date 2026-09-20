@@ -1,28 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Search, Heart, ShoppingCart, ChevronDown, Menu, X } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import Logo from "./Logo";
 
 const links = [
   { name: "Home", href: "/" },
-  { name: "Services", href: "/services" },
-  { name: "Shop", href: "/shop" },
   { name: "Contact", href: "/contact" },
 ];
 
-const deviceCategories = [
-  "Smartphones",
-  "Laptops",
-  "Wearables",
-  "Audio",
-  "Power Banks",
-  "Accessories",
-];
+const shoeCategories = ["Women", "Men", "Children", "New Arrivals", "Thrift Picks"];
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -36,10 +27,10 @@ const Navbar = () => {
         <div className="flex-1 overflow-hidden">
           <div className="flex w-max animate-marquee gap-16">
             <p className="whitespace-nowrap">
-              Free shipping on orders over ₦200,000 | 30-Day Warranty on all devices
+              New arrivals every week | WhatsApp us for same-day Lagos delivery
             </p>
             <p className="whitespace-nowrap">
-              Free shipping on orders over ₦200,000 | 30-Day Warranty on all devices
+              New arrivals every week | WhatsApp us for same-day Lagos delivery
             </p>
           </div>
         </div>
@@ -75,9 +66,7 @@ const Navbar = () => {
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
 
-        <Link href="/" className="justify-self-center">
-          <Image src="/logo-icon.png" alt="Richmond Trust Devices" width={70} height={30} priority />
-        </Link>
+        <Logo className="justify-self-center" />
 
         <Link href="/cart" className="relative justify-self-end text-white/80">
           <ShoppingCart className="h-5 w-5" />
@@ -101,11 +90,11 @@ const Navbar = () => {
             Home
           </Link>
 
-          <p className="px-3 pt-2 text-xs font-semibold tracking-wide text-white/40">Devices</p>
-          {deviceCategories.map((category) => (
+          <p className="px-3 pt-2 text-xs font-semibold tracking-wide text-white/40">Shop</p>
+          {shoeCategories.map((category) => (
             <Link
               key={category}
-              href="/shop"
+              href={`/shop?category=${category.toLowerCase().replace(/\s+/g, "-")}`}
               onClick={() => setOpen(false)}
               className="rounded-lg px-3 py-2 text-sm text-white/70 hover:text-gold"
             >
@@ -173,9 +162,7 @@ const Navbar = () => {
 
       {/* desktop row */}
       <div className="hidden items-center justify-between px-10 py-4 md:flex">
-        <Link href="/">
-          <Image src="/logo-icon.png" alt="Richmond Trust Devices" width={90} height={39} priority />
-        </Link>
+        <Logo />
 
         <div className="flex items-center gap-10 rounded-full bg-white/5 px-8 py-3 text-sm font-medium tracking-wide">
           <Link
@@ -192,16 +179,16 @@ const Navbar = () => {
               href="/shop"
               className="flex cursor-pointer items-center gap-1 text-white/80 transition hover:text-gold"
             >
-              Devices
+              Shop
               <ChevronDown className="h-3.5 w-3.5" />
             </Link>
 
             <div className="invisible absolute top-full left-1/2 z-20 w-48 -translate-x-1/2 pt-3 opacity-0 transition group-hover:visible group-hover:opacity-100">
               <div className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-black p-2 shadow-lg">
-                {deviceCategories.map((category) => (
+                {shoeCategories.map((category) => (
                   <Link
                     key={category}
-                    href="/shop"
+                    href={`/shop?category=${category.toLowerCase().replace(/\s+/g, "-")}`}
                     className="rounded-lg px-3 py-2 text-sm text-white/70 transition hover:bg-white/5 hover:text-gold"
                   >
                     {category}

@@ -1,8 +1,8 @@
-import Accessoriessection from "./components/Accessoriessection";
 import CategoriesSection from "./components/CategoriesSection";
-import Devicesection from "./components/Devicesection";
+import NewArrivalsSection from "./components/NewArrivalsSection";
 import Hero from "./components/Hero";
 import QualityGrid from "./components/QualityGrid";
+import ThriftPicksSection from "./components/ThriftPicksSection";
 import TrustSection from "./components/TrustSection";
 
 export default function Home() {
@@ -10,10 +10,10 @@ export default function Home() {
     <div className="pb-16">
       <Hero />
       <CategoriesSection />
-      <Devicesection />
+      <NewArrivalsSection />
       <TrustSection />
       <QualityGrid />
-      <Accessoriessection />
+      <ThriftPicksSection />
     </div>
   );
 }

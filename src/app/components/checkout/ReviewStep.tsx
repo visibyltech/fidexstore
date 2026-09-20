@@ -18,8 +18,8 @@ type ReviewStepProps = {
 };
 
 const BANK_ACCOUNTS = [
-  { bank: "GTBank", accountName: "Richmond Trust Devices", accountNumber: "0123456789" },
-  { bank: "Globus Bank", accountName: "Richmond Trust Devices", accountNumber: "2003633137" },
+  { bank: "GTBank", accountName: "Chined Closet", accountNumber: "0123456789" },
+  { bank: "Globus Bank", accountName: "Chined Closet", accountNumber: "2003633137" },
 ];
 
 const INSTALLMENT_PLANS = [
@@ -123,7 +123,7 @@ const ReviewStep = ({
       return;
     }
 
-    const reference = `RTD-${Date.now()}`;
+    const reference = `CC-${Date.now()}`;
     const [firstName, ...rest] = delivery.fullName.trim().split(" ");
     const lastName = rest.join(" ") || firstName;
     const origin = window.location.origin;

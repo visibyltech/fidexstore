@@ -132,7 +132,7 @@ export default function AdminCategoriesPage() {
           <input
             value={newCategory.image}
             onChange={(e) => setNewCategory((v) => ({ ...v, image: e.target.value }))}
-            placeholder="/crop-phone.jpg"
+            placeholder="https://images.example.com/category.jpg"
             className="mt-2 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm placeholder:text-white/30 focus:border-gold focus:outline-none"
           />
         </div>

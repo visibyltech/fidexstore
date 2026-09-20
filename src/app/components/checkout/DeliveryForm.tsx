@@ -15,7 +15,7 @@ type DeliveryFormProps = {
 };
 
 const fields: { key: keyof DeliveryDetails; label: string; placeholder: string }[] = [
-  { key: "fullName", label: "Full Name", placeholder: "e.g., Richmond Doe" },
+  { key: "fullName", label: "Full Name", placeholder: "e.g., Ada Bello" },
   { key: "email", label: "Email", placeholder: "e.g., mail@example.com" },
   { key: "phone", label: "Phone", placeholder: "e.g., +234 800 000 0000" },
   { key: "address", label: "Address", placeholder: "e.g., 5 Electronics Way, Ikeja" },

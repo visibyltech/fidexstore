@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import ProductPanel, { Product } from "./ProductPanel";
 import type { ApiProduct } from "@/types/api";
 
-const Devicesection = () => {
+const NewArrivalsSection = () => {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -35,12 +35,12 @@ const Devicesection = () => {
 
   return (
     <ProductPanel
-      heading="Best Sellers"
-      subtitle="Explore our diverse range of devices trusted by thousands."
+      heading="New Arrivals"
+      subtitle="Fresh drops every week — new and gently-used shoes, restocked often."
       products={products}
       ctaLabel="Shop Now"
     />
   );
 };
 
-export default Devicesection;
+export default NewArrivalsSection;

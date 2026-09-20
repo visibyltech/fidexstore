@@ -1,15 +1,13 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { MapPin, Phone, Clock, Mail, Check } from "lucide-react";
+import { MapPin, Phone, Clock, Mail, MessageCircle, Check } from "lucide-react";
+import Logo from "./Logo";
 
 const quickLinks = [
   { name: "Home", href: "/" },
   { name: "Shop", href: "/shop" },
-  { name: "Devices", href: "/shop" },
-  { name: "Services", href: "/services" },
   { name: "Contact", href: "/contact" },
 ];
 
@@ -29,35 +27,35 @@ const Footer = () => {
     <footer className="mt-16 border-t border-white/10 bg-white/[0.02] px-10 pt-14 pb-6">
       <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
         <div>
-          <Link href="/">
-            <Image src="/logo-icon.png" alt="Richmond Trust Devices" width={110} height={48} />
-          </Link>
+          <Logo withTagline />
           <p className="mt-4 max-w-xs text-sm text-white/60">
-            Your trusted partner for premium smartphones, laptops, and
-            accessories — vetted, tested, and backed by warranty.
+            New and thrift shoes for men, women, and children — carefully
+            selected, gently loved, always in style.
           </p>
 
           <div className="mt-6 space-y-3 text-sm text-white/70">
             <div className="flex items-start gap-3">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
-              Asset Corp Plaza, Shop A60, Ikeja, Lagos.
+              11, Demurin Street, off Ikorodu Road, Ketu, Lagos.
             </div>
             <div className="flex items-center gap-3">
               <Phone className="h-4 w-4 shrink-0 text-gold" />
-              0813 933 0064
+              +234 803 455 5302
+            </div>
+            <div className="flex items-center gap-3">
+              <MessageCircle className="h-4 w-4 shrink-0 text-gold" />
+              WhatsApp: +234 803 455 5302
             </div>
             <div className="flex items-center gap-3">
               <Mail className="h-4 w-4 shrink-0 text-gold" />
-              richmondtrustd@gmail.com
+              hello@chinedcloset.com
             </div>
             <div className="flex items-start gap-3">
               <Clock className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
               <div>
-                Mon-Fri: 9:00am - 6:00pm
+                Mon-Sat: 9:00am - 7:00pm
                 <br />
-                Sat: 9:30am - 5:00pm
-                <br />
-                Sun: Closed
+                Sun: 12:00pm - 5:00pm
               </div>
             </div>
           </div>
@@ -81,7 +79,7 @@ const Footer = () => {
         <div>
           <h4 className="text-sm font-semibold tracking-wide uppercase">Stay Updated</h4>
           <p className="mt-4 text-sm text-white/60">
-            Subscribe to get notified about new devices and special offers.
+            Subscribe to hear about new arrivals and fresh thrift drops first.
           </p>
 
           <form onSubmit={handleSubscribe} className="mt-4 flex gap-2">
@@ -123,7 +121,7 @@ const Footer = () => {
       </div>
 
       <div className="mt-12 border-t border-white/10 pt-6 text-center text-xs text-white/40">
-        © 2026 Richmond Trust Devices. All Rights Reserved.
+        © 2026 Chined Closet. All Rights Reserved.
       </div>
     </footer>
   );

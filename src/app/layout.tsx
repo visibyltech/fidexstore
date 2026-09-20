@@ -17,9 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Richmond Trust Devices",
+  title: "Chined Closet — Good Style. Better Prices.",
   description:
-    "Your trusted partner for premium smartphones, laptops, and accessories — vetted, tested, and backed by warranty.",
+    "New and thrift shoes for men, women, and children in Lagos — carefully selected, gently loved, always in style.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

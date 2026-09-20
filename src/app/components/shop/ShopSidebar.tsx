@@ -3,15 +3,6 @@
 import { Star } from "lucide-react";
 import type { ApiCategory } from "@/types/api";
 
-const brands = [
-  { name: "Samsung", count: 8 },
-  { name: "Apple", count: 6 },
-  { name: "Xiaomi", count: 3 },
-  { name: "Infinix", count: 4 },
-  { name: "Tecno", count: 2 },
-  { name: "Ambrane", count: 3 },
-];
-
 type ShopSidebarProps = {
   categories: ApiCategory[];
   selectedCategory: string | null;
@@ -20,6 +11,8 @@ type ShopSidebarProps = {
   maxPrice: string;
   onMinPriceChange: (value: string) => void;
   onMaxPriceChange: (value: string) => void;
+  minRating: number | null;
+  onMinRatingChange: (value: number | null) => void;
 };
 
 const ShopSidebar = ({
@@ -30,6 +23,8 @@ const ShopSidebar = ({
   maxPrice,
   onMinPriceChange,
   onMaxPriceChange,
+  minRating,
+  onMinRatingChange,
 }: ShopSidebarProps) => {
   return (
     <aside className="w-full shrink-0 md:w-64">
@@ -54,19 +49,6 @@ const ShopSidebar = ({
             >
               {category.name}
             </p>
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-8 border-t border-white/10 pt-8">
-        <h3 className="text-sm font-semibold tracking-wide uppercase">Brand</h3>
-        <div className="mt-4 flex flex-col gap-3 text-sm text-white/70">
-          {brands.map((brand) => (
-            <label key={brand.name} className="flex cursor-pointer items-center gap-2">
-              <input type="checkbox" className="accent-gold" />
-              <span className="flex-1">{brand.name}</span>
-              <span className="text-white/30">{brand.count}</span>
-            </label>
           ))}
         </div>
       </div>
@@ -99,7 +81,12 @@ const ShopSidebar = ({
         <div className="mt-4 flex flex-col gap-3 text-sm text-white/70">
           {[5, 4, 3].map((rating) => (
             <label key={rating} className="flex cursor-pointer items-center gap-2">
-              <input type="checkbox" className="accent-gold" />
+              <input
+                type="checkbox"
+                checked={minRating === rating}
+                onChange={() => onMinRatingChange(minRating === rating ? null : rating)}
+                className="accent-gold"
+              />
               <span className="flex items-center gap-0.5">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import ProductPanel, { Product } from "./ProductPanel";
 import type { ApiProduct } from "@/types/api";
 
-const Accessoriessection = () => {
+const ThriftPicksSection = () => {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -35,12 +35,12 @@ const Accessoriessection = () => {
 
   return (
     <ProductPanel
-      heading="Featured Deals"
-      subtitle="Explore our diverse range of accessories for modern living."
+      heading="Thrift Picks"
+      subtitle="Carefully selected thrift finds — gently loved, greatly discounted."
       products={products}
       showDots
     />
   );
 };
 
-export default Accessoriessection;
+export default ThriftPicksSection;

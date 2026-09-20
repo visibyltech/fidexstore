@@ -191,7 +191,7 @@ const ProductForm = ({ initialValues, submitLabel, onSubmit }: ProductFormProps)
               <input
                 value={values.image}
                 onChange={(e) => set("image", e.target.value)}
-                placeholder="/crop-phone.jpg"
+                placeholder="https://images.example.com/product.jpg"
                 className="mt-2 w-full rounded-md border border-white/10 bg-white/5 px-4 py-3 text-sm placeholder:text-white/30 focus:border-gold focus:outline-none"
               />
             </>

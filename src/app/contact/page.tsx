@@ -1,8 +1,8 @@
 import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 
-const EMAIL = "richmondtrustd@gmail.com";
-const PHONE_DISPLAY = "0813 933 0064";
-const WHATSAPP_NUMBER = "2348139330064";
+const EMAIL = "hello@chinedcloset.com";
+const PHONE_DISPLAY = "+234 803 455 5302";
+const WHATSAPP_NUMBER = "2348034555302";
 
 export default function ContactPage() {
   return (
@@ -20,17 +20,17 @@ export default function ContactPage() {
         <div className="rounded-2xl bg-white/5 p-6 text-center">
           <MapPin className="mx-auto h-6 w-6 text-gold" />
           <h3 className="mt-3 text-sm font-semibold tracking-wide uppercase">Visit Us</h3>
-          <p className="mt-2 text-sm text-white/60">Asset Corp Plaza, Shop A60, Ikeja, Lagos.</p>
+          <p className="mt-2 text-sm text-white/60">
+            11, Demurin Street, off Ikorodu Road, Ketu, Lagos.
+          </p>
         </div>
         <div className="rounded-2xl bg-white/5 p-6 text-center">
           <Clock className="mx-auto h-6 w-6 text-gold" />
           <h3 className="mt-3 text-sm font-semibold tracking-wide uppercase">Opening Hours</h3>
           <p className="mt-2 text-sm text-white/60">
-            Mon-Fri: 9:00am - 6:00pm
+            Mon-Sat: 9:00am - 7:00pm
             <br />
-            Sat: 9:30am - 5:00pm
-            <br />
-            Sun: Closed
+            Sun: 12:00pm - 5:00pm
           </p>
         </div>
         <div className="rounded-2xl bg-white/5 p-6 text-center">

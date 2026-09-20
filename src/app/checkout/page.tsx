@@ -61,7 +61,7 @@ export default function CheckoutPage() {
           href="/shop"
           className="mt-6 flex items-center gap-2 rounded-md bg-gold px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold/90"
         >
-          Shop Devices <ArrowRight className="h-4 w-4" />
+          Shop Shoes <ArrowRight className="h-4 w-4" />
         </Link>
       </div>
     );

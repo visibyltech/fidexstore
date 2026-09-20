@@ -30,6 +30,7 @@ const ShopPageClient = () => {
   const [sort, setSort] = useState("newest");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+  const [minRating, setMinRating] = useState<number | null>(null);
 
   useEffect(() => {
     fetch("/api/categories")
@@ -67,6 +68,10 @@ const ShopPageClient = () => {
     };
   }, [category, sort, minPrice, maxPrice]);
 
+  const visibleProducts = minRating
+    ? products.filter((product) => product.rating >= minRating)
+    : products;
+
   return (
     <div className="pb-16">
       <ShopHeader />
@@ -80,18 +85,20 @@ const ShopPageClient = () => {
           maxPrice={maxPrice}
           onMinPriceChange={setMinPrice}
           onMaxPriceChange={setMaxPrice}
+          minRating={minRating}
+          onMinRatingChange={setMinRating}
         />
 
         <div className="flex-1">
-          <ShopToolbar total={products.length} sort={sort} onSortChange={setSort} />
+          <ShopToolbar total={visibleProducts.length} sort={sort} onSortChange={setSort} />
 
           {loading ? (
             <p className="mt-8 text-center text-sm text-white/50">Loading products…</p>
-          ) : products.length === 0 ? (
+          ) : visibleProducts.length === 0 ? (
             <p className="mt-8 text-center text-sm text-white/50">No products match your filters.</p>
           ) : (
             <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
-              {products.map((product) => (
+              {visibleProducts.map((product) => (
                 <ShopProductCard key={product.id} product={product} />
               ))}
             </div>

@@ -2,26 +2,25 @@ import Image from "next/image";
 import { Check } from "lucide-react";
 
 const points = [
-  "Every device inspected and tested before sale",
-  "30-day warranty on all smartphones and laptops",
-  "Genuine, original accessories only",
+  "Every pair carefully selected before it's listed",
+  "New arrivals added regularly, every week",
+  "Thrifted with care — gently used, greatly loved",
 ];
 
 const TrustSection = () => {
   return (
     <div className="mx-10 mt-16 grid grid-cols-1 items-center gap-10 md:grid-cols-2">
       <div className="relative aspect-4/3 overflow-hidden rounded-3xl">
-        <Image src="/hero1.jpg" alt="Devices we sell" fill className="object-cover" />
+        <Image src="/shoe-men-leather.jpg" alt="A pair of leather shoes from Chined Closet" fill className="object-cover" />
       </div>
 
       <div>
         <h2 className="text-3xl font-semibold tracking-tight">
-          Trusted Quality. <span className="text-gold">Powerful Performance.</span>
+          Good Style. <span className="text-gold">Better Prices.</span>
         </h2>
         <p className="mt-4 text-white/60">
-          At Richmond Trust Devices, every phone, laptop, and accessory is put
-          through a rigorous inspection process before it reaches you — so you
-          can buy with confidence.
+          At Chined Closet, every pair — new or thrifted — is carefully
+          selected before it reaches you, so you can shop with confidence.
         </p>
 
         <ul className="mt-6 space-y-3">
