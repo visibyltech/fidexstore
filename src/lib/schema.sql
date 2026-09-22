@@ -12,13 +12,20 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- parent_id is NULL for a top-level category (e.g. "New Shoes", "Thrift
+-- Shoes") and set for a leaf category nested under one (e.g. "Women" under
+-- "New Shoes"). Only two levels are supported; products always belong to a
+-- leaf category, never to a top-level one directly.
 CREATE TABLE IF NOT EXISTS categories (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
   slug TEXT NOT NULL UNIQUE,
   image TEXT,
+  parent_id INTEGER REFERENCES categories(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+CREATE INDEX IF NOT EXISTS idx_categories_parent_id ON categories(parent_id);
 
 CREATE TABLE IF NOT EXISTS products (
   id SERIAL PRIMARY KEY,

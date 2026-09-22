@@ -26,7 +26,13 @@ export async function GET(request: NextRequest) {
 
   if (category) {
     values.push(category);
-    conditions.push(`c.slug = $${values.length}`);
+    const idx = values.length;
+    // Matches either the exact (leaf) category, or any leaf category whose
+    // parent has this slug — so filtering by a top-level slug like "new"
+    // shows products from all of its subcategories (Women/Men/Children).
+    conditions.push(
+      `(c.slug = $${idx} OR c.parent_id = (SELECT id FROM categories WHERE slug = $${idx}))`
+    );
   }
   if (search) {
     values.push(`%${search}%`);

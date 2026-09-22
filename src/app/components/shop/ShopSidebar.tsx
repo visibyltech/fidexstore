@@ -2,6 +2,7 @@
 
 import { Star } from "lucide-react";
 import type { ApiCategory } from "@/types/api";
+import { groupCategories } from "@/lib/categories";
 
 type ShopSidebarProps = {
   categories: ApiCategory[];
@@ -26,6 +27,8 @@ const ShopSidebar = ({
   minRating,
   onMinRatingChange,
 }: ShopSidebarProps) => {
+  const categoryGroups = groupCategories(categories);
+
   return (
     <aside className="w-full shrink-0 md:w-64">
       <div>
@@ -39,16 +42,30 @@ const ShopSidebar = ({
           >
             All Products
           </p>
-          {categories.map((category) => (
-            <p
-              key={category.slug}
-              onClick={() => onSelectCategory(category.slug)}
-              className={`w-fit cursor-pointer transition hover:text-gold ${
-                selectedCategory === category.slug ? "font-medium text-gold" : "text-black/60"
-              }`}
-            >
-              {category.name}
-            </p>
+          {categoryGroups.map(({ parent, children }) => (
+            <div key={parent.slug}>
+              <p
+                onClick={() => onSelectCategory(parent.slug)}
+                className={`w-fit cursor-pointer text-xs font-semibold tracking-wide uppercase transition hover:text-gold ${
+                  selectedCategory === parent.slug ? "text-gold" : "text-black/50"
+                }`}
+              >
+                {parent.name}
+              </p>
+              <div className="mt-2 flex flex-col gap-2 pl-3">
+                {children.map((category) => (
+                  <p
+                    key={category.slug}
+                    onClick={() => onSelectCategory(category.slug)}
+                    className={`w-fit cursor-pointer transition hover:text-gold ${
+                      selectedCategory === category.slug ? "font-medium text-gold" : "text-black/60"
+                    }`}
+                  >
+                    {category.name}
+                  </p>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       </div>

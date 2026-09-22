@@ -1,25 +1,45 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Search, Heart, ShoppingCart, ChevronDown, Menu, X } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import Logo from "./Logo";
+import type { ApiCategory } from "@/types/api";
+import { groupCategories } from "@/lib/categories";
 
 const links = [
   { name: "Home", href: "/" },
   { name: "Contact", href: "/contact" },
 ];
 
-const shoeCategories = ["Women", "Men", "Children", "New Arrivals", "Thrift Picks"];
-
 const Navbar = () => {
   const pathname = usePathname();
   const { itemCount } = useCart();
   const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
+  const [categories, setCategories] = useState<ApiCategory[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch("/api/categories")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!cancelled) setCategories(data.categories ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) setCategories([]);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const categoryGroups = groupCategories(categories);
 
   return (
     <div>
@@ -90,16 +110,26 @@ const Navbar = () => {
             Home
           </Link>
 
-          <p className="px-3 pt-2 text-xs font-semibold tracking-wide text-black/40">Shop</p>
-          {shoeCategories.map((category) => (
-            <Link
-              key={category}
-              href={`/shop?category=${category.toLowerCase().replace(/\s+/g, "-")}`}
-              onClick={() => setOpen(false)}
-              className="rounded-lg px-3 py-2 text-sm text-black/70 hover:text-gold"
-            >
-              {category}
-            </Link>
+          {categoryGroups.map(({ parent, children }) => (
+            <div key={parent.slug}>
+              <Link
+                href={`/shop?category=${parent.slug}`}
+                onClick={() => setOpen(false)}
+                className="block px-3 pt-2 text-xs font-semibold tracking-wide text-black/40 uppercase hover:text-gold"
+              >
+                {parent.name}
+              </Link>
+              {children.map((category) => (
+                <Link
+                  key={category.slug}
+                  href={`/shop?category=${category.slug}`}
+                  onClick={() => setOpen(false)}
+                  className="rounded-lg px-3 py-2 text-sm text-black/70 hover:text-gold"
+                >
+                  {category.name}
+                </Link>
+              ))}
+            </div>
           ))}
 
           {links.slice(1).map((link) => (
@@ -183,16 +213,26 @@ const Navbar = () => {
               <ChevronDown className="h-3.5 w-3.5" />
             </Link>
 
-            <div className="invisible absolute top-full left-1/2 z-20 w-48 -translate-x-1/2 pt-3 opacity-0 transition group-hover:visible group-hover:opacity-100">
-              <div className="flex flex-col gap-1 rounded-2xl border border-black/10 bg-white p-2 shadow-lg">
-                {shoeCategories.map((category) => (
-                  <Link
-                    key={category}
-                    href={`/shop?category=${category.toLowerCase().replace(/\s+/g, "-")}`}
-                    className="rounded-lg px-3 py-2 text-sm text-black/70 transition hover:bg-black/5 hover:text-gold"
-                  >
-                    {category}
-                  </Link>
+            <div className="invisible absolute top-full left-1/2 z-20 w-80 -translate-x-1/2 pt-3 opacity-0 transition group-hover:visible group-hover:opacity-100">
+              <div className="grid grid-cols-2 gap-2 rounded-2xl border border-black/10 bg-white p-3 shadow-lg">
+                {categoryGroups.map(({ parent, children }) => (
+                  <div key={parent.slug}>
+                    <Link
+                      href={`/shop?category=${parent.slug}`}
+                      className="block rounded-lg px-3 py-2 text-xs font-semibold tracking-wide text-black/50 uppercase transition hover:text-gold"
+                    >
+                      {parent.name}
+                    </Link>
+                    {children.map((category) => (
+                      <Link
+                        key={category.slug}
+                        href={`/shop?category=${category.slug}`}
+                        className="block rounded-lg px-3 py-2 text-sm text-black/70 transition hover:bg-black/5 hover:text-gold"
+                      >
+                        {category.name}
+                      </Link>
+                    ))}
+                  </div>
                 ))}
               </div>
             </div>

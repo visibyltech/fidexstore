@@ -3,9 +3,8 @@ import Link from "next/link";
 import { MessageCircle, Sparkles, BadgeCheck, Repeat, ShieldCheck, Truck } from "lucide-react";
 
 const categories = [
-  { name: "Women", slug: "women" },
-  { name: "Men", slug: "men" },
-  { name: "Children", slug: "children" },
+  { name: "New Shoes", slug: "new" },
+  { name: "Thrift Shoes", slug: "thrift" },
 ];
 
 const features = [

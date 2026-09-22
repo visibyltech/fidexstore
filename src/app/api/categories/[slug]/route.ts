@@ -9,7 +9,7 @@ export async function GET(
   const sql = getSql();
 
   const [category] = await sql`
-    SELECT id, name, slug, image FROM categories WHERE slug = ${slug}
+    SELECT id, name, slug, image, parent_id FROM categories WHERE slug = ${slug}
   `;
 
   if (!category) {

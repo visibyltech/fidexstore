@@ -3,6 +3,7 @@ export type ApiCategory = {
   name: string;
   slug: string;
   image: string | null;
+  parent_id: number | null;
 };
 
 export type ApiProduct = {

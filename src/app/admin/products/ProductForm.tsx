@@ -3,8 +3,8 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { UploadCloud, X } from "lucide-react";
-
-type Category = { id: number; name: string; slug: string };
+import { groupCategories } from "@/lib/categories";
+import type { ApiCategory } from "@/types/api";
 
 export type ProductFormValues = {
   name: string;
@@ -39,7 +39,7 @@ type ProductFormProps = {
 
 const ProductForm = ({ initialValues, submitLabel, onSubmit }: ProductFormProps) => {
   const router = useRouter();
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<ApiCategory[]>([]);
   const [values, setValues] = useState<ProductFormValues>({ ...emptyValues, ...initialValues });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [objectUrl, setObjectUrl] = useState<string | null>(null);
@@ -115,10 +115,14 @@ const ProductForm = ({ initialValues, submitLabel, onSubmit }: ProductFormProps)
             <option value="" disabled className="bg-white">
               Select a category
             </option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id} className="bg-white">
-                {category.name}
-              </option>
+            {groupCategories(categories).map(({ parent, children }) => (
+              <optgroup key={parent.slug} label={parent.name}>
+                {children.map((category) => (
+                  <option key={category.id} value={category.id} className="bg-white">
+                    {category.name}
+                  </option>
+                ))}
+              </optgroup>
             ))}
           </select>
         </div>
