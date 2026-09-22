@@ -6,6 +6,9 @@ type ShopToolbarProps = {
   total: number;
   sort: string;
   onSortChange: (sort: string) => void;
+  view: "grid" | "list";
+  onViewChange: (view: "grid" | "list") => void;
+  onToggleFilters: () => void;
 };
 
 const SORT_OPTIONS = [
@@ -15,14 +18,24 @@ const SORT_OPTIONS = [
   { value: "rating", label: "Top Rated" },
 ];
 
-const ShopToolbar = ({ total, sort, onSortChange }: ShopToolbarProps) => {
+const ShopToolbar = ({
+  total,
+  sort,
+  onSortChange,
+  view,
+  onViewChange,
+  onToggleFilters,
+}: ShopToolbarProps) => {
   return (
     <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-black/5 px-5 py-3">
       <p className="text-sm text-black/60">
         Showing {total} of {total} products
       </p>
 
-      <button className="flex items-center gap-2 rounded-md bg-black/10 px-4 py-2 text-sm font-medium transition hover:bg-black/15 md:hidden">
+      <button
+        onClick={onToggleFilters}
+        className="flex items-center gap-2 rounded-md bg-black/10 px-4 py-2 text-sm font-medium transition hover:bg-black/15 md:hidden"
+      >
         <SlidersHorizontal className="h-4 w-4" />
         Filters
       </button>
@@ -44,12 +57,22 @@ const ShopToolbar = ({ total, sort, onSortChange }: ShopToolbarProps) => {
         </div>
 
         <div className="flex items-center gap-1 rounded-md bg-black/10 p-1">
-          <div className="rounded bg-gold p-1.5 text-black">
+          <button
+            onClick={() => onViewChange("grid")}
+            aria-label="Grid view"
+            aria-pressed={view === "grid"}
+            className={`rounded p-1.5 transition ${view === "grid" ? "bg-gold text-black" : "text-black/60 hover:text-black"}`}
+          >
             <LayoutGrid className="h-4 w-4" />
-          </div>
-          <div className="rounded p-1.5 text-black/60">
+          </button>
+          <button
+            onClick={() => onViewChange("list")}
+            aria-label="List view"
+            aria-pressed={view === "list"}
+            className={`rounded p-1.5 transition ${view === "list" ? "bg-gold text-black" : "text-black/60 hover:text-black"}`}
+          >
             <List className="h-4 w-4" />
-          </div>
+          </button>
         </div>
       </div>
     </div>

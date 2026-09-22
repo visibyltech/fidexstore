@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, FormEvent } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Search, Heart, ShoppingCart, ChevronDown, Menu, X } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
 import { useAuth } from "../context/AuthContext";
 import Logo from "./Logo";
 import type { ApiCategory } from "@/types/api";
@@ -17,10 +18,22 @@ const links = [
 
 const Navbar = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const { itemCount } = useCart();
+  const { itemCount: wishlistCount } = useWishlist();
   const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [categories, setCategories] = useState<ApiCategory[]>([]);
+
+  const submitSearch = (e: FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+    router.push(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
+    setSearchOpen(false);
+    setOpen(false);
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -145,10 +158,30 @@ const Navbar = () => {
             </Link>
           ))}
 
-          <div className="mt-2 flex items-center gap-6 border-t border-black/10 px-3 pt-4 text-black/80">
-            <Search className="h-5 w-5" />
-            <Heart className="h-5 w-5" />
-          </div>
+          <form onSubmit={submitSearch} className="mt-2 flex gap-2 border-t border-black/10 px-3 pt-4">
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search shoes…"
+              className="w-full rounded-md border border-black/10 bg-black/5 px-3 py-2 text-sm placeholder:text-black/40 focus:border-gold focus:outline-none"
+            />
+            <button
+              type="submit"
+              aria-label="Search"
+              className="flex shrink-0 items-center justify-center rounded-md bg-gold px-3 text-black"
+            >
+              <Search className="h-4 w-4" />
+            </button>
+          </form>
+
+          <Link
+            href="/wishlist"
+            onClick={() => setOpen(false)}
+            className="mt-2 flex items-center gap-2 px-3 py-2 text-sm text-black/80 hover:text-gold"
+          >
+            <Heart className="h-5 w-5" /> Wishlist{wishlistCount > 0 ? ` (${wishlistCount})` : ""}
+          </Link>
 
           {user ? (
             <div className="mt-3 flex flex-col gap-1 border-t border-black/10 px-3 pt-4">
@@ -256,8 +289,47 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-5 text-black/80">
-          <Search className="h-5 w-5 cursor-pointer transition hover:text-gold" />
-          <Heart className="h-5 w-5 cursor-pointer transition hover:text-gold" />
+          <div className="relative">
+            <button
+              onClick={() => setSearchOpen((v) => !v)}
+              aria-label="Search"
+              className="cursor-pointer transition hover:text-gold"
+            >
+              <Search className="h-5 w-5" />
+            </button>
+
+            {searchOpen && (
+              <form
+                onSubmit={submitSearch}
+                className="absolute top-full right-0 z-20 mt-3 flex w-64 gap-2 rounded-2xl border border-black/10 bg-white p-2 shadow-lg"
+              >
+                <input
+                  autoFocus
+                  type="search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search shoes…"
+                  className="w-full rounded-lg border border-black/10 bg-black/5 px-3 py-2 text-sm placeholder:text-black/40 focus:border-gold focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  aria-label="Submit search"
+                  className="shrink-0 rounded-lg bg-gold px-3 text-black"
+                >
+                  <Search className="h-4 w-4" />
+                </button>
+              </form>
+            )}
+          </div>
+
+          <Link href="/wishlist" className="relative">
+            <Heart className="h-5 w-5 cursor-pointer transition hover:text-gold" />
+            {wishlistCount > 0 && (
+              <span className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-gold text-[10px] font-semibold text-black">
+                {wishlistCount}
+              </span>
+            )}
+          </Link>
           <Link href="/cart" className="relative">
             <ShoppingCart className="h-5 w-5 cursor-pointer transition hover:text-gold" />
             {itemCount > 0 && (

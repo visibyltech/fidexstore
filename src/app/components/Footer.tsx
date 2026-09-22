@@ -14,10 +14,25 @@ const quickLinks = [
 const Footer = () => {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubscribe = (e: FormEvent) => {
+  const handleSubscribe = async (e: FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
+    setError("");
+    setSubmitting(true);
+    const res = await fetch("/api/newsletter", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    setSubmitting(false);
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      setError(data?.error ?? "Something went wrong");
+      return;
+    }
     setSubscribed(true);
     setEmail("");
     setTimeout(() => setSubscribed(false), 3000);
@@ -93,7 +108,8 @@ const Footer = () => {
             />
             <button
               type="submit"
-              className={`flex shrink-0 items-center gap-1.5 rounded-md px-5 py-2 text-sm font-semibold transition ${
+              disabled={submitting}
+              className={`flex shrink-0 items-center gap-1.5 rounded-md px-5 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
                 subscribed ? "bg-green-500 text-black" : "bg-gold text-black hover:bg-gold/90"
               }`}
             >
@@ -101,22 +117,14 @@ const Footer = () => {
                 <>
                   <Check className="h-4 w-4" /> Subscribed
                 </>
+              ) : submitting ? (
+                "Subscribing…"
               ) : (
                 "Subscribe"
               )}
             </button>
           </form>
-
-          <div className="mt-5 flex gap-3">
-            {["Fb", "Ig", "Tw"].map((label) => (
-              <div
-                key={label}
-                className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-black/10 text-xs font-semibold transition hover:bg-gold hover:text-black"
-              >
-                {label}
-              </div>
-            ))}
-          </div>
+          {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
         </div>
       </div>
 
