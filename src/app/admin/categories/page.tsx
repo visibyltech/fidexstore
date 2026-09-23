@@ -164,8 +164,8 @@ export default function AdminCategoriesPage() {
     <div>
       <h2 className="text-lg font-semibold">Categories ({categories.length})</h2>
       <p className="mt-1 text-sm text-black/50">
-        Two levels supported — e.g. &ldquo;New Shoes&rdquo; and &ldquo;Thrift Shoes&rdquo; as
-        top-level categories, each with Women/Men/Children underneath.
+        Two levels supported. Fidex currently uses a flat catalog — Clothing, Accessories,
+        Grooming, Essentials — but you can nest subcategories under any of them if needed.
       </p>
 
       {error && (

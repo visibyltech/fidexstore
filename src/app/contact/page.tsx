@@ -1,8 +1,8 @@
 import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 
-const EMAIL = "hello@chinedcloset.com";
-const PHONE_DISPLAY = "+234 803 455 5302";
-const WHATSAPP_NUMBER = "2348034555302";
+const EMAIL = "hello@fidex.ng";
+const PHONE_DISPLAY = "+234 801 234 5678";
+const WHATSAPP_NUMBER = "2348012345678";
 
 export default function ContactPage() {
   return (
@@ -21,7 +21,7 @@ export default function ContactPage() {
           <MapPin className="mx-auto h-6 w-6 text-gold" />
           <h3 className="mt-3 text-sm font-semibold tracking-wide uppercase">Visit Us</h3>
           <p className="mt-2 text-sm text-black/60">
-            11, Demurin Street, off Ikorodu Road, Ketu, Lagos.
+            Lagos, Nigeria.
           </p>
         </div>
         <div className="rounded-2xl bg-black/5 p-6 text-center">

@@ -44,26 +44,26 @@ const Footer = () => {
         <div>
           <Logo withTagline />
           <p className="mt-4 max-w-xs text-sm text-black/60">
-            New and thrift shoes for men, women, and children — carefully
-            selected, gently loved, always in style.
+            Clothing, accessories, grooming, and everyday essentials —
+            carefully picked, always in style.
           </p>
 
           <div className="mt-6 space-y-3 text-sm text-black/70">
             <div className="flex items-start gap-3">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
-              11, Demurin Street, off Ikorodu Road, Ketu, Lagos.
+              Lagos, Nigeria.
             </div>
             <div className="flex items-center gap-3">
               <Phone className="h-4 w-4 shrink-0 text-gold" />
-              +234 803 455 5302
+              +234 801 234 5678
             </div>
             <div className="flex items-center gap-3">
               <MessageCircle className="h-4 w-4 shrink-0 text-gold" />
-              WhatsApp: +234 803 455 5302
+              WhatsApp: +234 801 234 5678
             </div>
             <div className="flex items-center gap-3">
               <Mail className="h-4 w-4 shrink-0 text-gold" />
-              hello@chinedcloset.com
+              hello@fidex.ng
             </div>
             <div className="flex items-start gap-3">
               <Clock className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
@@ -94,7 +94,7 @@ const Footer = () => {
         <div>
           <h4 className="text-sm font-semibold tracking-wide uppercase">Stay Updated</h4>
           <p className="mt-4 text-sm text-black/60">
-            Subscribe to hear about new arrivals and fresh thrift drops first.
+            Subscribe to hear about new drops and restocks first.
           </p>
 
           <form onSubmit={handleSubscribe} className="mt-4 flex gap-2">
@@ -129,7 +129,7 @@ const Footer = () => {
       </div>
 
       <div className="mt-12 border-t border-black/10 pt-6 text-center text-xs text-black/40">
-        © 2026 Chined Closet. All Rights Reserved.
+        © 2026 Fidex. All Rights Reserved.
       </div>
     </footer>
   );

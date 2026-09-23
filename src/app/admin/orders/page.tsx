@@ -58,7 +58,7 @@ export default function AdminOrdersPage() {
             <tbody>
               {orders.map((order) => (
                 <tr key={order.id} className="border-b border-black/5 last:border-0">
-                  <td className="px-4 py-3 font-medium">CC-{order.id}</td>
+                  <td className="px-4 py-3 font-medium">FX-{order.id}</td>
                   <td className="px-4 py-3">
                     <p className="text-black">{order.full_name}</p>
                     <p className="text-xs text-black/50">{order.email}</p>

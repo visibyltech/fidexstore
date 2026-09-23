@@ -101,7 +101,7 @@ export default function AdminOrderDetailPage() {
       <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <h2 className="text-lg font-semibold">Order CC-{order.id}</h2>
+            <h2 className="text-lg font-semibold">Order FX-{order.id}</h2>
             <span
               className={`rounded-full px-2 py-1 text-xs ${
                 order.status === "completed"

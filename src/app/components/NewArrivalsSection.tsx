@@ -36,7 +36,7 @@ const NewArrivalsSection = () => {
   return (
     <ProductPanel
       heading="New Arrivals"
-      subtitle="Fresh drops every week — new and gently-used shoes, restocked often."
+      subtitle="Fresh drops every week — clothing, accessories, and essentials restocked often."
       products={products}
       ctaLabel="Shop Now"
     />

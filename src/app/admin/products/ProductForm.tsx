@@ -115,15 +115,21 @@ const ProductForm = ({ initialValues, submitLabel, onSubmit }: ProductFormProps)
             <option value="" disabled className="bg-white">
               Select a category
             </option>
-            {groupCategories(categories).map(({ parent, children }) => (
-              <optgroup key={parent.slug} label={parent.name}>
-                {children.map((category) => (
-                  <option key={category.id} value={category.id} className="bg-white">
-                    {category.name}
-                  </option>
-                ))}
-              </optgroup>
-            ))}
+            {groupCategories(categories).map(({ parent, children }) =>
+              children.length > 0 ? (
+                <optgroup key={parent.slug} label={parent.name}>
+                  {children.map((category) => (
+                    <option key={category.id} value={category.id} className="bg-white">
+                      {category.name}
+                    </option>
+                  ))}
+                </optgroup>
+              ) : (
+                <option key={parent.slug} value={parent.id} className="bg-white">
+                  {parent.name}
+                </option>
+              )
+            )}
           </select>
         </div>
 

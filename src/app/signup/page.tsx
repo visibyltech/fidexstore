@@ -44,7 +44,7 @@ export default function SignupPage() {
           <UserPlus className="h-5 w-5 text-gold" />
           <h1 className="text-lg font-semibold">Create Account</h1>
         </div>
-        <p className="mt-1 text-sm text-black/50">Join Chined Closet.</p>
+        <p className="mt-1 text-sm text-black/50">Join Fidex.</p>
 
         {error && (
           <p className="mt-4 rounded-md bg-red-500/10 px-4 py-2 text-sm text-red-600">{error}</p>

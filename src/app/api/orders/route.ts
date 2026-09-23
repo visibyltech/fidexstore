@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
   }
 
   return NextResponse.json(
-    { order: { id: order.id, orderNumber: `CC-${order.id}` } },
+    { order: { id: order.id, orderNumber: `FX-${order.id}` } },
     { status: 201 }
   );
 }

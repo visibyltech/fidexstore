@@ -23,13 +23,13 @@ export default function CartPage() {
           <ShoppingCart className="h-14 w-14 text-black/20" />
           <p className="mt-6 text-lg font-semibold">Your cart is empty</p>
           <p className="mt-2 text-sm text-black/50">
-            Browse our shoes and add items to get started!
+            Browse our shop and add items to get started!
           </p>
           <Link
             href="/shop"
             className="mt-6 flex items-center gap-2 rounded-md bg-gold px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold/90"
           >
-            Shop Shoes <ArrowRight className="h-4 w-4" />
+            Shop Now <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       ) : (

@@ -53,6 +53,7 @@ const Navbar = () => {
   }, []);
 
   const categoryGroups = groupCategories(categories);
+  const isFlatCatalog = categoryGroups.every((group) => group.children.length === 0);
 
   return (
     <div>
@@ -60,10 +61,10 @@ const Navbar = () => {
         <div className="flex-1 overflow-hidden">
           <div className="flex w-max animate-marquee gap-16">
             <p className="whitespace-nowrap">
-              New arrivals every week | WhatsApp us for same-day Lagos delivery
+              New drops weekly | WhatsApp us for same-day Lagos delivery
             </p>
             <p className="whitespace-nowrap">
-              New arrivals every week | WhatsApp us for same-day Lagos delivery
+              New drops weekly | WhatsApp us for same-day Lagos delivery
             </p>
           </div>
         </div>
@@ -123,27 +124,38 @@ const Navbar = () => {
             Home
           </Link>
 
-          {categoryGroups.map(({ parent, children }) => (
-            <div key={parent.slug}>
-              <Link
-                href={`/shop?category=${parent.slug}`}
-                onClick={() => setOpen(false)}
-                className="block px-3 pt-2 text-xs font-semibold tracking-wide text-black/40 uppercase hover:text-gold"
-              >
-                {parent.name}
-              </Link>
-              {children.map((category) => (
+          {isFlatCatalog
+            ? categoryGroups.map(({ parent }) => (
                 <Link
-                  key={category.slug}
-                  href={`/shop?category=${category.slug}`}
+                  key={parent.slug}
+                  href={`/shop?category=${parent.slug}`}
                   onClick={() => setOpen(false)}
-                  className="rounded-lg px-3 py-2 text-sm text-black/70 hover:text-gold"
+                  className="rounded-lg px-3 py-2 text-sm text-black/80 hover:text-gold"
                 >
-                  {category.name}
+                  {parent.name}
                 </Link>
+              ))
+            : categoryGroups.map(({ parent, children }) => (
+                <div key={parent.slug}>
+                  <Link
+                    href={`/shop?category=${parent.slug}`}
+                    onClick={() => setOpen(false)}
+                    className="block px-3 pt-2 text-xs font-semibold tracking-wide text-black/40 uppercase hover:text-gold"
+                  >
+                    {parent.name}
+                  </Link>
+                  {children.map((category) => (
+                    <Link
+                      key={category.slug}
+                      href={`/shop?category=${category.slug}`}
+                      onClick={() => setOpen(false)}
+                      className="rounded-lg px-3 py-2 text-sm text-black/70 hover:text-gold"
+                    >
+                      {category.name}
+                    </Link>
+                  ))}
+                </div>
               ))}
-            </div>
-          ))}
 
           {links.slice(1).map((link) => (
             <Link
@@ -163,7 +175,7 @@ const Navbar = () => {
               type="search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search shoes…"
+              placeholder="Search products…"
               className="w-full rounded-md border border-black/10 bg-black/5 px-3 py-2 text-sm placeholder:text-black/40 focus:border-gold focus:outline-none"
             />
             <button
@@ -246,27 +258,45 @@ const Navbar = () => {
               <ChevronDown className="h-3.5 w-3.5" />
             </Link>
 
-            <div className="invisible absolute top-full left-1/2 z-20 w-80 -translate-x-1/2 pt-3 opacity-0 transition group-hover:visible group-hover:opacity-100">
-              <div className="grid grid-cols-2 gap-2 rounded-2xl border border-black/10 bg-white p-3 shadow-lg">
-                {categoryGroups.map(({ parent, children }) => (
-                  <div key={parent.slug}>
-                    <Link
-                      href={`/shop?category=${parent.slug}`}
-                      className="block rounded-lg px-3 py-2 text-xs font-semibold tracking-wide text-black/50 uppercase transition hover:text-gold"
-                    >
-                      {parent.name}
-                    </Link>
-                    {children.map((category) => (
+            <div
+              className={`invisible absolute top-full left-1/2 z-20 -translate-x-1/2 pt-3 opacity-0 transition group-hover:visible group-hover:opacity-100 ${
+                isFlatCatalog ? "w-48" : "w-80"
+              }`}
+            >
+              <div
+                className={`rounded-2xl border border-black/10 bg-white p-3 shadow-lg ${
+                  isFlatCatalog ? "flex flex-col gap-1" : "grid grid-cols-2 gap-2"
+                }`}
+              >
+                {isFlatCatalog
+                  ? categoryGroups.map(({ parent }) => (
                       <Link
-                        key={category.slug}
-                        href={`/shop?category=${category.slug}`}
+                        key={parent.slug}
+                        href={`/shop?category=${parent.slug}`}
                         className="block rounded-lg px-3 py-2 text-sm text-black/70 transition hover:bg-black/5 hover:text-gold"
                       >
-                        {category.name}
+                        {parent.name}
                       </Link>
+                    ))
+                  : categoryGroups.map(({ parent, children }) => (
+                      <div key={parent.slug}>
+                        <Link
+                          href={`/shop?category=${parent.slug}`}
+                          className="block rounded-lg px-3 py-2 text-xs font-semibold tracking-wide text-black/50 uppercase transition hover:text-gold"
+                        >
+                          {parent.name}
+                        </Link>
+                        {children.map((category) => (
+                          <Link
+                            key={category.slug}
+                            href={`/shop?category=${category.slug}`}
+                            className="block rounded-lg px-3 py-2 text-sm text-black/70 transition hover:bg-black/5 hover:text-gold"
+                          >
+                            {category.name}
+                          </Link>
+                        ))}
+                      </div>
                     ))}
-                  </div>
-                ))}
               </div>
             </div>
           </div>
@@ -308,7 +338,7 @@ const Navbar = () => {
                   type="search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search shoes…"
+                  placeholder="Search products…"
                   className="w-full rounded-lg border border-black/10 bg-black/5 px-3 py-2 text-sm placeholder:text-black/40 focus:border-gold focus:outline-none"
                 />
                 <button

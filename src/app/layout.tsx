@@ -17,9 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Chined Closet — Good Style. Better Prices.",
+  title: "Fidex — Style. Confidence. Everything You.",
   description:
-    "New and thrift shoes for men, women, and children in Lagos — carefully selected, gently loved, always in style.",
+    "Clothing, accessories, grooming, and everyday essentials for the modern streetwear wardrobe.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -1,4 +1,4 @@
--- Chined Closet — core schema.
+-- Fidex — core schema.
 -- Every account is created with role = 'user'; role is only ever changed
 -- to 'admin' by an existing admin (PATCH /api/admin/users/[id]/role) or by
 -- the scripts/seed-admin.mjs bootstrap script run directly against the DB.

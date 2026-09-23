@@ -9,14 +9,14 @@ export default function NotFound() {
         Coming <span className="text-gold">Soon</span>
       </h1>
       <p className="mt-3 max-w-md text-sm text-black/60">
-        This page is still being built. In the meantime, explore our full range of new and
-        thrifted shoes.
+        This page is still being built. In the meantime, explore our full range of clothing,
+        accessories, and essentials.
       </p>
       <Link
         href="/shop"
         className="mt-8 flex items-center gap-2 rounded-full bg-gold px-8 py-3 text-sm font-semibold tracking-wide text-black uppercase transition hover:bg-gold/90"
       >
-        Shop Shoes <ArrowRight className="h-4 w-4" />
+        Shop Now <ArrowRight className="h-4 w-4" />
       </Link>
       <Link href="/" className="mt-4 text-sm text-black/50 transition hover:text-gold">
         Back to Home

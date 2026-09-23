@@ -24,13 +24,13 @@ export default function WishlistPage() {
           <Heart className="h-14 w-14 text-black/20" />
           <p className="mt-6 text-lg font-semibold">Your wishlist is empty</p>
           <p className="mt-2 text-sm text-black/50">
-            Tap the heart on any shoe to save it here for later.
+            Tap the heart on any item to save it here for later.
           </p>
           <Link
             href="/shop"
             className="mt-6 flex items-center gap-2 rounded-md bg-gold px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold/90"
           >
-            Shop Shoes <ArrowRight className="h-4 w-4" />
+            Shop Now <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       ) : (
