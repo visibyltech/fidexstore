@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSql } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 
 // The only way a user's role can ever become "admin": an existing admin
@@ -27,14 +27,15 @@ export async function PATCH(
     return NextResponse.json({ error: "You cannot remove your own admin access" }, { status: 400 });
   }
 
-  const sql = getSql();
-  const [updated] = await sql`
-    UPDATE users SET role = ${role} WHERE id = ${userId}
-    RETURNING id, name, email, role
-  `;
-
-  if (!updated) {
+  const ref = getDb().collection("users").doc(String(userId));
+  const doc = await ref.get();
+  if (!doc.exists) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
-  return NextResponse.json({ user: updated });
+  await ref.update({ role });
+  const existing = doc.data()!;
+
+  return NextResponse.json({
+    user: { id: existing.id, name: existing.name, email: existing.email, role },
+  });
 }

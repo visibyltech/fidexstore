@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSql } from "@/lib/db";
+import { getDb, nextId } from "@/lib/db";
 import { createSessionToken, hashPassword, setSessionCookie } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
@@ -16,10 +16,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Password must be at least 8 characters" }, { status: 400 });
   }
 
-  const sql = getSql();
+  const db = getDb();
 
-  const [existing] = await sql`SELECT id FROM users WHERE email = ${email}`;
-  if (existing) {
+  const existingSnap = await db.collection("users").where("email", "==", email).limit(1).get();
+  if (!existingSnap.empty) {
     return NextResponse.json({ error: "An account with this email already exists" }, { status: 409 });
   }
 
@@ -27,14 +27,22 @@ export async function POST(request: NextRequest) {
 
   // Every account created here is a plain "user" — there is no field a
   // client can send to become an admin.
-  const [user] = await sql`
-    INSERT INTO users (name, email, password_hash, role)
-    VALUES (${name}, ${email}, ${passwordHash}, 'user')
-    RETURNING id, name, email, role
-  `;
+  const id = await nextId("users");
+  const user = {
+    id,
+    name,
+    email,
+    password_hash: passwordHash,
+    role: "user" as const,
+    created_at: new Date().toISOString(),
+  };
+  await db.collection("users").doc(String(id)).set(user);
 
   const token = await createSessionToken(user.id);
-  const response = NextResponse.json({ user }, { status: 201 });
+  const response = NextResponse.json(
+    { user: { id: user.id, name: user.name, email: user.email, role: user.role } },
+    { status: 201 }
+  );
   setSessionCookie(response, token);
   return response;
 }

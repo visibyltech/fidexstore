@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSql } from "@/lib/db";
+import { getDb } from "@/lib/db";
 
 // Public — anyone browsing the shop needs to see product images. Only
 // products where an admin uploaded a file directly (rather than linking to
@@ -14,10 +14,8 @@ export async function GET(
     return NextResponse.json({ error: "Invalid product id" }, { status: 400 });
   }
 
-  const sql = getSql();
-  const [product] = await sql`
-    SELECT image_data, image_mime_type FROM products WHERE id = ${productId}
-  `;
+  const doc = await getDb().collection("products").doc(String(productId)).get();
+  const product = doc.data();
   if (!product?.image_data) {
     return NextResponse.json({ error: "No image for this product" }, { status: 404 });
   }

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSql } from "@/lib/db";
+import { getDb } from "@/lib/db";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -11,11 +11,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "A valid email is required" }, { status: 400 });
   }
 
-  const sql = getSql();
-  await sql`
-    INSERT INTO newsletter_subscribers (email) VALUES (${email})
-    ON CONFLICT (email) DO NOTHING
-  `;
+  // Doc ID = email gives free uniqueness; .create() throws if it already
+  // exists, which we treat as a no-op — matching ON CONFLICT DO NOTHING.
+  try {
+    await getDb()
+      .collection("newsletter_subscribers")
+      .doc(email)
+      .create({ email, created_at: new Date().toISOString() });
+  } catch (err) {
+    const code = (err as { code?: number })?.code;
+    if (code !== 6 /* ALREADY_EXISTS */) throw err;
+  }
 
   return NextResponse.json({ ok: true });
 }

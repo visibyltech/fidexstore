@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSql } from "@/lib/db";
+import { getDb, nextId } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { slugify } from "@/lib/slug";
 import { readImageFile } from "@/lib/image-upload";
@@ -8,15 +8,36 @@ export async function GET(request: NextRequest) {
   const { user, response } = await requireAdmin(request);
   if (!user) return response;
 
-  const sql = getSql();
-  const products = await sql`
-    SELECT p.id, p.name, p.slug, p.description, p.image, p.price, p.old_price,
-           p.rating, p.reviews_count, p.stock, p.is_active, p.category_id,
-           c.slug AS category, c.name AS category_name
-    FROM products p
-    JOIN categories c ON c.id = p.category_id
-    ORDER BY p.created_at DESC
-  `;
+  const db = getDb();
+  const [productsSnap, categoriesSnap] = await Promise.all([
+    db.collection("products").get(),
+    db.collection("categories").get(),
+  ]);
+  const categoriesById = new Map(categoriesSnap.docs.map((doc) => [doc.data().id, doc.data()]));
+
+  const products = productsSnap.docs
+    .map((doc) => {
+      const p = doc.data();
+      const category = categoriesById.get(p.category_id);
+      return {
+        id: p.id,
+        name: p.name,
+        slug: p.slug,
+        description: p.description,
+        image: p.image,
+        price: p.price,
+        old_price: p.old_price,
+        rating: p.rating,
+        reviews_count: p.reviews_count,
+        stock: p.stock,
+        is_active: p.is_active,
+        category_id: p.category_id,
+        category: category?.slug ?? null,
+        category_name: category?.name ?? null,
+      };
+    })
+    .sort((a, b) => b.id - a.id);
+
   return NextResponse.json({ products });
 }
 
@@ -50,15 +71,15 @@ export async function POST(request: NextRequest) {
   const stockRaw = Number(formData.get("stock"));
   const stock = Number.isInteger(stockRaw) ? stockRaw : 0;
 
-  const sql = getSql();
+  const db = getDb();
 
-  const [category] = await sql`SELECT id FROM categories WHERE id = ${categoryId}`;
-  if (!category) {
+  const categoryDoc = await db.collection("categories").doc(String(categoryId)).get();
+  if (!categoryDoc.exists) {
     return NextResponse.json({ error: "Category not found" }, { status: 404 });
   }
 
-  const [existingSlug] = await sql`SELECT id FROM products WHERE slug = ${slug}`;
-  if (existingSlug) {
+  const existingSlugSnap = await db.collection("products").where("slug", "==", slug).limit(1).get();
+  if (!existingSlugSnap.empty) {
     return NextResponse.json({ error: "A product with this slug already exists" }, { status: 409 });
   }
 
@@ -75,23 +96,43 @@ export async function POST(request: NextRequest) {
     imageMimeType = result.mimeType;
   }
 
-  const [product] = await sql`
-    INSERT INTO products (
-      category_id, name, slug, description, image, image_data, image_mime_type, price, old_price, stock
-    ) VALUES (
-      ${categoryId}, ${name}, ${slug}, ${description}, ${imageUrl}, ${imageData}, ${imageMimeType}, ${price}, ${oldPrice}, ${stock}
-    )
-    RETURNING id, name, slug, description, image, price, old_price, stock, is_active, category_id
-  `;
+  const id = await nextId("products");
+  const now = new Date().toISOString();
+  const product = {
+    id,
+    category_id: categoryId,
+    name,
+    slug,
+    description,
+    image: imageData ? `/api/products/${id}/image` : imageUrl,
+    image_data: imageData,
+    image_mime_type: imageMimeType,
+    price,
+    old_price: oldPrice,
+    rating: 0,
+    reviews_count: 0,
+    stock,
+    is_active: true,
+    created_at: now,
+    updated_at: now,
+  };
+  await db.collection("products").doc(String(id)).set(product);
 
-  if (imageData) {
-    const [updated] = await sql`
-      UPDATE products SET image = ${`/api/products/${product.id}/image`}
-      WHERE id = ${product.id}
-      RETURNING id, name, slug, description, image, price, old_price, stock, is_active, category_id
-    `;
-    return NextResponse.json({ product: updated }, { status: 201 });
-  }
-
-  return NextResponse.json({ product }, { status: 201 });
+  return NextResponse.json(
+    {
+      product: {
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        description: product.description,
+        image: product.image,
+        price: product.price,
+        old_price: product.old_price,
+        stock: product.stock,
+        is_active: product.is_active,
+        category_id: product.category_id,
+      },
+    },
+    { status: 201 }
+  );
 }

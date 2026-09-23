@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSql } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 
 export async function GET(
@@ -15,22 +15,33 @@ export async function GET(
     return NextResponse.json({ error: "Invalid order id" }, { status: 400 });
   }
 
-  const sql = getSql();
-  const [order] = await sql`
-    SELECT id, user_id, status, payment_method, full_name, email, phone, address, city,
-           subtotal, delivery_fee, total,
-           installment_weeks, installment_interest_rate, installment_deposit,
-           receipt_filename, (receipt_data IS NOT NULL) AS has_receipt, created_at
-    FROM orders WHERE id = ${orderId}
-  `;
-  if (!order) {
+  const doc = await getDb().collection("orders").doc(String(orderId)).get();
+  const o = doc.data();
+  if (!o) {
     return NextResponse.json({ error: "Order not found" }, { status: 404 });
   }
 
-  const items = await sql`
-    SELECT id, product_id, name, image, price, qty FROM order_items
-    WHERE order_id = ${orderId} ORDER BY id
-  `;
+  const order = {
+    id: o.id,
+    user_id: o.user_id,
+    status: o.status,
+    payment_method: o.payment_method,
+    full_name: o.full_name,
+    email: o.email,
+    phone: o.phone,
+    address: o.address,
+    city: o.city,
+    subtotal: o.subtotal,
+    delivery_fee: o.delivery_fee,
+    total: o.total,
+    installment_weeks: o.installment_weeks,
+    installment_interest_rate: o.installment_interest_rate,
+    installment_deposit: o.installment_deposit,
+    receipt_filename: o.receipt_filename,
+    has_receipt: o.receipt_data != null,
+    created_at: o.created_at,
+  };
+  const items = [...(o.items ?? [])].sort((a, b) => a.id - b.id);
 
   return NextResponse.json({ order, items });
 }
@@ -54,13 +65,12 @@ export async function PATCH(
     return NextResponse.json({ error: "status must be 'pending' or 'completed'" }, { status: 400 });
   }
 
-  const sql = getSql();
-  const [order] = await sql`
-    UPDATE orders SET status = ${status} WHERE id = ${orderId} RETURNING id, status
-  `;
-  if (!order) {
+  const ref = getDb().collection("orders").doc(String(orderId));
+  const doc = await ref.get();
+  if (!doc.exists) {
     return NextResponse.json({ error: "Order not found" }, { status: 404 });
   }
+  await ref.update({ status });
 
-  return NextResponse.json({ order });
+  return NextResponse.json({ order: { id: orderId, status } });
 }

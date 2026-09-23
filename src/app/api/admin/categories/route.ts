@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSql } from "@/lib/db";
+import { getDb, nextId } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { slugify } from "@/lib/slug";
 
@@ -7,10 +7,8 @@ export async function GET(request: NextRequest) {
   const { user, response } = await requireAdmin(request);
   if (!user) return response;
 
-  const sql = getSql();
-  const categories = await sql`
-    SELECT id, name, slug, image, parent_id, created_at FROM categories ORDER BY id DESC
-  `;
+  const snap = await getDb().collection("categories").get();
+  const categories = snap.docs.map((doc) => doc.data()).sort((a, b) => b.id - a.id);
   return NextResponse.json({ categories });
 }
 
@@ -32,14 +30,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid parent_id" }, { status: 400 });
   }
 
-  const sql = getSql();
+  const db = getDb();
 
   if (parentId !== null) {
-    const [parent] = await sql`SELECT id, parent_id FROM categories WHERE id = ${parentId}`;
-    if (!parent) {
+    const parentDoc = await db.collection("categories").doc(String(parentId)).get();
+    if (!parentDoc.exists) {
       return NextResponse.json({ error: "Parent category not found" }, { status: 400 });
     }
-    if (parent.parent_id !== null) {
+    if (parentDoc.data()!.parent_id !== null) {
       return NextResponse.json(
         { error: "Only two levels of categories are supported — pick a top-level parent" },
         { status: 400 }
@@ -47,15 +45,21 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const [existing] = await sql`SELECT id FROM categories WHERE slug = ${slug}`;
-  if (existing) {
+  const existingSnap = await db.collection("categories").where("slug", "==", slug).limit(1).get();
+  if (!existingSnap.empty) {
     return NextResponse.json({ error: "A category with this slug already exists" }, { status: 409 });
   }
 
-  const [category] = await sql`
-    INSERT INTO categories (name, slug, image, parent_id)
-    VALUES (${name}, ${slug}, ${image}, ${parentId})
-    RETURNING id, name, slug, image, parent_id, created_at
-  `;
+  const id = await nextId("categories");
+  const category = {
+    id,
+    name,
+    slug,
+    image,
+    parent_id: parentId,
+    created_at: new Date().toISOString(),
+  };
+  await db.collection("categories").doc(String(id)).set(category);
+
   return NextResponse.json({ category }, { status: 201 });
 }

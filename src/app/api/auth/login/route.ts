@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSql } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { createSessionToken, setSessionCookie, verifyPassword } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
@@ -12,10 +12,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "email and password are required" }, { status: 400 });
   }
 
-  const sql = getSql();
-  const [user] = await sql`
-    SELECT id, name, email, role, password_hash FROM users WHERE email = ${email}
-  `;
+  const snap = await getDb().collection("users").where("email", "==", email).limit(1).get();
+  const user = snap.empty ? null : snap.docs[0].data();
 
   if (!user || !(await verifyPassword(password, user.password_hash))) {
     return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });

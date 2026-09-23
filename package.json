@@ -7,12 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "db:migrate": "node --env-file=.env.local scripts/migrate.mjs",
-    "db:seed-admin": "node --env-file=.env.local scripts/seed-admin.mjs"
+    "db:seed-admin": "node --env-file=.env.local scripts/seed-admin.mjs",
+    "db:seed-catalog": "node --env-file=.env.local scripts/seed-catalog.mjs"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^1.1.0",
     "bcryptjs": "^3.0.3",
+    "firebase-admin": "^14.5.0",
     "jose": "^6.2.12",
     "lucide-react": "^1.42.0",
     "next": "16.3.4",

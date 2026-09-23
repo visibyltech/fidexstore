@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSql } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 
 export async function GET(
@@ -15,10 +15,8 @@ export async function GET(
     return NextResponse.json({ error: "Invalid order id" }, { status: 400 });
   }
 
-  const sql = getSql();
-  const [order] = await sql`
-    SELECT receipt_data, receipt_mime_type FROM orders WHERE id = ${orderId}
-  `;
+  const doc = await getDb().collection("orders").doc(String(orderId)).get();
+  const order = doc.data();
   if (!order?.receipt_data) {
     return NextResponse.json({ error: "No receipt for this order" }, { status: 404 });
   }

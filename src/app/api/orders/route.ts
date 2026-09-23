@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSql } from "@/lib/db";
+import { getDb, nextId } from "@/lib/db";
 import { getSessionUser } from "@/lib/auth";
 
 const PAYMENT_METHODS = ["bank-transfer", "installments", "klump"];
@@ -42,16 +42,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid order totals" }, { status: 400 });
   }
 
-  let items: OrderItemInput[];
+  let itemInputs: OrderItemInput[];
   try {
-    items = JSON.parse(String(formData.get("items") ?? "[]"));
+    itemInputs = JSON.parse(String(formData.get("items") ?? "[]"));
   } catch {
     return NextResponse.json({ error: "Invalid items" }, { status: 400 });
   }
-  if (!Array.isArray(items) || items.length === 0) {
+  if (!Array.isArray(itemInputs) || itemInputs.length === 0) {
     return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
   }
-  for (const item of items) {
+  for (const item of itemInputs) {
     if (!item.name || !Number.isFinite(item.price) || !Number.isFinite(item.qty)) {
       return NextResponse.json({ error: "Invalid item in cart" }, { status: 400 });
     }
@@ -84,31 +84,50 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "A payment receipt is required" }, { status: 400 });
   }
 
-  const sql = getSql();
-  const [order] = await sql`
-    INSERT INTO orders (
-      user_id, payment_method, full_name, email, phone, address, city,
-      subtotal, delivery_fee, total,
-      installment_weeks, installment_interest_rate, installment_deposit,
-      receipt_filename, receipt_mime_type, receipt_data
-    ) VALUES (
-      ${sessionUser?.id ?? null}, ${paymentMethod}, ${fullName}, ${email}, ${phone}, ${address}, ${city},
-      ${subtotal}, ${deliveryFee}, ${total},
-      ${installmentWeeks}, ${installmentInterestRate}, ${installmentDeposit},
-      ${receiptFilename}, ${receiptMimeType}, ${receiptData}
-    )
-    RETURNING id
-  `;
+  const db = getDb();
+  const orderId = await nextId("orders");
 
-  for (const item of items) {
-    await sql`
-      INSERT INTO order_items (order_id, product_id, name, image, price, qty)
-      VALUES (${order.id}, ${item.id ?? null}, ${item.name}, ${item.image ?? null}, ${item.price}, ${item.qty})
-    `;
+  const items = [];
+  for (const item of itemInputs) {
+    const itemId = await nextId("order_items");
+    items.push({
+      id: itemId,
+      product_id: item.id ?? null,
+      name: item.name,
+      image: item.image ?? null,
+      price: item.price,
+      qty: item.qty,
+    });
   }
 
+  await db
+    .collection("orders")
+    .doc(String(orderId))
+    .set({
+      id: orderId,
+      user_id: sessionUser?.id ?? null,
+      status: "pending",
+      payment_method: paymentMethod,
+      full_name: fullName,
+      email,
+      phone,
+      address,
+      city,
+      subtotal,
+      delivery_fee: deliveryFee,
+      total,
+      installment_weeks: installmentWeeks,
+      installment_interest_rate: installmentInterestRate,
+      installment_deposit: installmentDeposit,
+      receipt_filename: receiptFilename,
+      receipt_mime_type: receiptMimeType,
+      receipt_data: receiptData,
+      items,
+      created_at: new Date().toISOString(),
+    });
+
   return NextResponse.json(
-    { order: { id: order.id, orderNumber: `FX-${order.id}` } },
+    { order: { id: orderId, orderNumber: `FX-${orderId}` } },
     { status: 201 }
   );
 }

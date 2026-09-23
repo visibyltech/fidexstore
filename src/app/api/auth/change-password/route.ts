@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSql } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { hashPassword, requireUser, verifyPassword } from "@/lib/auth";
 
 // Requires the caller's current password — there is no email-based "forgot
@@ -26,14 +26,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const sql = getSql();
-  const [row] = await sql`SELECT password_hash FROM users WHERE id = ${user.id}`;
+  const ref = getDb().collection("users").doc(String(user.id));
+  const doc = await ref.get();
+  const row = doc.data();
   if (!row || !(await verifyPassword(currentPassword, row.password_hash))) {
     return NextResponse.json({ error: "Current password is incorrect" }, { status: 401 });
   }
 
   const newHash = await hashPassword(newPassword);
-  await sql`UPDATE users SET password_hash = ${newHash} WHERE id = ${user.id}`;
+  await ref.update({ password_hash: newHash });
 
   return NextResponse.json({ ok: true });
 }

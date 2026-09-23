@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSql } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { slugify } from "@/lib/slug";
 import { readImageFile } from "@/lib/image-upload";
@@ -17,15 +17,25 @@ export async function GET(
     return NextResponse.json({ error: "Invalid product id" }, { status: 400 });
   }
 
-  const sql = getSql();
-  const [product] = await sql`
-    SELECT id, name, slug, description, image, price, old_price, stock, is_active, category_id
-    FROM products WHERE id = ${productId}
-  `;
-  if (!product) {
+  const doc = await getDb().collection("products").doc(String(productId)).get();
+  const p = doc.data();
+  if (!p) {
     return NextResponse.json({ error: "Product not found" }, { status: 404 });
   }
-  return NextResponse.json({ product });
+  return NextResponse.json({
+    product: {
+      id: p.id,
+      name: p.name,
+      slug: p.slug,
+      description: p.description,
+      image: p.image,
+      price: p.price,
+      old_price: p.old_price,
+      stock: p.stock,
+      is_active: p.is_active,
+      category_id: p.category_id,
+    },
+  });
 }
 
 export async function PATCH(
@@ -41,11 +51,13 @@ export async function PATCH(
     return NextResponse.json({ error: "Invalid product id" }, { status: 400 });
   }
 
-  const sql = getSql();
-  const [existing] = await sql`SELECT * FROM products WHERE id = ${productId}`;
-  if (!existing) {
+  const db = getDb();
+  const ref = db.collection("products").doc(String(productId));
+  const existingDoc = await ref.get();
+  if (!existingDoc.exists) {
     return NextResponse.json({ error: "Product not found" }, { status: 404 });
   }
+  const existing = existingDoc.data()!;
 
   const formData = await request.formData();
 
@@ -55,8 +67,8 @@ export async function PATCH(
     if (!Number.isInteger(categoryId)) {
       return NextResponse.json({ error: "Invalid categoryId" }, { status: 400 });
     }
-    const [category] = await sql`SELECT id FROM categories WHERE id = ${categoryId}`;
-    if (!category) {
+    const categoryDoc = await db.collection("categories").doc(String(categoryId)).get();
+    if (!categoryDoc.exists) {
       return NextResponse.json({ error: "Category not found" }, { status: 404 });
     }
   }
@@ -107,30 +119,43 @@ export async function PATCH(
   }
 
   if (slug !== existing.slug) {
-    const [slugTaken] = await sql`SELECT id FROM products WHERE slug = ${slug} AND id != ${productId}`;
-    if (slugTaken) {
+    const slugTakenSnap = await db.collection("products").where("slug", "==", slug).limit(1).get();
+    if (!slugTakenSnap.empty && slugTakenSnap.docs[0].id !== String(productId)) {
       return NextResponse.json({ error: "A product with this slug already exists" }, { status: 409 });
     }
   }
 
-  const [product] = await sql`
-    UPDATE products SET
-      category_id = ${categoryId},
-      name = ${name},
-      slug = ${slug},
-      description = ${description},
-      image = ${image},
-      image_data = ${imageData},
-      image_mime_type = ${imageMimeType},
-      price = ${price},
-      old_price = ${oldPrice},
-      stock = ${stock},
-      is_active = ${isActive},
-      updated_at = now()
-    WHERE id = ${productId}
-    RETURNING id, name, slug, description, image, price, old_price, stock, is_active, category_id
-  `;
-  return NextResponse.json({ product });
+  const updated = {
+    id: productId,
+    category_id: categoryId,
+    name,
+    slug,
+    description,
+    image,
+    image_data: imageData,
+    image_mime_type: imageMimeType,
+    price,
+    old_price: oldPrice,
+    stock,
+    is_active: isActive,
+    updated_at: new Date().toISOString(),
+  };
+  await ref.update(updated);
+
+  return NextResponse.json({
+    product: {
+      id: updated.id,
+      name: updated.name,
+      slug: updated.slug,
+      description: updated.description,
+      image: updated.image,
+      price: updated.price,
+      old_price: updated.old_price,
+      stock: updated.stock,
+      is_active: updated.is_active,
+      category_id: updated.category_id,
+    },
+  });
 }
 
 export async function DELETE(
@@ -146,10 +171,11 @@ export async function DELETE(
     return NextResponse.json({ error: "Invalid product id" }, { status: 400 });
   }
 
-  const sql = getSql();
-  const result = await sql`DELETE FROM products WHERE id = ${productId} RETURNING id`;
-  if (!result.length) {
+  const ref = getDb().collection("products").doc(String(productId));
+  const doc = await ref.get();
+  if (!doc.exists) {
     return NextResponse.json({ error: "Product not found" }, { status: 404 });
   }
+  await ref.delete();
   return NextResponse.json({ ok: true });
 }

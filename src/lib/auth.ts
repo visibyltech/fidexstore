@@ -1,7 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
-import { getSql } from "./db";
+import { getDb } from "./db";
 
 export type Role = "user" | "admin";
 
@@ -76,12 +76,11 @@ export async function getSessionUser(request: NextRequest): Promise<SessionUser 
   const userId = await verifySessionToken(token);
   if (!userId) return null;
 
-  const sql = getSql();
-  const [user] = await sql`
-    SELECT id, name, email, role FROM users WHERE id = ${userId}
-  `;
+  const doc = await getDb().collection("users").doc(String(userId)).get();
+  if (!doc.exists) return null;
 
-  return (user as SessionUser) ?? null;
+  const data = doc.data()!;
+  return { id: data.id, name: data.name, email: data.email, role: data.role };
 }
 
 type AuthResult =
