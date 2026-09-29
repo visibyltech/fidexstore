@@ -160,33 +160,29 @@ const ProductForm = ({ initialValues, submitLabel, onSubmit }: ProductFormProps)
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-xl rounded-2xl bg-black/5 p-6">
+    <form onSubmit={handleSubmit} className="max-w-xl bg-cream p-6">
       {error && (
-        <p className="mb-4 rounded-md bg-red-500/10 px-4 py-2 text-sm text-red-600">{error}</p>
+        <p className="mb-4 bg-red-500/10 px-4 py-2 text-sm text-red-600">{error}</p>
       )}
 
       <div className="space-y-4">
         <div>
-          <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
-            Name
-          </label>
-          <input
+          <label htmlFor="name" className="text-sm font-medium text-ink/80">Name</label>
+          <input id="name"
             required
             value={values.name}
             onChange={(e) => set("name", e.target.value)}
-            className="mt-2 w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
+            className="mt-2 w-full border border-ink/20 bg-white px-4 py-3 text-sm placeholder:text-ink/30 focus:border-gold focus:outline-none"
           />
         </div>
 
         <div>
-          <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
-            Category
-          </label>
-          <select
+          <label htmlFor="category" className="text-sm font-medium text-ink/80">Category</label>
+          <select id="category"
             required
             value={values.categoryId}
             onChange={(e) => set("categoryId", e.target.value)}
-            className="mt-2 w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm focus:border-gold focus:outline-none"
+            className="mt-2 w-full border border-ink/20 bg-white px-4 py-3 text-sm focus:border-gold focus:outline-none"
           >
             <option value="" disabled className="bg-white">
               Select a category
@@ -211,38 +207,34 @@ const ProductForm = ({ initialValues, submitLabel, onSubmit }: ProductFormProps)
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
-              Price (₦)
-            </label>
-            <input
+            <label htmlFor="price" className="text-sm font-medium text-ink/80">Price (₦)</label>
+            <input id="price"
               required
               type="number"
               min={0}
               value={values.price}
               onChange={(e) => set("price", e.target.value)}
-              className="mt-2 w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm focus:border-gold focus:outline-none"
+              className="mt-2 w-full border border-ink/20 bg-white px-4 py-3 text-sm focus:border-gold focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
-              Old Price (₦)
-            </label>
-            <input
+            <label htmlFor="old-price" className="text-sm font-medium text-ink/80">Old Price (₦)</label>
+            <input id="old-price"
               type="number"
               min={0}
               value={values.oldPrice}
               onChange={(e) => set("oldPrice", e.target.value)}
               placeholder="Optional"
-              className="mt-2 w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
+              className="mt-2 w-full border border-ink/20 bg-white px-4 py-3 text-sm placeholder:text-ink/30 focus:border-gold focus:outline-none"
             />
           </div>
         </div>
 
         <div>
-          <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
-            Product Images ({gallery.length}/{MAX_IMAGES})
-          </label>
-          <p className="mt-1 text-xs text-black/40">
+          <p className="text-sm font-medium text-ink/80">
+            Product images ({gallery.length}/{MAX_IMAGES})
+          </p>
+          <p className="mt-1 text-xs text-ink/40">
             The first image is the cover shown in the shop. Click the star on any image to make it the cover.
           </p>
 
@@ -251,14 +243,14 @@ const ProductForm = ({ initialValues, submitLabel, onSubmit }: ProductFormProps)
               {gallery.map((item, i) => (
                 <div
                   key={item.key}
-                  className={`relative aspect-square overflow-hidden rounded-lg bg-black/10 ${
+                  className={`relative aspect-square overflow-hidden bg-ink/10 ${
                     i === 0 ? "ring-2 ring-gold" : ""
                   }`}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={item.preview} alt={`Image ${i + 1}`} className="h-full w-full object-cover" />
                   {i === 0 ? (
-                    <span className="absolute bottom-1 left-1 rounded bg-gold px-1.5 py-0.5 text-[9px] font-semibold text-black uppercase">
+                    <span className="absolute bottom-1 left-1 bg-gold px-1.5 py-0.5 text-[10px] font-semibold text-white">
                       Cover
                     </span>
                   ) : (
@@ -267,7 +259,7 @@ const ProductForm = ({ initialValues, submitLabel, onSubmit }: ProductFormProps)
                       onClick={() => makeCover(item.key)}
                       aria-label="Make cover image"
                       title="Make cover image"
-                      className="absolute bottom-1 left-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white transition hover:bg-gold hover:text-black"
+                      className="absolute bottom-1 left-1 flex h-6 w-6 items-center justify-center rounded-full bg-ink/60 text-white transition hover:bg-gold hover:text-ink"
                     >
                       <Star className="h-3 w-3" />
                     </button>
@@ -276,7 +268,7 @@ const ProductForm = ({ initialValues, submitLabel, onSubmit }: ProductFormProps)
                     type="button"
                     onClick={() => removeImage(item.key)}
                     aria-label="Remove image"
-                    className="absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white transition hover:bg-red-600"
+                    className="absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-ink/60 text-white transition hover:bg-red-600"
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -287,7 +279,7 @@ const ProductForm = ({ initialValues, submitLabel, onSubmit }: ProductFormProps)
 
           {roomLeft > 0 && (
             <>
-              <label className="mt-3 flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-black/20 py-6 text-sm text-black/50 transition hover:border-gold hover:text-gold">
+              <label className="mt-3 flex cursor-pointer flex-col items-center justify-center gap-2 border border-dashed border-ink/20 py-6 text-sm text-ink/50 transition hover:border-gold hover:text-gold">
                 <UploadCloud className="h-5 w-5" />
                 {processing ? "Preparing images…" : "Click to upload images (you can select several)"}
                 <input
@@ -303,11 +295,12 @@ const ProductForm = ({ initialValues, submitLabel, onSubmit }: ProductFormProps)
                 />
               </label>
 
-              <label className="mt-3 block text-xs font-semibold tracking-wide text-black/60 uppercase">
-                Or Add Image URL
+              <label htmlFor="image-url" className="mt-3 block text-sm font-medium text-ink/80">
+                Or add an image URL
               </label>
               <div className="mt-2 flex gap-2">
                 <input
+                  id="image-url"
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
                   onKeyDown={(e) => {
@@ -317,12 +310,12 @@ const ProductForm = ({ initialValues, submitLabel, onSubmit }: ProductFormProps)
                     }
                   }}
                   placeholder="https://images.example.com/product.jpg"
-                  className="w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
+                  className="w-full border border-ink/20 bg-white px-4 py-3 text-sm placeholder:text-ink/30 focus:border-gold focus:outline-none"
                 />
                 <button
                   type="button"
                   onClick={handleAddUrl}
-                  className="shrink-0 rounded-md border border-black/10 px-4 text-sm font-semibold transition hover:border-gold hover:text-gold"
+                  className="shrink-0 border border-ink/10 px-4 text-sm font-semibold transition hover:border-gold hover:text-gold"
                 >
                   Add
                 </button>
@@ -332,33 +325,29 @@ const ProductForm = ({ initialValues, submitLabel, onSubmit }: ProductFormProps)
         </div>
 
         <div>
-          <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
-            Description
-          </label>
-          <textarea
+          <label htmlFor="description" className="text-sm font-medium text-ink/80">Description</label>
+          <textarea id="description"
             rows={3}
             value={values.description}
             onChange={(e) => set("description", e.target.value)}
-            className="mt-2 w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
+            className="mt-2 w-full border border-ink/20 bg-white px-4 py-3 text-sm placeholder:text-ink/30 focus:border-gold focus:outline-none"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
-              Stock
-            </label>
-            <input
+            <label htmlFor="stock" className="text-sm font-medium text-ink/80">Stock</label>
+            <input id="stock"
               required
               type="number"
               min={0}
               value={values.stock}
               onChange={(e) => set("stock", e.target.value)}
-              className="mt-2 w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm focus:border-gold focus:outline-none"
+              className="mt-2 w-full border border-ink/20 bg-white px-4 py-3 text-sm focus:border-gold focus:outline-none"
             />
           </div>
           <div className="flex items-end pb-3">
-            <label className="flex items-center gap-2 text-sm text-black/70">
+            <label className="flex items-center gap-2 text-sm text-ink/70">
               <input
                 type="checkbox"
                 checked={values.isActive}
@@ -374,7 +363,7 @@ const ProductForm = ({ initialValues, submitLabel, onSubmit }: ProductFormProps)
       <button
         type="submit"
         disabled={submitting || processing}
-        className="mt-6 w-full rounded-md bg-gold px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold/90 disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-6 w-full bg-gold px-6 py-3 text-sm font-semibold text-white transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-50"
       >
         {submitting ? "Saving…" : submitLabel}
       </button>

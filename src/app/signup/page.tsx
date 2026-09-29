@@ -4,7 +4,6 @@ import { FormEvent, Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { safeRedirect } from "@/lib/redirect";
 import Link from "next/link";
-import { UserPlus } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import PasswordInput from "../components/PasswordInput";
 
@@ -50,72 +49,72 @@ function SignupForm() {
   };
 
   return (
-    <div className="mx-10 mt-16 mb-16 flex justify-center">
-      <div className="w-full max-w-sm rounded-2xl bg-black/5 p-8">
-        <div className="flex items-center gap-2">
-          <UserPlus className="h-5 w-5 text-gold" />
-          <h1 className="text-lg font-semibold">Create Account</h1>
-        </div>
-        <p className="mt-1 text-sm text-black/50">Join Fidex.</p>
+    <div className="flex justify-center px-4 py-12 md:py-20">
+      <div className="w-full max-w-sm">
+        <h1 className="display-type text-4xl text-ink">Create an account</h1>
+        <p className="mt-2 text-sm text-ink/60">It takes a minute, and your orders are saved to it.</p>
 
         {error && (
-          <p className="mt-4 rounded-md bg-red-500/10 px-4 py-2 text-sm text-red-600">{error}</p>
+          <p className="mt-4 bg-red-500/10 px-4 py-2 text-sm text-red-600">{error}</p>
         )}
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
-            <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
+            <label htmlFor="full-name" className="text-sm font-medium text-ink/80">
               Full Name
             </label>
             <input
+              id="full-name"
               required
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-2 w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
+              className="mt-2 w-full border border-ink/20 bg-white px-4 py-3 text-sm placeholder:text-ink/30 focus:border-gold focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
+            <label htmlFor="email" className="text-sm font-medium text-ink/80">
               Email
             </label>
             <input
+              id="email"
               required
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-2 w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
+              className="mt-2 w-full border border-ink/20 bg-white px-4 py-3 text-sm placeholder:text-ink/30 focus:border-gold focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
+            <label htmlFor="password" className="text-sm font-medium text-ink/80">
               Password
             </label>
             <PasswordInput
+              id="password"
               required
               minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
+              className="w-full border border-ink/20 bg-white px-4 py-3 text-sm placeholder:text-ink/30 focus:border-gold focus:outline-none"
             />
-            <p className="mt-1 text-xs text-black/40">At least 8 characters.</p>
+            <p className="mt-1 text-xs text-ink/40">At least 8 characters.</p>
           </div>
 
           <button
             type="submit"
             disabled={submitting}
-            className="w-full rounded-md bg-gold px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold/90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full bg-gold px-6 py-3 text-sm font-semibold text-white transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {submitting ? "Creating account…" : "Sign Up"}
+            {submitting ? "Creating account…" : "Create account"}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-black/50">
+        <p className="mt-6 text-sm text-ink/60">
           Already have an account?{" "}
           <Link
             href={next === "/" ? "/login" : `/login?next=${encodeURIComponent(next)}`}
-            className="text-gold hover:underline">
-            Sign In
+            className="font-medium text-ink underline underline-offset-4 hover:text-gold">
+            Sign in
           </Link>
         </p>
       </div>

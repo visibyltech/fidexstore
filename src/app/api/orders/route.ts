@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
 import { getDb, nextId } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 
@@ -16,6 +17,9 @@ type OrderItemInput = {
 // Checkout requires a signed-in account (src/proxy.ts redirects signed-out
 // visitors away from /checkout); every order is linked to its user.
 export async function POST(request: NextRequest) {
+  const limited = rateLimit(request, "orders", { limit: 10, windowMs: 10 * 60_000 });
+  if (limited) return limited;
+
   const { user: sessionUser, response } = await requireUser(request);
   if (!sessionUser) return response;
 

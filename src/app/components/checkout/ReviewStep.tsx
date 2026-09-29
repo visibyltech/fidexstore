@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { CreditCard, UploadCloud, Zap, ShieldCheck, Loader2, Truck } from "lucide-react";
+import { UploadCloud, Loader2 } from "lucide-react";
 import { PaymentMethod } from "./PaymentMethodStep";
 import { CartItem } from "../../context/CartContext";
 import { DeliveryDetails } from "./DeliveryForm";
+import { SITE } from "@/lib/site";
 
 type ReviewStepProps = {
   paymentMethod: PaymentMethod;
@@ -17,10 +18,7 @@ type ReviewStepProps = {
   onPlaceOrder: (orderNumber: string) => void;
 };
 
-const BANK_ACCOUNTS = [
-  { bank: "GTBank", accountName: "Fidex", accountNumber: "0123456780" },
-  { bank: "Globus Bank", accountName: "Fidex", accountNumber: "2003633189" },
-];
+const BANK_ACCOUNTS = SITE.bankAccounts;
 
 const INSTALLMENT_PLANS = [
   { weeks: 2, interestRate: 3 },
@@ -195,40 +193,37 @@ const ReviewStep = ({
   };
 
   return (
-    <div className="flex-1 rounded-2xl bg-black/5 p-6">
-      <h2 className="text-lg font-semibold">Review & Pay</h2>
+    <div className="flex-1">
+      <h2 className="display-type text-3xl">Review and pay</h2>
 
       {paymentMethod === "bank-transfer" && (
-        <div className="mt-6 rounded-xl border border-gold/40 bg-gold/5 p-5">
-          <div className="flex items-center gap-2 text-gold">
-            <CreditCard className="h-4 w-4" />
-            <h3 className="text-sm font-semibold">Bank Account Details</h3>
-          </div>
-          <p className="mt-2 text-sm text-black/70">
+        <div className="mt-6 border-t border-ink/15 pt-6">
+          <h3 className="text-lg font-semibold text-ink">Transfer to our account</h3>
+          <p className="mt-2 text-sm text-ink/70">
             Please transfer the exact amount of{" "}
-            <span className="font-semibold text-black">₦{total.toLocaleString()}</span> to the
+            <span className="font-semibold text-ink">₦{total.toLocaleString()}</span> to the
             account below. Your order will not ship until we receive payment.
           </p>
 
-          <div className="mt-4 space-y-2 rounded-lg bg-black/5 p-4 text-sm">
+          <div className="mt-4 space-y-2 bg-cream p-4 text-sm">
             <div className="flex justify-between">
-              <span className="text-black/50">Account Name</span>
+              <span className="text-ink/60">Account name</span>
               <span className="font-semibold">{BANK_ACCOUNTS[0].accountName}</span>
             </div>
             {BANK_ACCOUNTS.map((account) => (
               <div key={account.accountNumber} className="flex justify-between">
-                <span className="text-black/50">{account.bank}</span>
+                <span className="text-ink/50">{account.bank}</span>
                 <span className="font-semibold">{account.accountNumber}</span>
               </div>
             ))}
           </div>
 
-          <label className="mt-4 block text-xs font-semibold tracking-wide text-black/60 uppercase">
-            Upload Payment Receipt *
-          </label>
-          <label className="mt-2 flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-black/20 py-8 text-sm text-black/50 transition hover:border-gold hover:text-gold">
+          <p className="mt-4 block text-sm font-medium text-ink/80">
+            Upload your payment receipt *
+          </p>
+          <label className="mt-2 flex cursor-pointer flex-col items-center justify-center gap-2 border border-dashed border-ink/20 py-8 text-sm text-ink/50 transition hover:border-gold hover:text-gold">
             <UploadCloud className="h-5 w-5" />
-            {receiptFile?.name ?? "Click to upload screenshot"}
+            {receiptFile?.name ?? "Choose a screenshot or photo of the receipt"}
             <input
               type="file"
               accept="image/*"
@@ -240,23 +235,18 @@ const ReviewStep = ({
       )}
 
       {paymentMethod === "installments" && (
-        <div className="mt-6 rounded-xl border border-gold/40 bg-gold/5 p-5">
-          <div className="flex items-center gap-2 text-gold">
-            <Truck className="h-4 w-4" />
-            <h3 className="text-sm font-semibold">Installment Plan Details</h3>
-          </div>
-          <p className="mt-2 text-sm text-black/70">
+        <div className="mt-6 border-t border-ink/15 pt-6">
+          <h3 className="text-lg font-semibold text-ink">Your instalment plan</h3>
+          <p className="mt-2 text-sm text-ink/70">
             Choose a payment plan that works for you. A {DEPOSIT_RATE * 100}% initial deposit is
             required to start your plan. Your order ships once payment is completed.
           </p>
 
-          <label className="mt-4 block text-xs font-semibold tracking-wide text-black/60 uppercase">
-            Select Duration
-          </label>
-          <select
+          <label htmlFor="select-duration" className="mt-4 block text-sm font-medium text-ink/80">Select Duration</label>
+          <select id="select-duration"
             value={installmentWeeks}
             onChange={(e) => setInstallmentWeeks(Number(e.target.value))}
-            className="mt-2 w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm focus:border-gold focus:outline-none"
+            className="mt-2 w-full border border-ink/20 bg-white px-4 py-3 text-sm focus:border-gold focus:outline-none"
           >
             {INSTALLMENT_PLANS.map((plan) => (
               <option key={plan.weeks} value={plan.weeks} className="bg-white">
@@ -265,17 +255,17 @@ const ReviewStep = ({
             ))}
           </select>
 
-          <div className="mt-4 space-y-2 rounded-lg bg-black/5 p-4 text-sm">
+          <div className="mt-4 space-y-2 bg-cream p-4 text-sm">
             <div className="flex justify-between">
-              <span className="text-black/50">Subtotal (inc. Delivery)</span>
+              <span className="text-ink/50">Subtotal (inc. Delivery)</span>
               <span className="font-semibold">₦{total.toLocaleString()}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-black/50">Interest ({selectedPlan.interestRate}%)</span>
+              <span className="text-ink/50">Interest ({selectedPlan.interestRate}%)</span>
               <span className="font-semibold">+₦{installmentInterest.toLocaleString()}</span>
             </div>
-            <div className="flex justify-between border-t border-black/10 pt-2">
-              <span className="font-semibold text-black/70">Total Payable</span>
+            <div className="flex justify-between border-t border-ink/10 pt-2">
+              <span className="font-semibold text-ink/70">Total Payable</span>
               <span className="font-semibold text-gold">
                 ₦{installmentTotalPayable.toLocaleString()}
               </span>
@@ -287,40 +277,40 @@ const ReviewStep = ({
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-black/50">Remaining ({selectedPlan.weeks} payments)</span>
+              <span className="text-ink/50">Remaining ({selectedPlan.weeks} payments)</span>
               <span className="font-semibold">
                 ₦{installmentWeeklyPayment.toLocaleString()} / week
               </span>
             </div>
           </div>
 
-          <label className="mt-4 block text-xs font-semibold tracking-wide text-black/60 uppercase">
-            Upload Initial Deposit Receipt *
-          </label>
-          <p className="mt-1 text-sm text-black/70">
+          <p className="mt-4 block text-sm font-medium text-ink/80">
+            Upload your initial deposit receipt *
+          </p>
+          <p className="mt-1 text-sm text-ink/70">
             Please transfer your initial deposit of{" "}
-            <span className="font-semibold text-black">
+            <span className="font-semibold text-ink">
               ₦{installmentDeposit.toLocaleString()}
             </span>{" "}
             to the account below.
           </p>
 
-          <div className="mt-3 space-y-2 rounded-lg bg-black/5 p-4 text-sm">
+          <div className="mt-3 space-y-2 bg-cream p-4 text-sm">
             <div className="flex justify-between">
-              <span className="text-black/50">Account Name</span>
+              <span className="text-ink/60">Account name</span>
               <span className="font-semibold">{BANK_ACCOUNTS[0].accountName}</span>
             </div>
             {BANK_ACCOUNTS.map((account) => (
               <div key={account.accountNumber} className="flex justify-between">
-                <span className="text-black/50">{account.bank}</span>
+                <span className="text-ink/50">{account.bank}</span>
                 <span className="font-semibold">{account.accountNumber}</span>
               </div>
             ))}
           </div>
 
-          <label className="mt-3 flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-black/20 py-8 text-sm text-black/50 transition hover:border-gold hover:text-gold">
+          <label className="mt-3 flex cursor-pointer flex-col items-center justify-center gap-2 border border-dashed border-ink/20 py-8 text-sm text-ink/50 transition hover:border-gold hover:text-gold">
             <UploadCloud className="h-5 w-5" />
-            {receiptFile?.name ?? "Click to upload screenshot"}
+            {receiptFile?.name ?? "Choose a screenshot or photo of the receipt"}
             <input
               type="file"
               accept="image/*"
@@ -332,14 +322,11 @@ const ReviewStep = ({
       )}
 
       {paymentMethod === "klump" && (
-        <div className="mt-6 rounded-xl border border-gold/40 bg-gold/5 p-5 text-sm text-black/70">
-          <div className="flex items-center gap-2 text-gold">
-            <ShieldCheck className="h-4 w-4" />
-            <h3 className="text-sm font-semibold">Klump Buy Now, Pay Later</h3>
-          </div>
+        <div className="mt-6 border-t border-ink/15 pt-6 text-sm text-ink/70">
+          <h3 className="text-lg font-semibold text-ink">Pay later with Klump</h3>
           <p className="mt-2">
-            Clicking &ldquo;Place Order&rdquo; opens the secure Klump checkout widget for{" "}
-            <span className="font-semibold text-black">₦{total.toLocaleString()}</span>. Choose a
+            Clicking &ldquo;Place order&rdquo; opens the secure Klump checkout widget for{" "}
+            <span className="font-semibold text-ink">₦{total.toLocaleString()}</span>. Choose a
             payment plan there to complete your purchase.
           </p>
           {klumpStatus === "verifying" && (
@@ -362,28 +349,28 @@ const ReviewStep = ({
       )}
 
       {orderError && (
-        <p className="mt-4 rounded-md bg-red-500/10 px-4 py-2 text-sm text-red-600">{orderError}</p>
+        <p className="mt-4 bg-red-500/10 px-4 py-2 text-sm text-red-600">{orderError}</p>
       )}
 
       <div className="mt-6 space-y-3">
-        <label className="flex cursor-pointer items-start gap-2 text-sm text-black/70">
+        <label className="flex cursor-pointer items-start gap-2 text-sm text-ink/70">
           <input
             type="checkbox"
             checked={acceptedTerms}
             onChange={(e) => setAcceptedTerms(e.target.checked)}
             className="mt-0.5 accent-gold"
           />
-          I accept the <span className="font-semibold text-black">Terms & Conditions</span>{" "}
+          I accept the <span className="font-semibold text-ink">Terms & Conditions</span>{" "}
           including the No-Return & No-Refund policy.
         </label>
-        <label className="flex cursor-pointer items-start gap-2 text-sm text-black/70">
+        <label className="flex cursor-pointer items-start gap-2 text-sm text-ink/70">
           <input
             type="checkbox"
             checked={acceptedPrivacy}
             onChange={(e) => setAcceptedPrivacy(e.target.checked)}
             className="mt-0.5 accent-gold"
           />
-          I accept the <span className="font-semibold text-black">Privacy Policy</span> and consent
+          I accept the <span className="font-semibold text-ink">Privacy Policy</span> and consent
           to data processing under Nigerian NDPR.
         </label>
       </div>
@@ -391,17 +378,16 @@ const ReviewStep = ({
       <div className="mt-6 flex gap-3">
         <button
           onClick={onBack}
-          className="rounded-md bg-black/10 px-6 py-3 text-sm font-semibold transition hover:bg-black/15"
+          className="bg-ink/10 px-6 py-3 text-sm font-semibold transition hover:bg-ink/15"
         >
           Back
         </button>
         <button
           onClick={handlePlaceOrder}
           disabled={!canPlaceOrder || submitting || klumpStatus === "verifying"}
-          className="flex flex-1 items-center justify-center gap-2 rounded-md bg-gold px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold/90 disabled:cursor-not-allowed disabled:opacity-40"
+          className="flex flex-1 items-center justify-center gap-2 bg-gold px-6 py-3 text-sm font-semibold text-white transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-40"
         >
-          <Zap className="h-4 w-4" />{" "}
-          {submitting ? "Placing Order…" : `Place Order — ₦${orderTotal.toLocaleString()}`}
+          {submitting ? "Placing order…" : `Place order: ₦${orderTotal.toLocaleString()}`}
         </button>
       </div>
     </div>

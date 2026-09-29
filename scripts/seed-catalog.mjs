@@ -1,7 +1,7 @@
 import { cert, initializeApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 
-// One-time catalog seed for a fresh Fidex Firestore project — run directly
+// One-time catalog seed for a fresh Fidex Firestore project. Run directly
 // against Firestore with server-side env vars. Safe to re-run: categories
 // and products are matched by slug and skipped if they already exist.
 const CATEGORIES = [
@@ -12,17 +12,17 @@ const CATEGORIES = [
 ];
 
 const PRODUCTS = [
-  { category: "clothing", name: "Classic Black Crew Tee", slug: "classic-black-crew-tee", description: "A wardrobe staple — 100% heavyweight cotton crew neck tee, cut for a clean, modern fit.", image: "/products-fidex/tshirt-black.jpg", price: 8500, old_price: null, rating: 4.6, reviews_count: 34, stock: 60 },
+  { category: "clothing", name: "Classic Black Crew Tee", slug: "classic-black-crew-tee", description: "A wardrobe staple. 100% heavyweight cotton crew neck tee, cut for a clean, modern fit.", image: "/products-fidex/tshirt-black.jpg", price: 8500, old_price: null, rating: 4.6, reviews_count: 34, stock: 60 },
   { category: "clothing", name: "Essential White Crew Tee", slug: "essential-white-crew-tee", description: "Crisp white cotton tee that pairs with everything. Breathable, durable, and true to size.", image: "/products-fidex/tshirt-white.jpg", price: 8500, old_price: 10000, rating: 4.5, reviews_count: 28, stock: 55 },
-  { category: "clothing", name: "Slim Fit Denim Jeans", slug: "slim-fit-denim-jeans", description: "Stretch denim with a tailored slim fit — built for everyday wear from day to night.", image: "/products-fidex/jeans.jpg", price: 22000, old_price: 26000, rating: 4.7, reviews_count: 41, stock: 32 },
+  { category: "clothing", name: "Slim Fit Denim Jeans", slug: "slim-fit-denim-jeans", description: "Stretch denim with a tailored slim fit. Built for everyday wear from day to night.", image: "/products-fidex/jeans.jpg", price: 22000, old_price: 26000, rating: 4.7, reviews_count: 41, stock: 32 },
   { category: "accessories", name: "Full-Grain Leather Belt", slug: "full-grain-leather-belt", description: "Hand-cut full-grain leather belt with a solid metal buckle. Ages beautifully with wear.", image: "/products-fidex/belt.jpg", price: 12500, old_price: null, rating: 4.4, reviews_count: 19, stock: 40 },
-  { category: "accessories", name: "Classic Chronograph Watch", slug: "classic-chronograph-watch", description: "A timeless chronograph on a stainless steel case — sharp enough for the office, tough enough for the weekend.", image: "/products-fidex/watch.jpg", price: 45000, old_price: 55000, rating: 4.8, reviews_count: 52, stock: 18 },
+  { category: "accessories", name: "Classic Chronograph Watch", slug: "classic-chronograph-watch", description: "A timeless chronograph on a stainless steel case. Sharp enough for the office, tough enough for the weekend.", image: "/products-fidex/watch.jpg", price: 45000, old_price: 55000, rating: 4.8, reviews_count: 52, stock: 18 },
   { category: "accessories", name: "Polarized Aviator Sunglasses", slug: "polarized-aviator-sunglasses", description: "UV400 polarized lenses in a classic aviator frame. Comes with a protective case.", image: "/products-fidex/sunglasses.jpg", price: 15000, old_price: null, rating: 4.3, reviews_count: 22, stock: 45 },
   { category: "accessories", name: "Leather Trifold Wallet", slug: "leather-trifold-wallet", description: "Compact trifold wallet in genuine leather with card slots and a coin pocket.", image: "/products-fidex/wallet.jpg", price: 18000, old_price: null, rating: 4.6, reviews_count: 16, stock: 38 },
-  { category: "accessories", name: "Everyday Canvas Backpack", slug: "everyday-canvas-backpack", description: "Durable canvas backpack with a padded laptop sleeve — built for daily carry.", image: "/products-fidex/backpack.jpg", price: 27500, old_price: 32000, rating: 4.7, reviews_count: 37, stock: 24 },
-  { category: "grooming", name: "Men's Grooming Essentials Kit", slug: "mens-grooming-essentials-kit", description: "A complete grooming set — trimmer, brush, and skincare essentials in one travel-ready kit.", image: "/products-fidex/grooming-set.jpg", price: 19500, old_price: null, rating: 4.5, reviews_count: 29, stock: 27 },
+  { category: "accessories", name: "Everyday Canvas Backpack", slug: "everyday-canvas-backpack", description: "Durable canvas backpack with a padded laptop sleeve. Built for daily carry.", image: "/products-fidex/backpack.jpg", price: 27500, old_price: 32000, rating: 4.7, reviews_count: 37, stock: 24 },
+  { category: "grooming", name: "Men's Grooming Essentials Kit", slug: "mens-grooming-essentials-kit", description: "A complete grooming set. Trimmer, brush, and skincare essentials in one travel-ready kit.", image: "/products-fidex/grooming-set.jpg", price: 19500, old_price: null, rating: 4.5, reviews_count: 29, stock: 27 },
   { category: "essentials", name: "Classic Snapback Cap", slug: "classic-snapback-cap", description: "Structured six-panel snapback with an adjustable fit. A go-to finishing piece for any outfit.", image: "/products-fidex/cap.jpg", price: 9500, old_price: null, rating: 4.4, reviews_count: 21, stock: 50 },
-  { category: "essentials", name: "Canvas Low-Top Sneakers", slug: "canvas-low-top-sneakers", description: "Lightweight canvas low-tops with a cushioned footbed — an everyday essential for any wardrobe.", image: "/products-fidex/sneakers.jpg", price: 24000, old_price: 28000, rating: 4.6, reviews_count: 44, stock: 30 },
+  { category: "essentials", name: "Canvas Low-Top Sneakers", slug: "canvas-low-top-sneakers", description: "Lightweight canvas low-tops with a cushioned footbed. An everyday essential for any wardrobe.", image: "/products-fidex/sneakers.jpg", price: 24000, old_price: 28000, rating: 4.6, reviews_count: 44, stock: 30 },
 ];
 
 async function nextId(db, collectionName) {

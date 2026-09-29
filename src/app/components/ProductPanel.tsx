@@ -1,113 +1,28 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { Check, ShoppingCart } from "lucide-react";
-import { useCart } from "../context/CartContext";
-
-export type Product = {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-};
+import ShopProductCard, { ShopProduct } from "./shop/ShopProductCard";
+import SectionHeading from "./SectionHeading";
 
 type ProductPanelProps = {
   heading: string;
-  subtitle: string;
-  products: Product[];
-  ctaLabel?: string;
-  showDots?: boolean;
+  subtitle?: string;
+  products: ShopProduct[];
+  href?: string;
 };
 
-const ProductCard = ({ product }: { product: Product }) => {
-  const { addToCart } = useCart();
-  const [added, setAdded] = useState(false);
-
-  const handleAddToCart = () => {
-    addToCart({ id: product.id, name: product.name, image: product.image, price: product.price });
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1500);
-  };
+const ProductPanel = ({ heading, subtitle, products, href }: ProductPanelProps) => {
+  if (products.length === 0) return null;
 
   return (
-    <div className="group relative">
-      <div className="relative aspect-square overflow-hidden rounded-2xl">
-        <Image
-          src={product.image}
-          alt={product.name}
-          fill
-          className="object-cover transition duration-300 group-hover:scale-105"
-        />
-      </div>
-      {/* The link's ::after stretches over the whole card, so clicking anywhere opens the product. */}
-      <Link
-        href={`/product/${product.id}`}
-        className="mt-3 block text-xs font-medium tracking-wide text-black/70 uppercase transition group-hover:text-gold after:absolute after:inset-0 after:content-['']"
-      >
-        {product.name}
-      </Link>
-      <p className="mt-1 text-sm font-semibold text-gold">
-        ₦{product.price.toLocaleString()}
-      </p>
+    <section className="px-4 pt-16 md:px-10 md:pt-24">
+      <SectionHeading title={heading} description={subtitle} href={href} />
 
-      <button
-        onClick={handleAddToCart}
-        className={`relative z-10 mt-3 flex w-full items-center justify-center gap-2 rounded-md py-2 text-xs font-semibold uppercase transition ${
-          added ? "bg-green-500 text-black" : "bg-gold text-black hover:bg-gold/90"
-        }`}
-      >
-        {added ? (
-          <>
-            <Check className="h-3.5 w-3.5" /> Added
-          </>
-        ) : (
-          <>
-            <ShoppingCart className="h-3.5 w-3.5" /> Add to Cart
-          </>
-        )}
-      </button>
-    </div>
-  );
-};
-
-const ProductPanel = ({ heading, subtitle, products, ctaLabel, showDots }: ProductPanelProps) => {
-  return (
-    <div className="mx-10 mt-16 rounded-3xl bg-black/4 px-6 py-10 md:px-10">
-      <div className="text-center">
-        <h2 className="text-2xl font-semibold tracking-wide uppercase">{heading}</h2>
-        <p className="mt-2 text-sm text-black/50">{subtitle}</p>
-      </div>
-
-      <div className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5">
+      <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-10 md:grid-cols-3 md:gap-x-4 lg:grid-cols-4">
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ShopProductCard key={product.id} product={product} />
         ))}
       </div>
-
-      {ctaLabel && (
-        <div className="mt-10 flex justify-center">
-          <Link
-            href="/shop"
-            className="rounded-full bg-gold px-8 py-3 text-sm font-semibold tracking-wide text-black uppercase transition hover:bg-gold/90"
-          >
-            {ctaLabel}
-          </Link>
-        </div>
-      )}
-
-      {showDots && (
-        <div className="mt-10 flex justify-center gap-2">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <span
-              key={i}
-              className={`h-2 w-2 rounded-full ${i === 0 ? "bg-gold" : "bg-black/20"}`}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+    </section>
   );
 };
 

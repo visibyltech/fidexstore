@@ -1,36 +1,66 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const tileImage = "object-cover transition duration-300 group-hover:scale-105";
+const tiles = [
+  {
+    href: "/shop?category=accessories",
+    src: "/products-fidex/backpack.jpg",
+    alt: "Canvas backpack",
+    label: "Everyday carry",
+    className: "col-span-2 row-span-2 aspect-square md:aspect-auto",
+  },
+  {
+    href: "/shop?category=accessories",
+    src: "/products-fidex/sunglasses.jpg",
+    alt: "Aviator sunglasses",
+    label: "Sunglasses",
+    className: "aspect-square",
+  },
+  {
+    href: "/shop?category=essentials",
+    src: "/products-fidex/cap.jpg",
+    alt: "Snapback cap",
+    label: "Caps",
+    className: "aspect-square",
+  },
+  {
+    href: "/shop?category=grooming",
+    src: "/products-fidex/grooming-set.jpg",
+    alt: "Grooming kit",
+    label: "Grooming",
+    className: "col-span-2 aspect-2/1",
+  },
+];
 
 const QualityGrid = () => {
   return (
-    <div className="mx-10 mt-16 grid grid-cols-1 gap-4 md:grid-cols-2">
-      <Link href="/shop" className="group relative h-100 overflow-hidden rounded-3xl md:h-auto">
-        <Image
-          src="/products-fidex/backpack.jpg"
-          alt="Fidex accessories, ready for everyday carry"
-          fill
-          className={tileImage}
-        />
-        <div className="absolute inset-0 bg-black/50" />
-        <p className="absolute bottom-8 left-8 text-2xl font-semibold tracking-wide text-white uppercase">
-          New Drops Weekly
+    <section className="mt-16 bg-ink px-4 py-14 text-cream md:mt-24 md:px-10 md:py-20">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <h2 className="display-type text-5xl uppercase md:text-7xl">
+          The <span className="text-gold">weekly</span> drop
+        </h2>
+        <p className="max-w-xs text-sm text-cream/70">
+          A few things we are wearing right now. Tap any photo to shop the category.
         </p>
-      </Link>
-
-      <div className="grid grid-cols-2 gap-4">
-        <Link href="/shop?category=accessories" className="group relative h-48 overflow-hidden rounded-3xl">
-          <Image src="/products-fidex/sunglasses.jpg" alt="Fidex sunglasses" fill className={tileImage} />
-        </Link>
-        <Link href="/shop?category=accessories" className="group relative h-48 overflow-hidden rounded-3xl">
-          <Image src="/products-fidex/cap.jpg" alt="Fidex cap" fill className={tileImage} />
-        </Link>
-        <Link href="/shop?category=grooming" className="group relative col-span-2 h-48 overflow-hidden rounded-3xl">
-          <Image src="/products-fidex/grooming-set.jpg" alt="Fidex grooming set" fill className={tileImage} />
-        </Link>
       </div>
-    </div>
+
+      <div className="mt-10 grid grid-cols-2 gap-1 md:grid-cols-4 md:grid-rows-2">
+        {tiles.map((tile) => (
+          <Link key={tile.src} href={tile.href} className={`group relative overflow-hidden ${tile.className}`}>
+            <Image
+              src={tile.src}
+              alt={tile.alt}
+              fill
+              sizes="(min-width: 768px) 50vw, 100vw"
+              className="object-cover transition duration-500 group-hover:scale-[1.03]"
+            />
+            <span className="absolute bottom-3 left-3 bg-cream px-3 py-1.5 text-sm font-medium text-ink transition group-hover:bg-gold group-hover:text-white">
+              {tile.label}
+            </span>
+          </Link>
+        ))}
+      </div>
+    </section>
   );
 };
 

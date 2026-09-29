@@ -1,26 +1,31 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Hammer } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+
+export const metadata: Metadata = { title: "Page not found" };
 
 export default function NotFound() {
   return (
-    <div className="mx-10 mt-16 mb-16 flex flex-col items-center rounded-3xl bg-black/5 py-24 text-center">
-      <Hammer className="h-12 w-12 text-gold" />
-      <h1 className="mt-6 text-3xl font-semibold tracking-tight">
-        Coming <span className="text-gold">Soon</span>
-      </h1>
-      <p className="mt-3 max-w-md text-sm text-black/60">
-        This page is still being built. In the meantime, explore our full range of clothing,
-        accessories, and essentials.
+    <div className="bg-cream px-4 py-20 md:px-10 md:py-28">
+      <p className="display-type text-[7rem] leading-none text-gold md:text-[12rem]">404</p>
+      <h1 className="display-type mt-4 text-4xl text-ink md:text-5xl">We couldn&apos;t find that page.</h1>
+      <p className="mt-4 max-w-md text-ink/70">
+        The link may be old or the item may have sold out. Everything we have in stock is in the shop.
       </p>
-      <Link
-        href="/shop"
-        className="mt-8 flex items-center gap-2 rounded-full bg-gold px-8 py-3 text-sm font-semibold tracking-wide text-black uppercase transition hover:bg-gold/90"
-      >
-        Shop Now <ArrowRight className="h-4 w-4" />
-      </Link>
-      <Link href="/" className="mt-4 text-sm text-black/50 transition hover:text-gold">
-        Back to Home
-      </Link>
+      <div className="mt-8 flex flex-wrap items-center gap-6">
+        <Link
+          href="/shop"
+          className="group flex items-center gap-2 bg-ink px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-gold"
+        >
+          Go to the shop <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+        </Link>
+        <Link
+          href="/"
+          className="text-sm font-medium text-ink underline decoration-ink/30 underline-offset-4 transition hover:decoration-gold"
+        >
+          Back to home
+        </Link>
+      </div>
     </div>
   );
 }

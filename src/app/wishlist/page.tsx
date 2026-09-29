@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, Trash2, ShoppingCart, ArrowRight } from "lucide-react";
+import { X, ArrowRight } from "lucide-react";
 import { useWishlist } from "../context/WishlistContext";
 import { useCart } from "../context/CartContext";
 
@@ -11,62 +11,55 @@ export default function WishlistPage() {
   const { addToCart } = useCart();
 
   return (
-    <div className="mx-10 mt-8 mb-16">
-      <div className="flex items-center gap-3">
-        <Heart className="h-6 w-6 text-gold" />
-        <h1 className="text-2xl font-semibold">
-          Wishlist <span className="text-black/40">({itemCount} items)</span>
-        </h1>
-      </div>
+    <div className="px-4 pt-10 md:px-10">
+      <h1 className="display-type text-5xl text-ink md:text-6xl">
+        Saved for later <span className="text-ink/30">({itemCount})</span>
+      </h1>
 
       {items.length === 0 ? (
-        <div className="mt-8 flex flex-col items-center justify-center rounded-3xl bg-black/5 py-24 text-center">
-          <Heart className="h-14 w-14 text-black/20" />
-          <p className="mt-6 text-lg font-semibold">Your wishlist is empty</p>
-          <p className="mt-2 text-sm text-black/50">
-            Tap the heart on any item to save it here for later.
-          </p>
+        <div className="mt-8 bg-cream px-6 py-16">
+          <p className="text-lg font-semibold">No saved items yet.</p>
+          <p className="mt-2 text-sm text-ink/60">Tap the heart on any product to keep it here.</p>
           <Link
             href="/shop"
-            className="mt-6 flex items-center gap-2 rounded-md bg-gold px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold/90"
+            className="mt-6 inline-flex items-center gap-2 bg-ink px-6 py-3 text-sm font-semibold text-white transition hover:bg-gold"
           >
-            Shop Now <ArrowRight className="h-4 w-4" />
+            Browse the shop <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       ) : (
-        <div className="mt-8 space-y-4">
+        <ul className="mt-8 border-t border-ink/10">
           {items.map((item) => (
-            <div key={item.id} className="flex items-center gap-4 rounded-2xl bg-black/5 p-4">
-              <Link
-                href={`/product/${item.id}`}
-                className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl"
-              >
-                <Image src={item.image} alt={item.name} fill className="object-cover" />
+            <li key={item.id} className="flex flex-wrap items-center gap-4 border-b border-ink/10 py-5">
+              <Link href={`/product/${item.id}`} className="relative h-24 w-20 shrink-0 overflow-hidden bg-cream">
+                <Image src={item.image} alt={item.name} fill sizes="80px" className="object-cover" />
               </Link>
 
-              <div className="flex-1">
-                <Link href={`/product/${item.id}`} className="font-semibold transition hover:text-gold">
+              <div className="min-w-0 flex-1">
+                <Link href={`/product/${item.id}`} className="font-medium transition hover:text-gold">
                   {item.name}
                 </Link>
-                <p className="mt-1 text-sm text-gold">₦{item.price.toLocaleString()}</p>
+                <p className="mt-1 text-sm text-ink/60">₦{item.price.toLocaleString()}</p>
               </div>
 
-              <button
-                onClick={() => addToCart(item)}
-                className="flex items-center gap-2 rounded-md bg-gold px-4 py-2 text-xs font-semibold text-black transition hover:bg-gold/90"
-              >
-                <ShoppingCart className="h-3.5 w-3.5" /> Add to Cart
-              </button>
-
-              <button
-                onClick={() => removeFromWishlist(item.id)}
-                className="text-black/40 transition hover:text-red-500"
-              >
-                <Trash2 className="h-5 w-5" />
-              </button>
-            </div>
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => addToCart(item)}
+                  className="bg-ink px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gold"
+                >
+                  Add to cart
+                </button>
+                <button
+                  onClick={() => removeFromWishlist(item.id)}
+                  aria-label={`Remove ${item.name} from wishlist`}
+                  className="flex items-center gap-1 text-xs text-ink/50 transition hover:text-gold"
+                >
+                  <X className="h-3.5 w-3.5" /> Remove
+                </button>
+              </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );

@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Check, ChevronRight, Heart, Minus, Plus, ShoppingCart, Star } from "lucide-react";
+import { ArrowLeft, Check, Heart, Minus, Plus, Star } from "lucide-react";
 import { useCart } from "../../context/CartContext";
 import { useWishlist } from "../../context/WishlistContext";
-import ProductPanel, { Product } from "../../components/ProductPanel";
+import ProductPanel from "../../components/ProductPanel";
+import { toShopProduct, ShopProduct } from "../../components/shop/ShopProductCard";
+import { whatsappUrl } from "@/lib/site";
 import type { ApiProduct, ApiProductDetail } from "@/types/api";
 
 export default function ProductDetailPage() {
@@ -17,7 +19,7 @@ export default function ProductDetailPage() {
 
   const [product, setProduct] = useState<ApiProductDetail | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "not-found">("loading");
-  const [related, setRelated] = useState<Product[]>([]);
+  const [related, setRelated] = useState<ShopProduct[]>([]);
   const [qty, setQty] = useState(1);
   const [activeIndex, setActiveIndex] = useState(0);
   const [added, setAdded] = useState(false);
@@ -47,7 +49,7 @@ export default function ProductDetailPage() {
     if (!product?.category) return;
     let cancelled = false;
 
-    fetch(`/api/products?category=${product.category}&sort=rating&limit=6`)
+    fetch(`/api/products?category=${product.category}&sort=rating&limit=5`)
       .then((res) => res.json())
       .then((data) => {
         if (cancelled) return;
@@ -55,8 +57,8 @@ export default function ProductDetailPage() {
         setRelated(
           items
             .filter((p) => p.id !== product.id)
-            .slice(0, 5)
-            .map((p) => ({ id: p.id, name: p.name, price: p.price, image: p.image ?? "" }))
+            .slice(0, 4)
+            .map(toShopProduct)
         );
       })
       .catch(() => {
@@ -69,19 +71,19 @@ export default function ProductDetailPage() {
   }, [product?.category, product?.id]);
 
   if (status === "loading") {
-    return <p className="mx-10 mt-16 text-center text-sm text-black/50">Loading product…</p>;
+    return <p className="px-4 py-24 text-center text-sm text-ink/60 md:px-10">Loading product…</p>;
   }
 
   if (status === "not-found" || !product) {
     return (
-      <div className="mx-10 mt-8 mb-16 flex flex-col items-center justify-center rounded-3xl bg-black/5 py-24 text-center">
-        <p className="text-lg font-semibold">Product not found</p>
-        <p className="mt-2 text-sm text-black/50">This item may have sold out or been removed.</p>
+      <div className="px-4 py-24 text-center md:px-10">
+        <h1 className="display-type text-5xl text-ink">Product not found</h1>
+        <p className="mt-3 text-sm text-ink/60">It may have sold out or been taken down.</p>
         <Link
           href="/shop"
-          className="mt-6 flex items-center gap-2 rounded-md bg-gold px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold/90"
+          className="mt-8 inline-flex items-center gap-2 bg-ink px-6 py-3 text-sm font-semibold text-white transition hover:bg-gold"
         >
-          <ArrowLeft className="h-4 w-4" /> Back to Shop
+          <ArrowLeft className="h-4 w-4" /> Back to the shop
         </Link>
       </div>
     );
@@ -90,7 +92,7 @@ export default function ProductDetailPage() {
   const image = product.image ?? "";
   const images = product.images?.length ? product.images : image ? [image] : [];
   const activeImage = images[activeIndex] ?? images[0];
-  const rating = Math.round(Number(product.rating));
+  const rating = Number(product.rating);
   const wishlisted = isWishlisted(product.id);
   const outOfStock = product.stock === 0;
   const maxQty = product.stock ?? Infinity;
@@ -106,164 +108,167 @@ export default function ProductDetailPage() {
   };
 
   return (
-    <div className="pb-16">
-      <div className="mx-10 mt-8">
-        <nav className="flex flex-wrap items-center gap-1 text-xs text-black/50">
-          <Link href="/" className="hover:text-gold">Home</Link>
-          <ChevronRight className="h-3 w-3" />
-          <Link href="/shop" className="hover:text-gold">Shop</Link>
-          {product.category && (
-            <>
-              <ChevronRight className="h-3 w-3" />
-              <Link href={`/shop?category=${product.category}`} className="hover:text-gold">
-                {product.category_name}
-              </Link>
-            </>
-          )}
-          <ChevronRight className="h-3 w-3" />
-          <span className="text-black/80">{product.name}</span>
-        </nav>
-
-        <div className="mt-6 grid grid-cols-1 gap-10 md:grid-cols-2">
-          <div>
-            <div className="relative aspect-square overflow-hidden rounded-3xl border border-black/5 bg-white">
-              {discount > 0 && (
-                <span className="absolute top-4 left-4 z-10 rounded-md bg-gold px-2.5 py-1 text-xs font-semibold text-black uppercase">
-                  Sale
-                </span>
-              )}
-              {activeImage && (
-                <Image src={activeImage} alt={product.name} fill priority className="object-cover" />
-              )}
-            </div>
-
-            {images.length > 1 && (
-              <div className="mt-3 grid grid-cols-5 gap-3">
-                {images.map((src, i) => (
-                  <button
-                    key={`${i}-${src}`}
-                    onClick={() => setActiveIndex(i)}
-                    aria-label={`Show image ${i + 1}`}
-                    className={`relative aspect-square overflow-hidden rounded-xl border-2 transition ${
-                      i === activeIndex ? "border-gold" : "border-transparent opacity-70 hover:opacity-100"
-                    }`}
-                  >
-                    <Image src={src} alt="" fill className="object-cover" />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="flex flex-col">
-            {product.category && (
-              <Link
-                href={`/shop?category=${product.category}`}
-                className="text-xs tracking-wide text-black/40 uppercase hover:text-gold"
-              >
-                {product.category_name}
-              </Link>
-            )}
-            <h1 className="mt-1 text-3xl font-semibold">{product.name}</h1>
-
-            <div className="mt-3 flex items-center gap-2">
-              <div className="flex items-center gap-0.5">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className={`h-4 w-4 ${i < rating ? "fill-gold text-gold" : "text-black/20"}`} />
-                ))}
-              </div>
-              <span className="text-sm text-black/40">({product.reviews_count} reviews)</span>
-            </div>
-
-            <div className="mt-5 flex items-center gap-3">
-              <span className="text-2xl font-semibold text-gold">₦{product.price.toLocaleString()}</span>
-              {product.old_price && (
-                <span className="text-base text-black/40 line-through">
-                  ₦{product.old_price.toLocaleString()}
-                </span>
-              )}
-              {discount > 0 && <span className="text-sm font-medium text-green-600">-{discount}%</span>}
-            </div>
-
-            {product.description && (
-              <p className="mt-6 text-sm leading-relaxed whitespace-pre-line text-black/70">
-                {product.description}
-              </p>
-            )}
-
-            <p className={`mt-6 text-sm font-medium ${outOfStock ? "text-red-500" : "text-green-600"}`}>
-              {outOfStock
-                ? "Out of stock"
-                : product.stock != null && product.stock <= 5
-                  ? `Only ${product.stock} left`
-                  : "In stock"}
-            </p>
-
-            <div className="mt-6 flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-3 rounded-full bg-black/10 px-4 py-2.5">
-                <button
-                  onClick={() => setQty((q) => Math.max(1, q - 1))}
-                  aria-label="Decrease quantity"
-                  className="text-black/70 transition hover:text-gold"
-                >
-                  <Minus className="h-4 w-4" />
-                </button>
-                <span className="w-6 text-center text-sm">{qty}</span>
-                <button
-                  onClick={() => setQty((q) => Math.min(maxQty, q + 1))}
-                  aria-label="Increase quantity"
-                  className="text-black/70 transition hover:text-gold"
-                >
-                  <Plus className="h-4 w-4" />
-                </button>
-              </div>
-
-              <button
-                onClick={handleAddToCart}
-                disabled={outOfStock}
-                className={`flex flex-1 items-center justify-center gap-2 rounded-md px-6 py-3 text-sm font-semibold uppercase transition disabled:cursor-not-allowed disabled:opacity-50 ${
-                  added ? "bg-green-500 text-black" : "bg-gold text-black hover:bg-gold/90"
-                }`}
-              >
-                {added ? (
-                  <>
-                    <Check className="h-4 w-4" /> Added
-                  </>
-                ) : (
-                  <>
-                    <ShoppingCart className="h-4 w-4" /> Add to Cart
-                  </>
-                )}
-              </button>
-
-              <button
-                onClick={() => toggleWishlist(item)}
-                aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
-                className={`flex h-11 w-11 items-center justify-center rounded-full transition ${
-                  wishlisted ? "bg-gold text-black" : "bg-black/5 text-black/60 hover:bg-gold hover:text-black"
-                }`}
-              >
-                <Heart className={`h-5 w-5 ${wishlisted ? "fill-black" : ""}`} />
-              </button>
-            </div>
-
-            <Link
-              href="/shop"
-              className="mt-8 flex items-center gap-2 text-sm text-black/50 transition hover:text-gold"
-            >
-              <ArrowLeft className="h-4 w-4" /> Continue shopping
+    <div>
+      <nav aria-label="Breadcrumb" className="px-4 pt-6 text-xs text-ink/60 md:px-10">
+        <Link href="/" className="hover:text-gold">Home</Link>
+        <span className="mx-2">/</span>
+        <Link href="/shop" className="hover:text-gold">Shop</Link>
+        {product.category && (
+          <>
+            <span className="mx-2">/</span>
+            <Link href={`/shop?category=${product.category}`} className="hover:text-gold">
+              {product.category_name}
             </Link>
+          </>
+        )}
+        <span className="mx-2">/</span>
+        <span className="text-ink">{product.name}</span>
+      </nav>
+
+      <div className="mt-6 grid grid-cols-1 gap-10 px-4 md:px-10 lg:grid-cols-12 lg:gap-16">
+        <div className="lg:col-span-7">
+          <div className="relative aspect-4/5 overflow-hidden bg-cream">
+            {discount > 0 && (
+              <span className="absolute top-3 left-3 z-10 bg-gold px-2.5 py-1 text-sm font-semibold text-white">
+                -{discount}%
+              </span>
+            )}
+            {activeImage && (
+              <Image
+                src={activeImage}
+                alt={product.name}
+                fill
+                priority
+                sizes="(min-width: 1024px) 58vw, 100vw"
+                className="object-cover"
+              />
+            )}
           </div>
+
+          {images.length > 1 && (
+            <div className="mt-2 grid grid-cols-5 gap-2">
+              {images.map((src, i) => (
+                <button
+                  key={`${i}-${src}`}
+                  onClick={() => setActiveIndex(i)}
+                  aria-label={`Show image ${i + 1} of ${images.length}`}
+                  aria-current={i === activeIndex}
+                  className={`relative aspect-square overflow-hidden bg-cream transition ${
+                    i === activeIndex ? "ring-2 ring-ink ring-offset-2" : "opacity-70 hover:opacity-100"
+                  }`}
+                >
+                  <Image src={src} alt="" fill sizes="120px" className="object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="lg:col-span-5 lg:pt-4">
+          {product.category && (
+            <Link href={`/shop?category=${product.category}`} className="text-sm text-ink/60 hover:text-gold">
+              {product.category_name}
+            </Link>
+          )}
+          <h1 className="display-type mt-2 text-5xl text-ink md:text-6xl">{product.name}</h1>
+
+          {product.reviews_count > 0 && (
+            <p className="mt-3 flex items-center gap-1.5 text-sm text-ink/70">
+              <Star className="h-4 w-4 fill-ink text-ink" />
+              {rating.toFixed(1)}
+              <span className="text-ink/50">from {product.reviews_count} reviews</span>
+            </p>
+          )}
+
+          <p className="mt-6 flex items-baseline gap-3">
+            <span className="text-3xl font-semibold text-ink">₦{product.price.toLocaleString()}</span>
+            {product.old_price && (
+              <span className="text-lg text-ink/40 line-through">₦{product.old_price.toLocaleString()}</span>
+            )}
+          </p>
+
+          {product.description && (
+            <p className="mt-6 leading-relaxed whitespace-pre-line text-ink/75">{product.description}</p>
+          )}
+
+          <p className={`mt-6 text-sm font-medium ${outOfStock ? "text-gold" : "text-ink/70"}`}>
+            {outOfStock
+              ? "Sold out"
+              : product.stock != null && product.stock <= 5
+                ? `Only ${product.stock} left`
+                : "In stock, ready to ship"}
+          </p>
+
+          <div className="mt-4 flex items-stretch gap-2">
+            <div className="flex items-center border border-ink/20">
+              <button
+                onClick={() => setQty((q) => Math.max(1, q - 1))}
+                aria-label="Decrease quantity"
+                className="px-3 py-3 text-ink/70 transition hover:text-gold"
+              >
+                <Minus className="h-4 w-4" />
+              </button>
+              <span className="w-8 text-center text-sm" aria-live="polite">
+                {qty}
+              </span>
+              <button
+                onClick={() => setQty((q) => Math.min(maxQty, q + 1))}
+                aria-label="Increase quantity"
+                className="px-3 py-3 text-ink/70 transition hover:text-gold"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
+            </div>
+
+            <button
+              onClick={handleAddToCart}
+              disabled={outOfStock}
+              className={`flex flex-1 items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-40 ${
+                added ? "bg-gold" : "bg-ink hover:bg-gold"
+              }`}
+            >
+              {added ? (
+                <>
+                  <Check className="h-4 w-4" /> Added to cart
+                </>
+              ) : (
+                "Add to cart"
+              )}
+            </button>
+
+            <button
+              onClick={() => toggleWishlist(item)}
+              aria-label={wishlisted ? "Remove from wishlist" : "Save to wishlist"}
+              aria-pressed={wishlisted}
+              className="flex w-12 items-center justify-center border border-ink/20 text-ink transition hover:border-ink"
+            >
+              <Heart className={`h-5 w-5 ${wishlisted ? "fill-gold text-gold" : ""}`} />
+            </button>
+          </div>
+
+          <dl className="mt-10 border-t border-ink/10 text-sm">
+            <div className="flex justify-between gap-6 border-b border-ink/10 py-3">
+              <dt className="text-ink/60">Delivery</dt>
+              <dd className="text-right text-ink">Same-day in Lagos when ordered on WhatsApp</dd>
+            </div>
+            <div className="flex justify-between gap-6 border-b border-ink/10 py-3">
+              <dt className="text-ink/60">Payment</dt>
+              <dd className="text-right text-ink">Transfer, Klump, or weekly instalments</dd>
+            </div>
+          </dl>
+
+          <a
+            href={whatsappUrl(`Hi Fidex, I have a question about ${product.name}.`)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-block text-sm font-medium text-ink underline decoration-ink/30 underline-offset-4 transition hover:decoration-gold"
+          >
+            Ask about this item on WhatsApp
+          </a>
         </div>
       </div>
 
-      {related.length > 0 && (
-        <ProductPanel
-          heading="You May Also Like"
-          subtitle={`More from ${product.category_name}`}
-          products={related}
-        />
-      )}
+      <ProductPanel heading="You may also like" products={related} href={product.category ? `/shop?category=${product.category}` : "/shop"} />
     </div>
   );
 }

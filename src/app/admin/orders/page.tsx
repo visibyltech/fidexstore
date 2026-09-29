@@ -35,17 +35,17 @@ export default function AdminOrdersPage() {
 
   return (
     <div>
-      <h2 className="text-lg font-semibold">Orders ({orders.length})</h2>
+      <h2 className="display-type text-3xl">Orders ({orders.length})</h2>
 
       {loading ? (
-        <p className="mt-8 text-sm text-black/50">Loading…</p>
+        <p className="mt-8 text-sm text-ink/50">Loading…</p>
       ) : orders.length === 0 ? (
-        <p className="mt-8 text-sm text-black/50">No orders yet.</p>
+        <p className="mt-8 text-sm text-ink/50">No orders yet.</p>
       ) : (
-        <div className="mt-6 overflow-x-auto rounded-2xl bg-black/5">
+        <div className="mt-6 overflow-x-auto bg-cream">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-black/10 text-xs tracking-wide text-black/50 uppercase">
+              <tr className="border-b border-ink/10 text-xs font-medium text-ink/60">
                 <th className="px-4 py-3">Order</th>
                 <th className="px-4 py-3">Customer</th>
                 <th className="px-4 py-3">Payment</th>
@@ -57,13 +57,13 @@ export default function AdminOrdersPage() {
             </thead>
             <tbody>
               {orders.map((order) => (
-                <tr key={order.id} className="border-b border-black/5 last:border-0">
+                <tr key={order.id} className="border-b border-ink/5 last:border-0">
                   <td className="px-4 py-3 font-medium">FX-{order.id}</td>
                   <td className="px-4 py-3">
-                    <p className="text-black">{order.full_name}</p>
-                    <p className="text-xs text-black/50">{order.email}</p>
+                    <p className="text-ink">{order.full_name}</p>
+                    <p className="text-xs text-ink/50">{order.email}</p>
                   </td>
-                  <td className="px-4 py-3 text-black/60">
+                  <td className="px-4 py-3 text-ink/60">
                     {PAYMENT_LABELS[order.payment_method]}
                   </td>
                   <td className="px-4 py-3 text-gold">₦{order.total.toLocaleString()}</td>
@@ -78,13 +78,13 @@ export default function AdminOrdersPage() {
                       {order.status === "completed" ? "Completed" : "Pending"}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-black/60">
+                  <td className="px-4 py-3 text-ink/60">
                     {new Date(order.created_at).toLocaleDateString()}
                   </td>
                   <td className="px-4 py-3">
                     <Link
                       href={`/admin/orders/${order.id}`}
-                      className="flex items-center justify-end text-black/60 hover:text-gold"
+                      className="flex items-center justify-end text-ink/60 hover:text-gold"
                     >
                       <Eye className="h-4 w-4" />
                     </Link>

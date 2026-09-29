@@ -17,21 +17,21 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   if (loading) {
-    return <div className="mx-10 mt-16 mb-16 text-center text-sm text-black/50">Loading…</div>;
+    return <div className="mx-4 md:mx-10 mt-16 mb-16 text-center text-sm text-ink/50">Loading…</div>;
   }
 
   if (!user) {
     return (
-      <div className="mx-10 mt-16 mb-16 rounded-3xl bg-black/5 py-16 text-center">
-        <h1 className="text-xl font-semibold">Sign in required</h1>
-        <p className="mt-2 text-sm text-black/60">
+      <div className="mx-4 md:mx-10 mt-16 mb-16 bg-cream py-16 text-center">
+        <h1 className="display-type text-4xl">Sign in required</h1>
+        <p className="mt-2 text-sm text-ink/60">
           You need to sign in with an admin account to access this page.
         </p>
         <Link
-          href="/login"
-          className="mt-6 inline-block rounded-md bg-gold px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold/90"
+          href="/login?next=/admin"
+          className="mt-6 inline-block bg-gold px-6 py-3 text-sm font-semibold text-white transition hover:bg-ink"
         >
-          Sign In
+          Sign in
         </Link>
       </div>
     );
@@ -39,30 +39,30 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   if (user.role !== "admin") {
     return (
-      <div className="mx-10 mt-16 mb-16 rounded-3xl bg-black/5 py-16 text-center">
-        <h1 className="text-xl font-semibold">Access denied</h1>
-        <p className="mt-2 text-sm text-black/60">This area is for administrators only.</p>
+      <div className="mx-4 md:mx-10 mt-16 mb-16 bg-cream py-16 text-center">
+        <h1 className="display-type text-4xl">Access denied</h1>
+        <p className="mt-2 text-sm text-ink/60">This area is for administrators only.</p>
       </div>
     );
   }
 
   return (
-    <div className="mx-10 mt-8 mb-16">
-      <h1 className="text-2xl font-semibold">Admin Panel</h1>
+    <div className="px-4 pt-10 md:px-10">
+      <h1 className="display-type text-5xl md:text-6xl">Admin</h1>
 
-      <div className="mt-6 flex gap-2 border-b border-black/10 pb-4">
+      <nav className="mt-6 flex flex-wrap gap-2 border-b border-ink/10 pb-4">
         {links.map((link) => (
           <Link
             key={link.href}
             href={link.href}
-            className={`rounded-md px-4 py-2 text-sm font-medium transition ${
-              pathname === link.href ? "bg-gold text-black" : "text-black/60 hover:text-gold"
+            className={`px-4 py-2 text-sm font-medium transition ${
+              pathname === link.href ? "bg-ink text-white" : "text-ink/60 hover:text-gold"
             }`}
           >
             {link.label}
           </Link>
         ))}
-      </div>
+      </nav>
 
       <div className="mt-8">{children}</div>
     </div>

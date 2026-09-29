@@ -12,10 +12,10 @@ type ShopToolbarProps = {
 };
 
 const SORT_OPTIONS = [
-  { value: "newest", label: "Recommended" },
-  { value: "price_asc", label: "Price: Low to High" },
-  { value: "price_desc", label: "Price: High to Low" },
-  { value: "rating", label: "Top Rated" },
+  { value: "newest", label: "Newest" },
+  { value: "price_asc", label: "Price: low to high" },
+  { value: "price_desc", label: "Price: high to low" },
+  { value: "rating", label: "Top rated" },
 ];
 
 const ShopToolbar = ({
@@ -26,27 +26,38 @@ const ShopToolbar = ({
   onViewChange,
   onToggleFilters,
 }: ShopToolbarProps) => {
+  const viewButton = (value: "grid" | "list", label: string, Icon: typeof List) => (
+    <button
+      onClick={() => onViewChange(value)}
+      aria-label={label}
+      aria-pressed={view === value}
+      className={`p-2 transition ${view === value ? "bg-ink text-white" : "text-ink/50 hover:text-ink"}`}
+    >
+      <Icon className="h-4 w-4" />
+    </button>
+  );
+
   return (
-    <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-black/5 px-5 py-3">
-      <p className="text-sm text-black/60">
-        Showing {total} of {total} products
+    <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 pb-4">
+      <p className="text-sm text-ink/60">
+        {total} {total === 1 ? "product" : "products"}
       </p>
 
-      <button
-        onClick={onToggleFilters}
-        className="flex items-center gap-2 rounded-md bg-black/10 px-4 py-2 text-sm font-medium transition hover:bg-black/15 md:hidden"
-      >
-        <SlidersHorizontal className="h-4 w-4" />
-        Filters
-      </button>
+      <div className="flex items-center gap-3">
+        <button
+          onClick={onToggleFilters}
+          className="flex items-center gap-2 border border-ink/20 px-3 py-2 text-sm font-medium md:hidden"
+        >
+          <SlidersHorizontal className="h-4 w-4" />
+          Filters
+        </button>
 
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2 text-sm text-black/60">
-          Sort by:
+        <label className="flex items-center gap-2 text-sm text-ink/60">
+          <span className="hidden sm:inline">Sort by</span>
           <select
             value={sort}
             onChange={(e) => onSortChange(e.target.value)}
-            className="rounded-md border border-black/10 bg-black/5 px-3 py-1.5 text-black focus:outline-none"
+            className="border border-ink/20 bg-white px-3 py-2 text-sm text-ink focus:border-ink focus:outline-none"
           >
             {SORT_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
@@ -54,25 +65,11 @@ const ShopToolbar = ({
               </option>
             ))}
           </select>
-        </div>
+        </label>
 
-        <div className="flex items-center gap-1 rounded-md bg-black/10 p-1">
-          <button
-            onClick={() => onViewChange("grid")}
-            aria-label="Grid view"
-            aria-pressed={view === "grid"}
-            className={`rounded p-1.5 transition ${view === "grid" ? "bg-gold text-black" : "text-black/60 hover:text-black"}`}
-          >
-            <LayoutGrid className="h-4 w-4" />
-          </button>
-          <button
-            onClick={() => onViewChange("list")}
-            aria-label="List view"
-            aria-pressed={view === "list"}
-            className={`rounded p-1.5 transition ${view === "list" ? "bg-gold text-black" : "text-black/60 hover:text-black"}`}
-          >
-            <List className="h-4 w-4" />
-          </button>
+        <div className="hidden items-center border border-ink/20 sm:flex">
+          {viewButton("grid", "Grid view", LayoutGrid)}
+          {viewButton("list", "List view", List)}
         </div>
       </div>
     </div>

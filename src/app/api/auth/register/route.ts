@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
 import { getDb, nextId } from "@/lib/db";
 import { createSessionToken, hashPassword, setSessionCookie } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
+  const limited = rateLimit(request, "register", { limit: 5, windowMs: 60 * 60_000 });
+  if (limited) return limited;
+
   const body = await request.json().catch(() => null);
 
   const name = typeof body?.name === "string" ? body.name.trim() : "";

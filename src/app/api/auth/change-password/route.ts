@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
 import { getDb } from "@/lib/db";
 import { hashPassword, requireUser, verifyPassword } from "@/lib/auth";
 
@@ -6,6 +7,9 @@ import { hashPassword, requireUser, verifyPassword } from "@/lib/auth";
 // password" flow. A logged-in user proves identity with the old password,
 // same as any other authenticated action.
 export async function POST(request: NextRequest) {
+  const limited = rateLimit(request, "change-password", { limit: 10, windowMs: 15 * 60_000 });
+  if (limited) return limited;
+
   const { user, response } = await requireUser(request);
   if (!user) return response;
 

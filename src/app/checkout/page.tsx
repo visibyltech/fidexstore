@@ -34,6 +34,14 @@ export default function CheckoutPage() {
     address: "",
     city: "",
   });
+  // Pre-fill name and email from the signed-in account, without overwriting
+  // anything the customer has already typed.
+  const [prefilledFor, setPrefilledFor] = useState<number | null>(null);
+  if (user && prefilledFor !== user.id) {
+    setPrefilledFor(user.id);
+    setDelivery((d) => ({ ...d, fullName: d.fullName || user.name, email: d.email || user.email }));
+  }
+
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("bank-transfer");
 
   const total = subtotal + (items.length > 0 ? DELIVERY_FEE : 0);
@@ -45,23 +53,23 @@ export default function CheckoutPage() {
   };
 
   if (loading || !user) {
-    return <p className="mx-10 mt-16 mb-16 text-center text-sm text-black/50">Loading…</p>;
+    return <p className="mx-4 md:mx-10 mt-16 mb-16 text-center text-sm text-ink/50">Loading…</p>;
   }
 
   if (orderPlaced) {
     return (
-      <div className="mx-10 mt-8 mb-16 flex flex-col items-center rounded-3xl bg-black/5 py-24 text-center">
+      <div className="mx-4 md:mx-10 mt-8 mb-16 flex flex-col items-center bg-cream py-24 text-center">
         <CheckCircle2 className="h-16 w-16 text-gold" />
         <h1 className="mt-6 text-2xl font-semibold">Order Placed Successfully!</h1>
-        <p className="mt-2 text-sm text-black/60">
+        <p className="mt-2 text-sm text-ink/60">
           Your order <span className="font-semibold text-gold">{orderNumber}</span> has been
           received. We&apos;ll reach out with confirmation shortly.
         </p>
         <Link
           href="/shop"
-          className="mt-8 flex items-center gap-2 rounded-md bg-gold px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold/90"
+          className="mt-8 flex items-center gap-2 bg-gold px-6 py-3 text-sm font-semibold text-white transition hover:bg-ink"
         >
-          Continue Shopping <ArrowRight className="h-4 w-4" />
+          Continue shopping <ArrowRight className="h-4 w-4" />
         </Link>
       </div>
     );
@@ -69,28 +77,28 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="mx-10 mt-8 mb-16 flex flex-col items-center rounded-3xl bg-black/5 py-24 text-center">
-        <h1 className="text-xl font-semibold">Your cart is empty</h1>
-        <p className="mt-2 text-sm text-black/60">Add items to your cart before checking out.</p>
+      <div className="mx-4 md:mx-10 mt-8 mb-16 flex flex-col items-center bg-cream py-24 text-center">
+        <h1 className="display-type text-4xl">Your cart is empty</h1>
+        <p className="mt-2 text-sm text-ink/60">Add items to your cart before checking out.</p>
         <Link
           href="/shop"
-          className="mt-6 flex items-center gap-2 rounded-md bg-gold px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold/90"
+          className="mt-6 flex items-center gap-2 bg-gold px-6 py-3 text-sm font-semibold text-white transition hover:bg-ink"
         >
-          Shop Now <ArrowRight className="h-4 w-4" />
+          Browse the shop <ArrowRight className="h-4 w-4" />
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="mx-10 mt-8 mb-16">
-      <h1 className="text-2xl font-semibold">Checkout</h1>
+    <div className="px-4 pt-10 md:px-10">
+      <h1 className="display-type text-5xl text-ink md:text-6xl">Checkout</h1>
 
       <div className="mt-8 max-w-2xl">
         <CheckoutStepper currentStep={step} />
       </div>
 
-      <div className="mt-8 flex flex-col gap-8 md:flex-row md:items-start">
+      <div className="mt-10 flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-16">
         {step === 1 && (
           <DeliveryForm
             details={delivery}
@@ -121,7 +129,9 @@ export default function CheckoutPage() {
           />
         )}
 
-        <OrderSummary />
+        <div className="w-full lg:w-96">
+          <OrderSummary />
+        </div>
       </div>
     </div>
   );

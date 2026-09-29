@@ -2,7 +2,6 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
-import { KeyRound } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import PasswordInput from "../components/PasswordInput";
 
@@ -16,17 +15,17 @@ export default function AccountPage() {
   const [submitting, setSubmitting] = useState(false);
 
   if (loading) {
-    return <div className="mx-10 mt-16 mb-16 text-center text-sm text-black/50">Loading…</div>;
+    return <div className="mx-4 md:mx-10 mt-16 mb-16 text-center text-sm text-ink/50">Loading…</div>;
   }
 
   if (!user) {
     return (
-      <div className="mx-10 mt-16 mb-16 rounded-3xl bg-black/5 py-16 text-center">
+      <div className="mx-4 md:mx-10 mt-16 mb-16 bg-cream py-16 text-center">
         <h1 className="text-xl font-semibold">Sign in required</h1>
-        <p className="mt-2 text-sm text-black/60">Sign in to manage your account.</p>
+        <p className="mt-2 text-sm text-ink/60">Sign in to manage your account.</p>
         <Link
           href="/login"
-          className="mt-6 inline-block rounded-md bg-gold px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold/90"
+          className="mt-6 inline-block bg-gold px-6 py-3 text-sm font-semibold text-white transition hover:bg-ink"
         >
           Sign In
         </Link>
@@ -65,70 +64,59 @@ export default function AccountPage() {
   };
 
   return (
-    <div className="mx-10 mt-16 mb-16 flex justify-center">
-      <div className="w-full max-w-sm rounded-2xl bg-black/5 p-8">
-        <div className="flex items-center gap-2">
-          <KeyRound className="h-5 w-5 text-gold" />
-          <h1 className="text-lg font-semibold">My Account</h1>
-        </div>
-        <p className="mt-1 text-sm text-black/50">Signed in as {user.email}</p>
+    <div className="px-4 pt-10 md:px-10">
+      <h1 className="display-type text-5xl text-ink md:text-6xl">My account</h1>
+      <p className="mt-2 text-sm text-ink/60">Signed in as {user.email}</p>
 
-        <h2 className="mt-6 text-sm font-semibold tracking-wide text-black/70 uppercase">
-          Change Password
-        </h2>
+      <div className="mt-10 w-full max-w-sm border-t border-ink/10 pt-8">
+        <h2 className="text-lg font-semibold text-ink">Change password</h2>
 
         {error && (
-          <p className="mt-4 rounded-md bg-red-500/10 px-4 py-2 text-sm text-red-600">{error}</p>
+          <p className="mt-4 bg-red-500/10 px-4 py-2 text-sm text-red-600">{error}</p>
         )}
         {success && (
-          <p className="mt-4 rounded-md bg-green-500/10 px-4 py-2 text-sm text-green-600">
+          <p className="mt-4 bg-green-500/10 px-4 py-2 text-sm text-green-600">
             Password updated successfully.
           </p>
         )}
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div>
-            <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
-              Current Password
-            </label>
-            <PasswordInput
+            <label htmlFor="current-password" className="text-sm font-medium text-ink/80">Current Password</label>
+            <PasswordInput id="current-password"
               required
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
+              className="w-full border border-ink/20 bg-white px-4 py-3 text-sm placeholder:text-ink/30 focus:border-gold focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
-              New Password
-            </label>
-            <PasswordInput
+            <label htmlFor="new-password" className="text-sm font-medium text-ink/80">New Password</label>
+            <PasswordInput id="new-password"
               required
               minLength={8}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
+              className="w-full border border-ink/20 bg-white px-4 py-3 text-sm placeholder:text-ink/30 focus:border-gold focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
-              Confirm New Password
-            </label>
-            <PasswordInput
+            <label htmlFor="confirm-new-password" className="text-sm font-medium text-ink/80">Confirm New Password</label>
+            <PasswordInput id="confirm-new-password"
               required
               minLength={8}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
+              className="w-full border border-ink/20 bg-white px-4 py-3 text-sm placeholder:text-ink/30 focus:border-gold focus:outline-none"
             />
           </div>
 
           <button
             type="submit"
             disabled={submitting}
-            className="w-full rounded-md bg-gold px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold/90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full bg-gold px-6 py-3 text-sm font-semibold text-white transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {submitting ? "Updating…" : "Update Password"}
+            {submitting ? "Updating…" : "Update password"}
           </button>
         </form>
       </div>

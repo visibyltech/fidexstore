@@ -6,19 +6,8 @@ import { X } from "lucide-react";
 import ShopHeader from "./ShopHeader";
 import ShopSidebar from "./ShopSidebar";
 import ShopToolbar from "./ShopToolbar";
-import ShopProductCard, { ShopProduct } from "./ShopProductCard";
+import ShopProductCard, { ShopProduct, toShopProduct } from "./ShopProductCard";
 import type { ApiCategory, ApiProduct } from "@/types/api";
-
-const toShopProduct = (product: ApiProduct): ShopProduct => ({
-  id: product.id,
-  category: product.category_name,
-  name: product.name,
-  image: product.image ?? "",
-  price: product.price,
-  oldPrice: product.old_price ?? undefined,
-  rating: Math.round(Number(product.rating)),
-  reviews: product.reviews_count,
-});
 
 const ShopPageClient = () => {
   const searchParams = useSearchParams();
@@ -89,10 +78,10 @@ const ShopPageClient = () => {
     : products;
 
   return (
-    <div className="pb-16">
-      <ShopHeader />
+    <div>
+      <ShopHeader title={search ? `Results for "${search}"` : "Shop everything"} />
 
-      <div className="mx-10 mt-8 flex flex-col gap-8 md:flex-row">
+      <div className="flex flex-col gap-8 px-4 pt-8 md:flex-row md:gap-12 md:px-10">
         <div className={mobileFiltersOpen ? "block" : "hidden md:block"}>
           <ShopSidebar
             categories={categories}
@@ -112,15 +101,12 @@ const ShopPageClient = () => {
 
         <div className="flex-1">
           {search && (
-            <div className="mb-4 flex items-center gap-2 text-sm text-black/60">
-              Search results for <span className="font-semibold text-black">&ldquo;{search}&rdquo;</span>
-              <button
-                onClick={() => setSearch("")}
-                className="flex items-center gap-1 text-black/40 hover:text-gold"
-              >
-                <X className="h-3.5 w-3.5" /> Clear
-              </button>
-            </div>
+            <button
+              onClick={() => setSearch("")}
+              className="mb-4 flex items-center gap-1 text-sm text-ink/60 hover:text-gold"
+            >
+              <X className="h-3.5 w-3.5" /> Clear search
+            </button>
           )}
 
           <ShopToolbar
@@ -133,17 +119,17 @@ const ShopPageClient = () => {
           />
 
           {loading ? (
-            <p className="mt-8 text-center text-sm text-black/50">Loading products…</p>
+            <p className="mt-8 text-sm text-ink/50">Loading products…</p>
           ) : visibleProducts.length === 0 ? (
-            <p className="mt-8 text-center text-sm text-black/50">No products match your filters.</p>
+            <p className="mt-8 text-sm text-ink/60">Nothing matches those filters. Try widening the price range or picking another category.</p>
           ) : view === "list" ? (
-            <div className="mt-8 flex flex-col gap-4">
+            <div className="mt-6 flex flex-col gap-4">
               {visibleProducts.map((product) => (
                 <ShopProductCard key={product.id} product={product} layout="list" />
               ))}
             </div>
           ) : (
-            <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-10 sm:grid-cols-3 md:gap-x-4">
               {visibleProducts.map((product) => (
                 <ShopProductCard key={product.id} product={product} />
               ))}

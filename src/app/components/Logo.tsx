@@ -1,24 +1,21 @@
 import Link from "next/link";
 
 type LogoProps = {
-  withTagline?: boolean;
   className?: string;
+  tone?: "dark" | "light";
+  size?: "md" | "lg";
 };
 
-const Logo = ({ withTagline = false, className = "" }: LogoProps) => {
+const Logo = ({ className = "", tone = "dark", size = "md" }: LogoProps) => {
   return (
-    <Link href="/" className={`flex items-center gap-2.5 ${className}`}>
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gold/70 text-xs font-bold tracking-tight text-gold">
-        FX
-      </span>
-      <span className="flex flex-col leading-none">
-        <span className="text-sm font-semibold tracking-[0.15em] uppercase">Fidex</span>
-        {withTagline && (
-          <span className="mt-1.5 text-[10px] tracking-widest text-black/50">
-            Style. Confidence. Everything You.
-          </span>
-        )}
-      </span>
+    <Link
+      href="/"
+      aria-label="Fidex home"
+      className={`display-type leading-none tracking-tight ${
+        size === "lg" ? "text-6xl md:text-8xl" : "text-[1.75rem]"
+      } ${tone === "light" ? "text-cream" : "text-ink"} ${className}`}
+    >
+      FIDEX<span className="text-gold">.</span>
     </Link>
   );
 };

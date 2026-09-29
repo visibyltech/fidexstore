@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
 
-// Checkout (delivery, payment options, review) requires an account. Signed-out
-// visitors are sent to sign in and brought back here afterwards. This is the
-// fast, optimistic check — POST /api/orders enforces it again server-side.
+// Checkout, the account page and the admin panel require an account.
+// Signed-out visitors are sent to sign in and brought back afterwards. This is
+// the fast, optimistic check: the API routes behind these pages verify the
+// session (and admin role) again on every request.
 export async function proxy(request: NextRequest) {
   const token = request.cookies.get(SESSION_COOKIE)?.value;
   if (token && (await verifySessionToken(token))) {
@@ -16,5 +17,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/checkout/:path*"],
+  matcher: ["/checkout/:path*", "/account/:path*", "/admin/:path*"],
 };

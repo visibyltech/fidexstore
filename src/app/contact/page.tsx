@@ -1,68 +1,72 @@
-import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import type { Metadata } from "next";
+import { ArrowUpRight } from "lucide-react";
+import { SITE, whatsappUrl } from "@/lib/site";
 
-const EMAIL = "hello@fidex.ng";
-const PHONE_DISPLAY = "+234 801 234 5678";
-const WHATSAPP_NUMBER = "2348012345678";
+export const metadata: Metadata = {
+  title: "Contact us",
+  description: "Call, WhatsApp or email Fidex in Lagos.",
+};
+
+const channels = [
+  {
+    label: "WhatsApp",
+    value: "Fastest reply, and how same-day orders are placed",
+    href: whatsappUrl(),
+    external: true,
+  },
+  { label: "Call", value: SITE.phoneDisplay, href: `tel:${SITE.phoneDisplay.replace(/\s/g, "")}` },
+  { label: "Email", value: SITE.email, href: `mailto:${SITE.email}` },
+];
 
 export default function ContactPage() {
   return (
-    <div className="pb-16">
-      <div className="mx-10 mt-6 rounded-3xl bg-black/[0.03] px-6 py-14 text-center">
-        <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
-          Get In <span className="text-gold">Touch</span>
+    <div className="grid grid-cols-1 lg:grid-cols-2">
+      <div className="bg-cream px-4 py-14 md:px-10 md:py-20">
+        <h1 className="display-type text-6xl text-ink uppercase md:text-8xl">
+          Talk
+          <br />
+          to <span className="text-gold">us.</span>
         </h1>
-        <p className="mt-3 text-sm text-black/50">
-          Home <span className="text-gold">/</span> Contact
+        <p className="mt-6 max-w-sm leading-relaxed text-ink/70">
+          Questions about sizing, an order, or a drop you missed? Reach us however suits you and we
+          will get back to you during opening hours.
         </p>
+
+        <dl className="mt-10 max-w-sm space-y-4 text-sm">
+          <div>
+            <dt className="font-semibold text-ink">Where</dt>
+            <dd className="mt-1 text-ink/70">{SITE.city}</dd>
+          </div>
+          <div>
+            <dt className="font-semibold text-ink">Opening hours</dt>
+            {SITE.hours.map((line) => (
+              <dd key={line} className="mt-1 text-ink/70">
+                {line}
+              </dd>
+            ))}
+          </div>
+        </dl>
       </div>
 
-      <div className="mx-10 mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="rounded-2xl bg-black/5 p-6 text-center">
-          <MapPin className="mx-auto h-6 w-6 text-gold" />
-          <h3 className="mt-3 text-sm font-semibold tracking-wide uppercase">Visit Us</h3>
-          <p className="mt-2 text-sm text-black/60">
-            Lagos, Nigeria.
-          </p>
-        </div>
-        <div className="rounded-2xl bg-black/5 p-6 text-center">
-          <Clock className="mx-auto h-6 w-6 text-gold" />
-          <h3 className="mt-3 text-sm font-semibold tracking-wide uppercase">Opening Hours</h3>
-          <p className="mt-2 text-sm text-black/60">
-            Mon-Sat: 9:00am - 7:00pm
-            <br />
-            Sun: 12:00pm - 5:00pm
-          </p>
-        </div>
-        <div className="rounded-2xl bg-black/5 p-6 text-center">
-          <Phone className="mx-auto h-6 w-6 text-gold" />
-          <h3 className="mt-3 text-sm font-semibold tracking-wide uppercase">Call Us</h3>
-          <p className="mt-2 text-sm text-black/60">{PHONE_DISPLAY}</p>
-        </div>
-      </div>
-
-      <div className="mx-10 mt-6 rounded-2xl bg-black/5 p-8 text-center">
-        <Mail className="mx-auto h-6 w-6 text-gold" />
-        <h3 className="mt-3 text-lg font-semibold">Prefer to reach out directly?</h3>
-        <p className="mt-2 text-sm text-black/60">
-          Email us or send a message on WhatsApp and we&apos;ll respond as soon as we can.
-        </p>
-        <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
-          <a
-            href={`mailto:${EMAIL}`}
-            className="flex items-center justify-center gap-2 rounded-md bg-gold px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold/90"
-          >
-            <Mail className="h-4 w-4" /> {EMAIL}
-          </a>
-          <a
-            href={`https://wa.me/${WHATSAPP_NUMBER}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 rounded-md bg-black/10 px-6 py-3 text-sm font-semibold transition hover:bg-black/15"
-          >
-            <MessageCircle className="h-4 w-4" /> Chat on WhatsApp
-          </a>
-        </div>
-      </div>
+      <ul className="px-4 py-6 md:px-10 lg:py-20">
+        {channels.map((channel) => (
+          <li key={channel.label} className="border-b border-ink/10">
+            <a
+              href={channel.href}
+              {...(channel.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              className="group flex items-center justify-between gap-6 py-8"
+            >
+              <span>
+                <span className="display-type block text-4xl text-ink transition group-hover:text-gold md:text-5xl">
+                  {channel.label}
+                </span>
+                <span className="mt-2 block text-sm text-ink/60">{channel.value}</span>
+              </span>
+              <ArrowUpRight className="h-6 w-6 shrink-0 text-ink/40 transition group-hover:text-gold" />
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

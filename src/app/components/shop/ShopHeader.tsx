@@ -1,12 +1,16 @@
-const ShopHeader = () => {
+import Link from "next/link";
+
+const ShopHeader = ({ title = "Shop everything" }: { title?: string }) => {
   return (
-    <div className="mx-10 mt-6 rounded-3xl bg-black/[0.03] px-6 py-14 text-center">
-      <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
-        Shop <span className="text-gold">Everything</span>
-      </h1>
-      <p className="mt-3 text-sm text-black/50">
-        Home <span className="text-gold">/</span> Shop
-      </p>
+    <div className="border-b border-ink/10 bg-cream px-4 py-10 md:px-10 md:py-14">
+      <nav aria-label="Breadcrumb" className="text-xs text-ink/60">
+        <Link href="/" className="hover:text-gold">
+          Home
+        </Link>
+        <span className="mx-2">/</span>
+        <span className="text-ink">Shop</span>
+      </nav>
+      <h1 className="display-type mt-3 text-5xl text-ink md:text-7xl">{title}</h1>
     </div>
   );
 };

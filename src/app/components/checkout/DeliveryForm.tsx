@@ -1,4 +1,4 @@
-import { MapPin, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export type DeliveryDetails = {
   fullName: string;
@@ -14,12 +14,18 @@ type DeliveryFormProps = {
   onContinue: () => void;
 };
 
-const fields: { key: keyof DeliveryDetails; label: string; placeholder: string }[] = [
-  { key: "fullName", label: "Full Name", placeholder: "e.g., Ada Bello" },
-  { key: "email", label: "Email", placeholder: "e.g., mail@example.com" },
-  { key: "phone", label: "Phone", placeholder: "e.g., +234 800 000 0000" },
-  { key: "address", label: "Address", placeholder: "e.g., 5 Electronics Way, Ikeja" },
-  { key: "city", label: "City", placeholder: "e.g., Lagos" },
+const fields: {
+  key: keyof DeliveryDetails;
+  label: string;
+  type: string;
+  autoComplete: string;
+  placeholder: string;
+}[] = [
+  { key: "fullName", label: "Full name", type: "text", autoComplete: "name", placeholder: "Ada Bello" },
+  { key: "email", label: "Email", type: "email", autoComplete: "email", placeholder: "ada@example.com" },
+  { key: "phone", label: "Phone", type: "tel", autoComplete: "tel", placeholder: "+234 800 000 0000" },
+  { key: "address", label: "Street address", type: "text", autoComplete: "street-address", placeholder: "5 Electronics Way, Ikeja" },
+  { key: "city", label: "City", type: "text", autoComplete: "address-level2", placeholder: "Lagos" },
 ];
 
 const isValid = (details: DeliveryDetails) =>
@@ -27,24 +33,23 @@ const isValid = (details: DeliveryDetails) =>
 
 const DeliveryForm = ({ details, onChange, onContinue }: DeliveryFormProps) => {
   return (
-    <div className="flex-1 rounded-2xl bg-black/5 p-6">
-      <div className="flex items-center gap-2">
-        <MapPin className="h-5 w-5 text-gold" />
-        <h2 className="text-lg font-semibold">Delivery Details</h2>
-      </div>
+    <div className="flex-1">
+      <h2 className="display-type text-3xl">Delivery details</h2>
 
       <div className="mt-6 space-y-4">
         {fields.map((field) => (
           <div key={field.key}>
-            <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
+            <label htmlFor={`delivery-${field.key}`} className="text-sm font-medium text-ink/80">
               {field.label}
             </label>
             <input
-              type="text"
+              id={`delivery-${field.key}`}
+              type={field.type}
+              autoComplete={field.autoComplete}
               value={details[field.key]}
               placeholder={field.placeholder}
               onChange={(e) => onChange({ ...details, [field.key]: e.target.value })}
-              className="mt-2 w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
+              className="mt-2 w-full border border-ink/20 bg-white px-4 py-3 text-sm placeholder:text-ink/30 focus:border-gold focus:outline-none"
             />
           </div>
         ))}
@@ -53,9 +58,9 @@ const DeliveryForm = ({ details, onChange, onContinue }: DeliveryFormProps) => {
       <button
         onClick={onContinue}
         disabled={!isValid(details)}
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-gold px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold/90 disabled:cursor-not-allowed disabled:opacity-40"
+        className="mt-6 flex w-full items-center justify-center gap-2 bg-gold px-6 py-3 text-sm font-semibold text-white transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-40"
       >
-        Continue to Payment <ArrowRight className="h-4 w-4" />
+        Continue to payment <ArrowRight className="h-4 w-4" />
       </button>
     </div>
   );

@@ -1,14 +1,36 @@
 @import "tailwindcss";
 
 @theme {
+  /* "gold" is the brand red; the name predates the rebrand and is used everywhere. */
   --color-gold: #C81E2C;
   --color-gold-light: #E4525F;
   --color-cream: #F6F1E7;
+  --color-ink: #141414;
+
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
   background-color: #ffffff;
-  color: #1a1a1a;
+  color: var(--color-ink);
+}
+
+/* Condensed heavy cut of Archivo for headlines. */
+@utility display-type {
+  font-stretch: 68%;
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--color-gold);
+  color: #ffffff;
 }
 
 @keyframes marquee {
@@ -21,5 +43,11 @@ body {
 }
 
 .animate-marquee {
-  animation: marquee 18s linear infinite;
+  animation: marquee 40s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
 }

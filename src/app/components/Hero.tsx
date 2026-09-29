@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MessageCircle, Sparkles, BadgeCheck, Truck, ShieldCheck } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { whatsappUrl } from "@/lib/site";
 
 const categories = [
   { name: "Clothing", slug: "clothing" },
@@ -9,101 +10,107 @@ const categories = [
   { name: "Essentials", slug: "essentials" },
 ];
 
-const features = [
-  { icon: BadgeCheck, label: "Quality Checked" },
-  { icon: Sparkles, label: "Affordable Prices" },
-  { icon: Truck, label: "New Drops Weekly" },
-  { icon: ShieldCheck, label: "Satisfaction Guaranteed" },
-];
-
-const heroTiles = [
-  { src: "/products-fidex/tshirt-black.jpg", alt: "Fidex black t-shirt", category: "clothing" },
-  { src: "/products-fidex/jeans.jpg", alt: "Fidex denim jeans", category: "clothing" },
-  { src: "/products-fidex/sneakers.jpg", alt: "Fidex canvas sneakers", category: "clothing" },
-  { src: "/products-fidex/watch.jpg", alt: "Fidex wristwatch", category: "accessories" },
-];
-
 const Hero = () => {
   return (
-    <div className="px-6 pt-6 md:px-10">
-      <section className="grid grid-cols-1 gap-8 rounded-3xl bg-black/[0.03] p-8 md:grid-cols-2 md:p-14">
-        <div className="flex flex-col justify-center">
-          <p className="text-xs font-semibold tracking-[0.3em] text-gold uppercase">
-            Clothing &amp; Everyday Essentials
-          </p>
-          <h1 className="mt-4 text-4xl leading-tight font-semibold tracking-tight md:text-5xl">
-            Style. Confidence.
+    <section className="grid grid-cols-1 border-b border-ink/10 lg:grid-cols-12">
+      <div className="flex flex-col justify-between bg-cream px-4 py-10 md:px-10 md:py-14 lg:col-span-5">
+        <div>
+          <h1 className="display-type text-[clamp(3.25rem,14vw,5.5rem)] text-ink uppercase lg:text-[clamp(3.5rem,5.6vw,6.5rem)]">
+            Style.
             <br />
-            <span className="text-gold">Everything You.</span>
+            Confidence.
+            <br />
+            <span className="text-gold">Everything you.</span>
           </h1>
-          <p className="mt-6 max-w-md text-base text-black/60">
-            Clothing, accessories, grooming, and everyday essentials — curated
-            for a look that&apos;s always on point, at prices that make sense.
+          <p className="mt-6 max-w-sm text-base leading-relaxed text-ink/70">
+            Clothing, accessories, grooming and everyday essentials. Every piece is checked by hand
+            before it goes up, and new drops land every week.
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            {categories.map((category) => (
-              <Link
-                key={category.slug}
-                href={`/shop?category=${category.slug}`}
-                className="rounded-full border border-black/15 px-5 py-2 text-sm font-medium text-black/80 transition hover:border-gold hover:text-gold"
-              >
-                {category.name}
-              </Link>
-            ))}
-          </div>
-
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap items-center gap-6">
             <Link
               href="/shop"
-              className="rounded-full bg-gold px-8 py-3 text-sm font-semibold tracking-wide text-black uppercase transition hover:bg-gold/90"
+              className="group flex items-center gap-3 bg-gold px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-ink"
             >
-              Shop Now
+              Shop the collection
+              <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
             </Link>
             <a
-              href="https://wa.me/2348012345678"
+              href={whatsappUrl("Hi Fidex, I'd like to place an order.")}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-full border border-black/15 px-6 py-3 text-sm font-semibold tracking-wide uppercase transition hover:border-gold hover:text-gold"
+              className="text-sm font-medium text-ink underline decoration-ink/30 underline-offset-4 transition hover:decoration-gold"
             >
-              <MessageCircle className="h-4 w-4" /> WhatsApp Us
+              Order on WhatsApp
             </a>
           </div>
         </div>
 
-        <div className="relative grid grid-cols-2 gap-3">
-          {heroTiles.map((tile, i) => (
+        <nav aria-label="Shop by category" className="mt-12 flex flex-wrap gap-x-6 gap-y-2 border-t border-ink/15 pt-5">
+          {categories.map((category) => (
             <Link
-              key={tile.src}
-              href={`/shop?category=${tile.category}`}
-              className="group relative aspect-square overflow-hidden rounded-2xl"
+              key={category.slug}
+              href={`/shop?category=${category.slug}`}
+              className="group flex items-center gap-1 text-sm text-ink/70 transition hover:text-gold"
             >
-              <Image
-                src={tile.src}
-                alt={tile.alt}
-                fill
-                priority={i === 0}
-                className="object-cover transition duration-300 group-hover:scale-105"
-              />
+              {category.name}
+              <ArrowUpRight className="h-3.5 w-3.5 opacity-0 transition group-hover:opacity-100" />
             </Link>
           ))}
-          <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 rounded-xl bg-cream px-4 py-3 text-black shadow-lg">
-            <p className="text-sm font-semibold tracking-wide">Style. Confidence.</p>
-            <p className="text-sm font-semibold tracking-wide text-gold">Everything You.</p>
-          </div>
-        </div>
-      </section>
-
-      <div className="mt-6 grid grid-cols-2 gap-4 rounded-3xl bg-black/[0.03] px-6 py-6 sm:grid-cols-4 md:px-10">
-        {features.map(({ icon: Icon, label }) => (
-          <div key={label} className="flex items-center gap-3">
-            <Icon className="h-5 w-5 shrink-0 text-gold" />
-            <p className="text-xs font-medium tracking-wide text-black/70">{label}</p>
-          </div>
-        ))}
+        </nav>
       </div>
-    </div>
+
+      <div className="grid grid-cols-2 grid-rows-2 gap-1 bg-white lg:col-span-7">
+        <HeroTile
+          href="/shop?category=clothing"
+          src="/products-fidex/tshirt-black.jpg"
+          alt="Black crew-neck t-shirt"
+          label="Clothing"
+          className="row-span-2 aspect-3/4 lg:aspect-auto"
+          priority
+        />
+        <HeroTile
+          href="/shop?category=essentials"
+          src="/products-fidex/sneakers.jpg"
+          alt="White canvas sneakers"
+          label="Essentials"
+          className="aspect-square lg:aspect-auto"
+        />
+        <HeroTile
+          href="/shop?category=accessories"
+          src="/products-fidex/watch.jpg"
+          alt="Analogue wristwatch"
+          label="Accessories"
+          className="aspect-square lg:aspect-auto"
+        />
+      </div>
+    </section>
   );
 };
+
+type HeroTileProps = {
+  href: string;
+  src: string;
+  alt: string;
+  label: string;
+  className?: string;
+  priority?: boolean;
+};
+
+const HeroTile = ({ href, src, alt, label, className = "", priority }: HeroTileProps) => (
+  <Link href={href} className={`group relative overflow-hidden bg-cream lg:min-h-56 ${className}`}>
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      priority={priority}
+      sizes="(min-width: 1024px) 30vw, 50vw"
+      className="object-cover transition duration-500 group-hover:scale-[1.03]"
+    />
+    <span className="absolute bottom-4 left-4 bg-white px-3 py-1.5 text-sm font-medium text-ink transition group-hover:bg-gold group-hover:text-white">
+      {label}
+    </span>
+  </Link>
+);
 
 export default Hero;

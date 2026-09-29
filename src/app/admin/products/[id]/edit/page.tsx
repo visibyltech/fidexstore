@@ -51,16 +51,16 @@ export default function EditProductPage() {
   };
 
   if (notFound) {
-    return <p className="text-sm text-black/50">Product not found.</p>;
+    return <p className="text-sm text-ink/50">Product not found.</p>;
   }
 
   if (!initialValues) {
-    return <p className="text-sm text-black/50">Loading…</p>;
+    return <p className="text-sm text-ink/50">Loading…</p>;
   }
 
   return (
     <div>
-      <h2 className="text-lg font-semibold">Edit Product</h2>
+      <h2 className="display-type text-3xl">Edit Product</h2>
       <div className="mt-6">
         <ProductForm initialValues={initialValues} submitLabel="Save Changes" onSubmit={handleSubmit} />
       </div>

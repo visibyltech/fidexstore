@@ -109,33 +109,33 @@ export default function AdminCategoriesPage() {
     const draft = drafts[category.id] ?? category;
     return (
       <div
-        className={`flex flex-wrap items-center gap-3 rounded-2xl bg-black/5 p-4 ${indent ? "ml-8" : ""}`}
+        className={`flex flex-wrap items-center gap-3 bg-cream p-4 ${indent ? "ml-8" : ""}`}
       >
-        <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-black/10">
+        <div className="relative h-12 w-12 shrink-0 overflow-hidden bg-ink/10">
           {draft.image && <Image src={draft.image} alt={draft.name} fill className="object-cover" />}
         </div>
         <input
           value={draft.name}
           onChange={(e) => updateDraft(category.id, "name", e.target.value)}
-          className="min-w-40 flex-1 rounded-md border border-black/10 bg-black/5 px-3 py-2 text-sm focus:border-gold focus:outline-none"
+          className="min-w-40 flex-1 border border-ink/20 bg-white px-3 py-2 text-sm focus:border-gold focus:outline-none"
         />
         <input
           value={draft.slug}
           onChange={(e) => updateDraft(category.id, "slug", e.target.value)}
-          className="min-w-32 flex-1 rounded-md border border-black/10 bg-black/5 px-3 py-2 text-sm text-black/60 focus:border-gold focus:outline-none"
+          className="min-w-32 flex-1 border border-ink/20 bg-white px-3 py-2 text-sm text-ink/60 focus:border-gold focus:outline-none"
         />
         <input
           value={draft.image ?? ""}
           onChange={(e) => updateDraft(category.id, "image", e.target.value)}
           placeholder="Image URL"
-          className="min-w-40 flex-1 rounded-md border border-black/10 bg-black/5 px-3 py-2 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
+          className="min-w-40 flex-1 border border-ink/20 bg-white px-3 py-2 text-sm placeholder:text-ink/30 focus:border-gold focus:outline-none"
         />
         <select
           value={draft.parent_id ?? ""}
           onChange={(e) =>
             updateDraft(category.id, "parent_id", e.target.value ? Number(e.target.value) : null)
           }
-          className="rounded-md border border-black/10 bg-black/5 px-3 py-2 text-sm focus:border-gold focus:outline-none"
+          className="border border-ink/20 bg-white px-3 py-2 text-sm focus:border-gold focus:outline-none"
         >
           <option value="">Top-level</option>
           {parentOptions
@@ -149,11 +149,11 @@ export default function AdminCategoriesPage() {
         <button
           onClick={() => handleSave(category.id)}
           disabled={savingId === category.id}
-          className="rounded-md bg-gold px-4 py-2 text-xs font-semibold text-black transition hover:bg-gold/90 disabled:cursor-not-allowed disabled:opacity-50"
+          className="bg-gold px-4 py-2 text-xs font-semibold text-white transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-50"
         >
           {savingId === category.id ? "Saving…" : "Save"}
         </button>
-        <button onClick={() => handleDelete(category.id, category.name)} className="text-black/50 hover:text-red-600">
+        <button onClick={() => handleDelete(category.id, category.name)} className="text-ink/50 hover:text-red-600">
           <Trash2 className="h-4 w-4" />
         </button>
       </div>
@@ -162,61 +162,54 @@ export default function AdminCategoriesPage() {
 
   return (
     <div>
-      <h2 className="text-lg font-semibold">Categories ({categories.length})</h2>
-      <p className="mt-1 text-sm text-black/50">
-        Two levels supported. Fidex currently uses a flat catalog — Clothing, Accessories,
-        Grooming, Essentials — but you can nest subcategories under any of them if needed.
+      <h2 className="display-type text-3xl">Categories ({categories.length})</h2>
+      <p className="mt-1 text-sm text-ink/50">
+        Categories can be nested one level deep. Fidex currently uses four top-level categories
+        (Clothing, Accessories, Grooming and Essentials), and you can add subcategories under any
+        of them.
       </p>
 
       {error && (
-        <p className="mt-4 rounded-md bg-red-500/10 px-4 py-2 text-sm text-red-600">{error}</p>
+        <p className="mt-4 bg-red-500/10 px-4 py-2 text-sm text-red-600">{error}</p>
       )}
 
       <form
         onSubmit={handleCreate}
-        className="mt-6 flex flex-wrap items-end gap-3 rounded-2xl bg-black/5 p-4"
+        className="mt-6 flex flex-wrap items-end gap-3 bg-cream p-4"
       >
         <div>
-          <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
-            Name
-          </label>
-          <input
+          <label htmlFor="name" className="text-sm font-medium text-ink/80">Name</label>
+          <input id="name"
             required
             value={newCategory.name}
             onChange={(e) => setNewCategory((v) => ({ ...v, name: e.target.value }))}
-            className="mt-2 rounded-md border border-black/10 bg-black/5 px-3 py-2 text-sm focus:border-gold focus:outline-none"
+            className="mt-2 border border-ink/20 bg-white px-3 py-2 text-sm focus:border-gold focus:outline-none"
           />
         </div>
         <div>
-          <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
-            Slug (optional)
-          </label>
-          <input
+          <label htmlFor="slug-optional" className="text-sm font-medium text-ink/80">Slug (optional)</label>
+          <input id="slug-optional"
             value={newCategory.slug}
             onChange={(e) => setNewCategory((v) => ({ ...v, slug: e.target.value }))}
             placeholder="auto from name"
-            className="mt-2 rounded-md border border-black/10 bg-black/5 px-3 py-2 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
+            className="mt-2 border border-ink/20 bg-white px-3 py-2 text-sm placeholder:text-ink/30 focus:border-gold focus:outline-none"
           />
         </div>
         <div>
-          <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
-            Image URL
-          </label>
-          <input
+          <label htmlFor="image-url" className="text-sm font-medium text-ink/80">Image URL</label>
+          <input id="image-url"
             value={newCategory.image}
             onChange={(e) => setNewCategory((v) => ({ ...v, image: e.target.value }))}
             placeholder="https://images.example.com/category.jpg"
-            className="mt-2 rounded-md border border-black/10 bg-black/5 px-3 py-2 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
+            className="mt-2 border border-ink/20 bg-white px-3 py-2 text-sm placeholder:text-ink/30 focus:border-gold focus:outline-none"
           />
         </div>
         <div>
-          <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
-            Parent Category
-          </label>
-          <select
+          <label htmlFor="parent-category" className="text-sm font-medium text-ink/80">Parent Category</label>
+          <select id="parent-category"
             value={newCategory.parentId}
             onChange={(e) => setNewCategory((v) => ({ ...v, parentId: e.target.value }))}
-            className="mt-2 rounded-md border border-black/10 bg-black/5 px-3 py-2 text-sm focus:border-gold focus:outline-none"
+            className="mt-2 border border-ink/20 bg-white px-3 py-2 text-sm focus:border-gold focus:outline-none"
           >
             <option value="">None (top-level)</option>
             {parentOptions.map((p) => (
@@ -228,14 +221,14 @@ export default function AdminCategoriesPage() {
         </div>
         <button
           type="submit"
-          className="rounded-md bg-gold px-4 py-2 text-sm font-semibold text-black transition hover:bg-gold/90"
+          className="bg-gold px-4 py-2 text-sm font-semibold text-white transition hover:bg-ink"
         >
           + Add Category
         </button>
       </form>
 
       {loading ? (
-        <p className="mt-8 text-sm text-black/50">Loading…</p>
+        <p className="mt-8 text-sm text-ink/50">Loading…</p>
       ) : (
         <div className="mt-6 space-y-3">
           {topLevel.map((parent) => (
