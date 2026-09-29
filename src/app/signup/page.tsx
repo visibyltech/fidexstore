@@ -1,14 +1,25 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
+import { FormEvent, Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { safeRedirect } from "@/lib/redirect";
 import Link from "next/link";
 import { UserPlus } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import PasswordInput from "../components/PasswordInput";
 
 export default function SignupPage() {
+  return (
+    <Suspense fallback={null}>
+      <SignupForm />
+    </Suspense>
+  );
+}
+
+function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = safeRedirect(searchParams.get("next"));
   const { refresh } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -35,7 +46,7 @@ export default function SignupPage() {
     }
 
     await refresh();
-    router.push("/");
+    router.push(next);
   };
 
   return (
@@ -101,7 +112,9 @@ export default function SignupPage() {
 
         <p className="mt-6 text-center text-sm text-black/50">
           Already have an account?{" "}
-          <Link href="/login" className="text-gold hover:underline">
+          <Link
+            href={next === "/" ? "/login" : `/login?next=${encodeURIComponent(next)}`}
+            className="text-gold hover:underline">
             Sign In
           </Link>
         </p>

@@ -1,7 +1,8 @@
-import { SignJWT, jwtVerify } from "jose";
+import { SignJWT } from "jose";
 import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "./db";
+import { SESSION_COOKIE, getAuthSecret, verifySessionToken } from "./session";
 
 export type Role = "user" | "admin";
 
@@ -12,16 +13,8 @@ export type SessionUser = {
   role: Role;
 };
 
-export const SESSION_COOKIE = "rtd_session";
+export { SESSION_COOKIE };
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7; // 7 days
-
-function getAuthSecret() {
-  const secret = process.env.AUTH_SECRET;
-  if (!secret) {
-    throw new Error("AUTH_SECRET environment variable is not set");
-  }
-  return new TextEncoder().encode(secret);
-}
 
 export function hashPassword(password: string) {
   return bcrypt.hash(password, 10);
@@ -37,16 +30,6 @@ export function createSessionToken(userId: number) {
     .setIssuedAt()
     .setExpirationTime(`${SESSION_TTL_SECONDS}s`)
     .sign(getAuthSecret());
-}
-
-async function verifySessionToken(token: string): Promise<number | null> {
-  try {
-    const { payload } = await jwtVerify(token, getAuthSecret());
-    const id = Number(payload.sub);
-    return Number.isInteger(id) ? id : null;
-  } catch {
-    return null;
-  }
 }
 
 export function setSessionCookie(response: NextResponse, token: string) {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb, nextId } from "@/lib/db";
-import { getSessionUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 
 const PAYMENT_METHODS = ["bank-transfer", "installments", "klump"];
 const MAX_RECEIPT_BYTES = 5 * 1024 * 1024;
@@ -13,11 +13,11 @@ type OrderItemInput = {
   qty?: number;
 };
 
-// Public route — checkout works for guests. If a session cookie is present
-// the order is linked to that user; otherwise it's recorded from the
-// delivery form details alone, same as any guest checkout.
+// Checkout requires a signed-in account (src/proxy.ts redirects signed-out
+// visitors away from /checkout); every order is linked to its user.
 export async function POST(request: NextRequest) {
-  const sessionUser = await getSessionUser(request);
+  const { user: sessionUser, response } = await requireUser(request);
+  if (!sessionUser) return response;
 
   const formData = await request.formData();
 
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
     .doc(String(orderId))
     .set({
       id: orderId,
-      user_id: sessionUser?.id ?? null,
+      user_id: sessionUser.id,
       status: "pending",
       payment_method: paymentMethod,
       full_name: fullName,

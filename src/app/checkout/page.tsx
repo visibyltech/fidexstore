@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, ArrowRight } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import CheckoutStepper from "../components/checkout/CheckoutStepper";
 import OrderSummary, { DELIVERY_FEE } from "../components/checkout/OrderSummary";
@@ -11,7 +13,16 @@ import PaymentMethodStep, { PaymentMethod } from "../components/checkout/Payment
 import ReviewStep from "../components/checkout/ReviewStep";
 
 export default function CheckoutPage() {
+  const router = useRouter();
+  const { user, loading } = useAuth();
   const { items, subtotal, clearCart } = useCart();
+
+  // src/proxy.ts already redirects signed-out visitors before the page
+  // loads; this catches signing out while already on checkout.
+  useEffect(() => {
+    if (!loading && !user) router.replace("/login?next=/checkout");
+  }, [loading, user, router]);
+
   const [step, setStep] = useState(1);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderNumber, setOrderNumber] = useState("");
@@ -32,6 +43,10 @@ export default function CheckoutPage() {
     setOrderPlaced(true);
     clearCart();
   };
+
+  if (loading || !user) {
+    return <p className="mx-10 mt-16 mb-16 text-center text-sm text-black/50">Loading…</p>;
+  }
 
   if (orderPlaced) {
     return (

@@ -1,14 +1,25 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
+import { FormEvent, Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { safeRedirect } from "@/lib/redirect";
 import Link from "next/link";
 import { LogIn } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import PasswordInput from "../components/PasswordInput";
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = safeRedirect(searchParams.get("next"));
   const { refresh } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,7 +45,7 @@ export default function LoginPage() {
     }
 
     await refresh();
-    router.push("/");
+    router.push(next);
   };
 
   return (
@@ -45,6 +56,12 @@ export default function LoginPage() {
           <h1 className="text-lg font-semibold">Sign In</h1>
         </div>
         <p className="mt-1 text-sm text-black/50">Welcome back to Fidex.</p>
+
+        {next.startsWith("/checkout") && (
+          <p className="mt-4 rounded-md bg-gold/10 px-4 py-2 text-sm text-black/70">
+            Please sign in or create an account to continue to checkout.
+          </p>
+        )}
 
         {error && (
           <p className="mt-4 rounded-md bg-red-500/10 px-4 py-2 text-sm text-red-600">{error}</p>
@@ -86,7 +103,9 @@ export default function LoginPage() {
 
         <p className="mt-6 text-center text-sm text-black/50">
           Don&apos;t have an account?{" "}
-          <Link href="/signup" className="text-gold hover:underline">
+          <Link
+            href={next === "/" ? "/signup" : `/signup?next=${encodeURIComponent(next)}`}
+            className="text-gold hover:underline">
             Sign Up
           </Link>
         </p>
