@@ -191,7 +191,7 @@ export default function AdminOrderDetailPage() {
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-green-600">Deposit Required</span>
+                  <span className="text-green-600">Initial Deposit (30%)</span>
                   <span className="font-semibold text-green-600">
                     ₦{order.installment_deposit?.toLocaleString()}
                   </span>

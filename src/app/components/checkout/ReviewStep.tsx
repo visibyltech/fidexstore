@@ -298,7 +298,7 @@ const ReviewStep = ({
             Upload Initial Deposit Receipt *
           </label>
           <p className="mt-1 text-sm text-black/70">
-            Please transfer your deposit of{" "}
+            Please transfer your initial deposit of{" "}
             <span className="font-semibold text-black">
               ₦{installmentDeposit.toLocaleString()}
             </span>{" "}
