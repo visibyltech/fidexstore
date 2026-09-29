@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Heart, Star, ShoppingCart, Check } from "lucide-react";
 import { useCart } from "../../context/CartContext";
 import { useWishlist } from "../../context/WishlistContext";
@@ -68,7 +69,7 @@ const ShopProductCard = ({
   const addToCartButton = (
     <button
       onClick={handleAddToCart}
-      className={`flex items-center justify-center gap-2 rounded-md py-2 text-xs font-semibold uppercase transition ${
+      className={`relative z-10 flex items-center justify-center gap-2 rounded-md py-2 text-xs font-semibold uppercase transition ${
         added ? "bg-green-500 text-black" : "bg-gold text-black hover:bg-gold/90"
       } ${layout === "list" ? "shrink-0 px-4" : "mt-3 w-full"}`}
     >
@@ -84,21 +85,37 @@ const ShopProductCard = ({
     </button>
   );
 
+  // The link's ::after stretches over the whole card, so clicking anywhere
+  // opens the product; the buttons sit above it with relative z-10.
+  const nameLink = (
+    <Link
+      href={`/product/${product.id}`}
+      className="transition group-hover:text-gold after:absolute after:inset-0 after:content-['']"
+    >
+      {product.name}
+    </Link>
+  );
+
   if (layout === "list") {
     return (
-      <div className="flex items-center gap-4 rounded-2xl border border-black/5 bg-white p-3">
+      <div className="group relative flex items-center gap-4 rounded-2xl border border-black/5 bg-white p-3 transition hover:border-gold/40">
         <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl">
           {discount > 0 && (
-            <span className="absolute top-1.5 left-1.5 z-10 rounded-md bg-gold px-1.5 py-0.5 text-[9px] font-semibold text-black uppercase">
+            <span className="pointer-events-none absolute top-1.5 left-1.5 z-10 rounded-md bg-gold px-1.5 py-0.5 text-[9px] font-semibold text-black uppercase">
               Sale
             </span>
           )}
-          <Image src={product.image} alt={product.name} fill className="object-cover" />
+          <Image
+            src={product.image}
+            alt={product.name}
+            fill
+            className="object-cover transition duration-300 group-hover:scale-105"
+          />
         </div>
 
         <div className="min-w-0 flex-1">
           <p className="text-xs tracking-wide text-black/40 uppercase">{product.category}</p>
-          <h4 className="mt-0.5 truncate text-sm font-semibold">{product.name}</h4>
+          <h4 className="mt-0.5 truncate text-sm font-semibold">{nameLink}</h4>
           <div className="mt-1">
             <RatingStars rating={product.rating} reviews={product.reviews} />
           </div>
@@ -108,7 +125,7 @@ const ShopProductCard = ({
         <button
           onClick={handleToggleWishlist}
           aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
-          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition ${
+          className={`relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition ${
             wishlisted ? "bg-gold text-black" : "bg-black/5 text-black/60 hover:bg-gold hover:text-black"
           }`}
         >
@@ -121,10 +138,10 @@ const ShopProductCard = ({
   }
 
   return (
-    <div>
+    <div className="group relative">
       <div className="relative aspect-square overflow-hidden rounded-2xl border border-black/5 bg-white">
         {discount > 0 && (
-          <span className="absolute top-3 left-3 z-10 rounded-md bg-gold px-2 py-1 text-[10px] font-semibold text-black uppercase">
+          <span className="pointer-events-none absolute top-3 left-3 z-10 rounded-md bg-gold px-2 py-1 text-[10px] font-semibold text-black uppercase">
             Sale
           </span>
         )}
@@ -137,11 +154,16 @@ const ShopProductCard = ({
         >
           <Heart className={`h-4 w-4 ${wishlisted ? "fill-black" : ""}`} />
         </button>
-        <Image src={product.image} alt={product.name} fill className="object-cover" />
+        <Image
+          src={product.image}
+          alt={product.name}
+          fill
+          className="object-cover transition duration-300 group-hover:scale-105"
+        />
       </div>
 
       <p className="mt-3 text-xs tracking-wide text-black/40 uppercase">{product.category}</p>
-      <h4 className="mt-0.5 text-sm font-semibold">{product.name}</h4>
+      <h4 className="mt-0.5 text-sm font-semibold">{nameLink}</h4>
 
       <div className="mt-1">
         <RatingStars rating={product.rating} reviews={product.reviews} />

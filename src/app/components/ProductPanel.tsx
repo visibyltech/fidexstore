@@ -32,25 +32,29 @@ const ProductCard = ({ product }: { product: Product }) => {
   };
 
   return (
-    <div>
+    <div className="group relative">
       <div className="relative aspect-square overflow-hidden rounded-2xl">
         <Image
           src={product.image}
           alt={product.name}
           fill
-          className="object-cover"
+          className="object-cover transition duration-300 group-hover:scale-105"
         />
       </div>
-      <p className="mt-3 text-xs font-medium tracking-wide text-black/70 uppercase">
+      {/* The link's ::after stretches over the whole card, so clicking anywhere opens the product. */}
+      <Link
+        href={`/product/${product.id}`}
+        className="mt-3 block text-xs font-medium tracking-wide text-black/70 uppercase transition group-hover:text-gold after:absolute after:inset-0 after:content-['']"
+      >
         {product.name}
-      </p>
+      </Link>
       <p className="mt-1 text-sm font-semibold text-gold">
         ₦{product.price.toLocaleString()}
       </p>
 
       <button
         onClick={handleAddToCart}
-        className={`mt-3 flex w-full items-center justify-center gap-2 rounded-md py-2 text-xs font-semibold uppercase transition ${
+        className={`relative z-10 mt-3 flex w-full items-center justify-center gap-2 rounded-md py-2 text-xs font-semibold uppercase transition ${
           added ? "bg-green-500 text-black" : "bg-gold text-black hover:bg-gold/90"
         }`}
       >

@@ -18,3 +18,8 @@ export type ApiProduct = {
   category: string;
   category_name: string;
 };
+
+export type ApiProductDetail = ApiProduct & {
+  description: string | null;
+  stock: number | null;
+};

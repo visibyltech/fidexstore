@@ -40,12 +40,17 @@ export default function CartPage() {
                 key={item.id}
                 className="flex items-center gap-4 rounded-2xl bg-black/5 p-4"
               >
-                <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl">
+                <Link
+                  href={`/product/${item.id}`}
+                  className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl"
+                >
                   <Image src={item.image} alt={item.name} fill className="object-cover" />
-                </div>
+                </Link>
 
                 <div className="flex-1">
-                  <p className="font-semibold">{item.name}</p>
+                  <Link href={`/product/${item.id}`} className="font-semibold transition hover:text-gold">
+                    {item.name}
+                  </Link>
                   <p className="mt-1 text-sm text-gold">₦{item.price.toLocaleString()}</p>
                 </div>
 

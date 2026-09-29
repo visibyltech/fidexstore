@@ -17,10 +17,10 @@ const features = [
 ];
 
 const heroTiles = [
-  { src: "/products-fidex/tshirt-black.jpg", alt: "Fidex black t-shirt" },
-  { src: "/products-fidex/jeans.jpg", alt: "Fidex denim jeans" },
-  { src: "/products-fidex/sneakers.jpg", alt: "Fidex canvas sneakers" },
-  { src: "/products-fidex/watch.jpg", alt: "Fidex wristwatch" },
+  { src: "/products-fidex/tshirt-black.jpg", alt: "Fidex black t-shirt", category: "clothing" },
+  { src: "/products-fidex/jeans.jpg", alt: "Fidex denim jeans", category: "clothing" },
+  { src: "/products-fidex/sneakers.jpg", alt: "Fidex canvas sneakers", category: "clothing" },
+  { src: "/products-fidex/watch.jpg", alt: "Fidex wristwatch", category: "accessories" },
 ];
 
 const Hero = () => {
@@ -73,18 +73,19 @@ const Hero = () => {
 
         <div className="relative grid grid-cols-2 gap-3">
           {heroTiles.map((tile, i) => (
-            <div
+            <Link
               key={tile.src}
-              className={`relative overflow-hidden rounded-2xl ${i === 0 ? "aspect-square" : "aspect-square"}`}
+              href={`/shop?category=${tile.category}`}
+              className="group relative aspect-square overflow-hidden rounded-2xl"
             >
               <Image
                 src={tile.src}
                 alt={tile.alt}
                 fill
                 priority={i === 0}
-                className="object-cover"
+                className="object-cover transition duration-300 group-hover:scale-105"
               />
-            </div>
+            </Link>
           ))}
           <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 rounded-xl bg-cream px-4 py-3 text-black shadow-lg">
             <p className="text-sm font-semibold tracking-wide">Style. Confidence.</p>

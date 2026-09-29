@@ -246,8 +246,8 @@ const ReviewStep = ({
             <h3 className="text-sm font-semibold">Installment Plan Details</h3>
           </div>
           <p className="mt-2 text-sm text-black/70">
-            Choose a payment plan that works for you. A {DEPOSIT_RATE * 100}% upfront deposit is
-            required before shipping.
+            Choose a payment plan that works for you. A {DEPOSIT_RATE * 100}% initial deposit is
+            required to start your plan. Your order ships once payment is completed.
           </p>
 
           <label className="mt-4 block text-xs font-semibold tracking-wide text-black/60 uppercase">
@@ -281,7 +281,7 @@ const ReviewStep = ({
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-green-600">Upfront Deposit ({DEPOSIT_RATE * 100}%)</span>
+              <span className="text-green-600">Initial Deposit ({DEPOSIT_RATE * 100}%)</span>
               <span className="font-semibold text-green-600">
                 ₦{installmentDeposit.toLocaleString()}
               </span>

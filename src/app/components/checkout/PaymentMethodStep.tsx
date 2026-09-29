@@ -13,7 +13,7 @@ const methods: { id: PaymentMethod; icon: typeof CreditCard; title: string; subt
     id: "installments",
     icon: CalendarClock,
     title: "Installment Payment",
-    subtitle: "30% deposit, spread the rest weekly",
+    subtitle: "30% initial deposit, rest weekly — ships when fully paid",
   },
   {
     id: "klump",
