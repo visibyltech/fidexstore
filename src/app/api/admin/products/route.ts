@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb, nextId } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { slugify } from "@/lib/slug";
-import { readImageFile } from "@/lib/image-upload";
+import { productImages, saveProductImages } from "@/lib/product-images";
 
 export async function GET(request: NextRequest) {
   const { user, response } = await requireAdmin(request);
@@ -25,6 +25,7 @@ export async function GET(request: NextRequest) {
         slug: p.slug,
         description: p.description,
         image: p.image,
+        images: productImages(p),
         price: p.price,
         old_price: p.old_price,
         rating: p.rating,
@@ -62,9 +63,6 @@ export async function POST(request: NextRequest) {
   const descriptionRaw = formData.get("description");
   const description =
     typeof descriptionRaw === "string" && descriptionRaw.trim() ? descriptionRaw : null;
-  const imageUrlRaw = formData.get("imageUrl");
-  const imageUrl =
-    typeof imageUrlRaw === "string" && imageUrlRaw.trim() ? imageUrlRaw.trim() : null;
   const oldPriceRaw = formData.get("oldPrice");
   const oldPrice =
     oldPriceRaw != null && Number.isFinite(Number(oldPriceRaw)) ? Number(oldPriceRaw) : null;
@@ -83,20 +81,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "A product with this slug already exists" }, { status: 409 });
   }
 
-  let imageData: string | null = null;
-  let imageMimeType: string | null = null;
-
-  const imageFile = formData.get("imageFile");
-  if (imageFile instanceof File && imageFile.size > 0) {
-    const result = await readImageFile(imageFile);
-    if ("error" in result) {
-      return NextResponse.json({ error: result.error }, { status: 400 });
-    }
-    imageData = result.data;
-    imageMimeType = result.mimeType;
+  const id = await nextId("products");
+  const saved = await saveProductImages(db, id, formData);
+  if ("error" in saved) {
+    return NextResponse.json({ error: saved.error }, { status: 400 });
   }
 
-  const id = await nextId("products");
   const now = new Date().toISOString();
   const product = {
     id,
@@ -104,9 +94,8 @@ export async function POST(request: NextRequest) {
     name,
     slug,
     description,
-    image: imageData ? `/api/products/${id}/image` : imageUrl,
-    image_data: imageData,
-    image_mime_type: imageMimeType,
+    images: saved.images,
+    image: saved.images[0] ?? null,
     price,
     old_price: oldPrice,
     rating: 0,
@@ -126,6 +115,7 @@ export async function POST(request: NextRequest) {
         slug: product.slug,
         description: product.description,
         image: product.image,
+        images: product.images,
         price: product.price,
         old_price: product.old_price,
         stock: product.stock,

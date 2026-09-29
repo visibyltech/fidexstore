@@ -27,10 +27,20 @@ a leaf category when a hierarchy is in use (Fidex's own catalog is flat —
 every category is top-level with no children).
 
 ### `products/{id}`
-`{ id, category_id, name, slug, description, image, image_data, image_mime_type, price, old_price, rating, reviews_count, stock, is_active, created_at, updated_at }`
-`image` is the URL/path rendered everywhere. `image_data`/`image_mime_type`
-are only set when the admin uploaded a file directly rather than linking to
-an external image (and `image` becomes `/api/products/[id]/image`).
+`{ id, category_id, name, slug, description, images, image, image_data, image_mime_type, price, old_price, rating, reviews_count, stock, is_active, created_at, updated_at }`
+`images` is the ordered gallery (URLs/paths); the first is the cover and is
+mirrored into `image`, which is what cards, cart, wishlist and orders render.
+Products saved before multi-image support have no `images` — read it via
+`productImages()` in `src/lib/product-images.ts`, which falls back to `image`.
+`image_data`/`image_mime_type` are legacy: a single inline upload served at
+`/api/products/[id]/image`, cleared once the admin removes it from the gallery.
+
+### `product_images/{id}`
+`{ id, product_id, data, mime_type, created_at }` — one uploaded gallery
+image (base64), served at `/api/product-images/[id]`. Kept out of the
+product doc so product listings stay small and each image gets its own
+1 MiB Firestore document. Deleted when removed from the gallery or when the
+product is deleted.
 
 ### `orders/{id}`
 `{ id, user_id: number | null, status: "pending" | "completed", payment_method: "bank-transfer" | "installments" | "klump", full_name, email, phone, address, city, subtotal, delivery_fee, total, installment_weeks, installment_interest_rate, installment_deposit, receipt_filename, receipt_mime_type, receipt_data, items: OrderItem[], created_at }`

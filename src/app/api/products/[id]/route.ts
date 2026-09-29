@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
+import { productImages } from "@/lib/product-images";
 
 export async function GET(
   _request: NextRequest,
@@ -29,6 +30,7 @@ export async function GET(
       slug: p.slug,
       description: p.description,
       image: p.image,
+      images: productImages(p),
       price: p.price,
       old_price: p.old_price,
       rating: p.rating,

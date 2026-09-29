@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { slugify } from "@/lib/slug";
-import { readImageFile } from "@/lib/image-upload";
+import { deleteUnusedProductImages, productImages, saveProductImages } from "@/lib/product-images";
 
 export async function GET(
   request: NextRequest,
@@ -29,6 +29,7 @@ export async function GET(
       slug: p.slug,
       description: p.description,
       image: p.image,
+      images: productImages(p),
       price: p.price,
       old_price: p.old_price,
       stock: p.stock,
@@ -96,28 +97,6 @@ export async function PATCH(
   const isActiveRaw = formData.get("isActive");
   const isActive = isActiveRaw != null ? isActiveRaw === "true" : existing.is_active;
 
-  let image = existing.image;
-  let imageData = existing.image_data;
-  let imageMimeType = existing.image_mime_type;
-
-  const imageFile = formData.get("imageFile");
-  if (imageFile instanceof File && imageFile.size > 0) {
-    const result = await readImageFile(imageFile);
-    if ("error" in result) {
-      return NextResponse.json({ error: result.error }, { status: 400 });
-    }
-    imageData = result.data;
-    imageMimeType = result.mimeType;
-    image = `/api/products/${productId}/image`;
-  } else {
-    const imageUrlRaw = formData.get("imageUrl");
-    if (typeof imageUrlRaw === "string" && imageUrlRaw.trim()) {
-      image = imageUrlRaw.trim();
-      imageData = null;
-      imageMimeType = null;
-    }
-  }
-
   if (slug !== existing.slug) {
     const slugTakenSnap = await db.collection("products").where("slug", "==", slug).limit(1).get();
     if (!slugTakenSnap.empty && slugTakenSnap.docs[0].id !== String(productId)) {
@@ -125,15 +104,27 @@ export async function PATCH(
     }
   }
 
+  const saved = await saveProductImages(db, productId, formData);
+  if ("error" in saved) {
+    return NextResponse.json({ error: saved.error }, { status: 400 });
+  }
+  const images = saved.images;
+
+  // Products created before multi-image support keep their single uploaded
+  // image inline on the product doc (served by /api/products/[id]/image);
+  // drop it once the admin removes it from the gallery.
+  const keepsLegacyImage = images.includes(`/api/products/${productId}/image`);
+
   const updated = {
     id: productId,
     category_id: categoryId,
     name,
     slug,
     description,
-    image,
-    image_data: imageData,
-    image_mime_type: imageMimeType,
+    images,
+    image: images[0] ?? null,
+    image_data: keepsLegacyImage ? (existing.image_data ?? null) : null,
+    image_mime_type: keepsLegacyImage ? (existing.image_mime_type ?? null) : null,
     price,
     old_price: oldPrice,
     stock,
@@ -141,6 +132,7 @@ export async function PATCH(
     updated_at: new Date().toISOString(),
   };
   await ref.update(updated);
+  await deleteUnusedProductImages(db, productId, images);
 
   return NextResponse.json({
     product: {
@@ -149,6 +141,7 @@ export async function PATCH(
       slug: updated.slug,
       description: updated.description,
       image: updated.image,
+      images: updated.images,
       price: updated.price,
       old_price: updated.old_price,
       stock: updated.stock,
@@ -171,11 +164,13 @@ export async function DELETE(
     return NextResponse.json({ error: "Invalid product id" }, { status: 400 });
   }
 
-  const ref = getDb().collection("products").doc(String(productId));
+  const db = getDb();
+  const ref = db.collection("products").doc(String(productId));
   const doc = await ref.get();
   if (!doc.exists) {
     return NextResponse.json({ error: "Product not found" }, { status: 404 });
   }
   await ref.delete();
+  await deleteUnusedProductImages(db, productId);
   return NextResponse.json({ ok: true });
 }

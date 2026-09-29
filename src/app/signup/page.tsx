@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { UserPlus } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import PasswordInput from "../components/PasswordInput";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -79,13 +80,12 @@ export default function SignupPage() {
             <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
               Password
             </label>
-            <input
+            <PasswordInput
               required
-              type="password"
               minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-2 w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
+              className="w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
             />
             <p className="mt-1 text-xs text-black/40">At least 8 characters.</p>
           </div>

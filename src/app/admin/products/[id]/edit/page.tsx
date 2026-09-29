@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import ProductForm, { ProductFormValues } from "../../ProductForm";
+import ProductForm, { appendGallery, GalleryItem, ProductFormValues } from "../../ProductForm";
 
 export default function EditProductPage() {
   const params = useParams<{ id: string }>();
@@ -24,14 +24,14 @@ export default function EditProductPage() {
           price: String(p.price),
           oldPrice: p.old_price != null ? String(p.old_price) : "",
           description: p.description ?? "",
-          image: p.image ?? "",
+          images: p.images ?? [],
           stock: String(p.stock),
           isActive: p.is_active,
         });
       });
   }, [params.id]);
 
-  const handleSubmit = async (values: ProductFormValues, imageFile: File | null) => {
+  const handleSubmit = async (values: ProductFormValues, gallery: GalleryItem[]) => {
     const formData = new FormData();
     formData.set("name", values.name);
     formData.set("categoryId", values.categoryId);
@@ -40,12 +40,7 @@ export default function EditProductPage() {
     formData.set("description", values.description);
     formData.set("stock", values.stock);
     formData.set("isActive", String(values.isActive));
-
-    if (imageFile) {
-      formData.set("imageFile", imageFile);
-    } else if (values.image) {
-      formData.set("imageUrl", values.image);
-    }
+    appendGallery(formData, gallery);
 
     const res = await fetch(`/api/admin/products/${params.id}`, {
       method: "PATCH",

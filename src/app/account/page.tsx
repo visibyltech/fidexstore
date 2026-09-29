@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { KeyRound } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import PasswordInput from "../components/PasswordInput";
 
 export default function AccountPage() {
   const { user, loading } = useAuth();
@@ -90,38 +91,35 @@ export default function AccountPage() {
             <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
               Current Password
             </label>
-            <input
+            <PasswordInput
               required
-              type="password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="mt-2 w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
+              className="w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
             />
           </div>
           <div>
             <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
               New Password
             </label>
-            <input
+            <PasswordInput
               required
-              type="password"
               minLength={8}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="mt-2 w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
+              className="w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
             />
           </div>
           <div>
             <label className="text-xs font-semibold tracking-wide text-black/60 uppercase">
               Confirm New Password
             </label>
-            <input
+            <PasswordInput
               required
-              type="password"
               minLength={8}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="mt-2 w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
+              className="w-full rounded-md border border-black/10 bg-black/5 px-4 py-3 text-sm placeholder:text-black/30 focus:border-gold focus:outline-none"
             />
           </div>
 

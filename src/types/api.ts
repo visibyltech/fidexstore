@@ -22,4 +22,5 @@ export type ApiProduct = {
 export type ApiProductDetail = ApiProduct & {
   description: string | null;
   stock: number | null;
+  images: string[];
 };

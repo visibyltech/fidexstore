@@ -19,6 +19,7 @@ export default function ProductDetailPage() {
   const [status, setStatus] = useState<"loading" | "ready" | "not-found">("loading");
   const [related, setRelated] = useState<Product[]>([]);
   const [qty, setQty] = useState(1);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [added, setAdded] = useState(false);
 
   useEffect(() => {
@@ -30,6 +31,7 @@ export default function ProductDetailPage() {
         if (cancelled) return;
         setProduct(data.product);
         setQty(1);
+        setActiveIndex(0);
         setStatus("ready");
       })
       .catch(() => {
@@ -86,6 +88,8 @@ export default function ProductDetailPage() {
   }
 
   const image = product.image ?? "";
+  const images = product.images?.length ? product.images : image ? [image] : [];
+  const activeImage = images[activeIndex] ?? images[0];
   const rating = Math.round(Number(product.rating));
   const wishlisted = isWishlisted(product.id);
   const outOfStock = product.stock === 0;
@@ -121,13 +125,34 @@ export default function ProductDetailPage() {
         </nav>
 
         <div className="mt-6 grid grid-cols-1 gap-10 md:grid-cols-2">
-          <div className="relative aspect-square overflow-hidden rounded-3xl border border-black/5 bg-white">
-            {discount > 0 && (
-              <span className="absolute top-4 left-4 z-10 rounded-md bg-gold px-2.5 py-1 text-xs font-semibold text-black uppercase">
-                Sale
-              </span>
+          <div>
+            <div className="relative aspect-square overflow-hidden rounded-3xl border border-black/5 bg-white">
+              {discount > 0 && (
+                <span className="absolute top-4 left-4 z-10 rounded-md bg-gold px-2.5 py-1 text-xs font-semibold text-black uppercase">
+                  Sale
+                </span>
+              )}
+              {activeImage && (
+                <Image src={activeImage} alt={product.name} fill priority className="object-cover" />
+              )}
+            </div>
+
+            {images.length > 1 && (
+              <div className="mt-3 grid grid-cols-5 gap-3">
+                {images.map((src, i) => (
+                  <button
+                    key={`${i}-${src}`}
+                    onClick={() => setActiveIndex(i)}
+                    aria-label={`Show image ${i + 1}`}
+                    className={`relative aspect-square overflow-hidden rounded-xl border-2 transition ${
+                      i === activeIndex ? "border-gold" : "border-transparent opacity-70 hover:opacity-100"
+                    }`}
+                  >
+                    <Image src={src} alt="" fill className="object-cover" />
+                  </button>
+                ))}
+              </div>
             )}
-            {image && <Image src={image} alt={product.name} fill priority className="object-cover" />}
           </div>
 
           <div className="flex flex-col">
