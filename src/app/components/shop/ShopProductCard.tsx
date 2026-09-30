@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import ProductImage from "../ProductImage";
 import Link from "next/link";
 import { Heart, Star, Plus, Check } from "lucide-react";
 import { useCart } from "../../context/CartContext";
@@ -113,15 +113,13 @@ const ShopProductCard = ({
     ) : null;
 
   const image = (sizes: string) =>
-    product.image ? (
-      <Image
+    <ProductImage
         src={product.image}
         alt={product.name}
         fill
         sizes={sizes}
         className="object-cover transition duration-500 group-hover:scale-[1.03]"
-      />
-    ) : null;
+      />;
 
   if (layout === "list") {
     return (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import ProductImage from "./ProductImage";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { ApiCategory } from "@/types/api";
@@ -41,15 +41,13 @@ const CategoriesSection = () => {
         {groups.map(({ parent, children }) => (
           <Link key={parent.slug} href={`/shop?category=${parent.slug}`} className="group">
             <div className="relative aspect-3/4 overflow-hidden bg-cream">
-              {parent.image && (
-                <Image
+              <ProductImage
                   src={parent.image}
                   alt={parent.name}
                   fill
                   sizes="(min-width: 768px) 25vw, 50vw"
                   className="object-cover transition duration-500 group-hover:scale-[1.03]"
                 />
-              )}
             </div>
             <div className="mt-3 flex items-center justify-between">
               <span className="text-base font-medium text-ink transition group-hover:text-gold">

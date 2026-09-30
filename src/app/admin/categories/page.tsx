@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import Image from "next/image";
+import ProductImage from "../../components/ProductImage";
 import { Trash2 } from "lucide-react";
 
 type Category = { id: number; name: string; slug: string; image: string | null; parent_id: number | null };
@@ -112,7 +112,7 @@ export default function AdminCategoriesPage() {
         className={`flex flex-wrap items-center gap-3 bg-cream p-4 ${indent ? "ml-8" : ""}`}
       >
         <div className="relative h-12 w-12 shrink-0 overflow-hidden bg-ink/10">
-          {draft.image && <Image src={draft.image} alt={draft.name} fill className="object-cover" />}
+          <ProductImage src={draft.image} alt={draft.name} fill className="object-cover" />
         </div>
         <input
           value={draft.name}

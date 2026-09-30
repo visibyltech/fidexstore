@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
         phone: o.phone,
         city: o.city,
         total: o.total,
-        has_receipt: o.receipt_data != null,
+        has_receipt: o.has_receipt ?? o.receipt_data != null,
         created_at: o.created_at,
       };
     })

@@ -43,13 +43,25 @@ product doc so product listings stay small and each image gets its own
 product is deleted.
 
 ### `orders/{id}`
-`{ id, user_id: number | null, status: "pending" | "completed", payment_method: "bank-transfer" | "installments" | "klump", full_name, email, phone, address, city, subtotal, delivery_fee, total, installment_weeks, installment_interest_rate, installment_deposit, receipt_filename, receipt_mime_type, receipt_data, items: OrderItem[], created_at }`
+`{ id, user_id: number, status: "pending" | "completed", payment_method: "bank-transfer" | "installments" | "klump", full_name, email, phone, address, city, subtotal, delivery_fee, total, installment_weeks, installment_interest_rate, installment_deposit, klump_reference, has_receipt, receipt_filename, items: OrderItem[], created_at }`
+Every price and total is computed server-side in `POST /api/orders` from
+product prices in Firestore and the rules in `src/lib/pricing.ts`; the
+browser only sends product ids and quantities.
 `items` is embedded directly on the order document (no separate collection)
 since it's always read and written together with its order. Each
-`OrderItem` is `{ id, product_id: number | null, name, image, price, qty }`,
-`id` being that item's own position id within the order (assigned via
-`nextId("order_items")`), used only to give each row a stable React key.
-Klump orders have no receipt (Klump verifies itself).
+`OrderItem` is `{ id, product_id, name, image, price, qty }` (a snapshot of
+the product at order time), `id` being that item's own position id within
+the order (assigned via `nextId("order_items")`), used only to give each row
+a stable React key.
+Klump orders have no receipt; the order is only recorded after the server
+verifies `klump_reference` with Klump, and each reference can be used once.
+Orders placed before receipts moved out still carry `receipt_data` /
+`receipt_mime_type` inline; the receipt endpoint falls back to those.
+
+### `order_receipts/{orderId}`
+`{ order_id, filename, mime_type, data, created_at }` — the uploaded
+payment receipt (base64), kept out of the order document so orders stay
+small and each receipt gets its own 1 MiB document.
 
 ### `newsletter_subscribers/{email}`
 `{ email, created_at }` — keyed by email (lowercased) for free uniqueness,

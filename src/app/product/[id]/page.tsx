@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import Image from "next/image";
+import ProductImage from "../../components/ProductImage";
 import Link from "next/link";
 import { ArrowLeft, Check, Heart, Minus, Plus, Star } from "lucide-react";
 import { useCart } from "../../context/CartContext";
@@ -133,8 +133,7 @@ export default function ProductDetailPage() {
                 -{discount}%
               </span>
             )}
-            {activeImage && (
-              <Image
+            <ProductImage
                 src={activeImage}
                 alt={product.name}
                 fill
@@ -142,7 +141,6 @@ export default function ProductDetailPage() {
                 sizes="(min-width: 1024px) 58vw, 100vw"
                 className="object-cover"
               />
-            )}
           </div>
 
           {images.length > 1 && (
@@ -157,7 +155,7 @@ export default function ProductDetailPage() {
                     i === activeIndex ? "ring-2 ring-ink ring-offset-2" : "opacity-70 hover:opacity-100"
                   }`}
                 >
-                  <Image src={src} alt="" fill sizes="120px" className="object-cover" />
+                  <ProductImage src={src} alt="" fill sizes="120px" className="object-cover" />
                 </button>
               ))}
             </div>

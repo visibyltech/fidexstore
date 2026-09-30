@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { applyLiveProducts, fetchLiveProducts } from "@/lib/catalog-sync";
 
 export type WishlistItem = {
   id: number;
@@ -27,13 +28,22 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     Promise.resolve().then(() => {
+      let stored: WishlistItem[] = [];
       try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) setItems(JSON.parse(stored));
+        const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]");
+        stored = Array.isArray(parsed) ? parsed : [];
+        setItems(stored);
       } catch {
         // ignore corrupted storage
       } finally {
         setHydrated(true);
+      }
+
+      // Same refresh as the cart: fix stale photos/prices, drop removed products.
+      if (stored.length > 0) {
+        fetchLiveProducts(stored.map((item) => item.id)).then((live) =>
+          setItems((prev) => applyLiveProducts(prev, live))
+        );
       }
     });
   }, []);

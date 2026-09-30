@@ -1,7 +1,8 @@
-import Image from "next/image";
+import ProductImage from "../ProductImage";
 import { useCart } from "../../context/CartContext";
+import { DELIVERY_FEE } from "@/lib/pricing";
 
-export const DELIVERY_FEE = 5000;
+export { DELIVERY_FEE };
 
 const OrderSummary = () => {
   const { items, subtotal } = useCart();
@@ -15,7 +16,7 @@ const OrderSummary = () => {
         {items.map((item) => (
           <div key={item.id} className="flex items-center gap-3">
             <div className="relative h-14 w-12 shrink-0 overflow-hidden bg-white">
-              <Image src={item.image} alt={item.name} fill sizes="48px" className="object-cover" />
+              <ProductImage src={item.image} alt={item.name} fill sizes="48px" className="object-cover" />
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium">{item.name}</p>

@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { applyLiveProducts, fetchLiveProducts } from "@/lib/catalog-sync";
 
 export type CartItem = {
   id: number;
@@ -30,13 +31,23 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     Promise.resolve().then(() => {
+      let stored: CartItem[] = [];
       try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) setItems(JSON.parse(stored));
+        const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]");
+        stored = Array.isArray(parsed) ? parsed : [];
+        setItems(stored);
       } catch {
         // ignore corrupted storage
       } finally {
         setHydrated(true);
+      }
+
+      // Refresh saved items so stale photos, names and prices are replaced
+      // and products that no longer exist drop out of the cart.
+      if (stored.length > 0) {
+        fetchLiveProducts(stored.map((item) => item.id)).then((live) =>
+          setItems((prev) => applyLiveProducts(prev, live))
+        );
       }
     });
   }, []);

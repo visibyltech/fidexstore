@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import ProductImage from "../components/ProductImage";
 import Link from "next/link";
 import { X, ArrowRight } from "lucide-react";
 import { useWishlist } from "../context/WishlistContext";
@@ -32,7 +32,7 @@ export default function WishlistPage() {
           {items.map((item) => (
             <li key={item.id} className="flex flex-wrap items-center gap-4 border-b border-ink/10 py-5">
               <Link href={`/product/${item.id}`} className="relative h-24 w-20 shrink-0 overflow-hidden bg-cream">
-                <Image src={item.image} alt={item.name} fill sizes="80px" className="object-cover" />
+                <ProductImage src={item.image} alt={item.name} fill sizes="80px" className="object-cover" />
               </Link>
 
               <div className="min-w-0 flex-1">

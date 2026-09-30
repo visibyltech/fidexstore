@@ -6,6 +6,8 @@ import { PaymentMethod } from "./PaymentMethodStep";
 import { CartItem } from "../../context/CartContext";
 import { DeliveryDetails } from "./DeliveryForm";
 import { SITE } from "@/lib/site";
+import { DEPOSIT_RATE, INSTALLMENT_PLANS, installmentBreakdown } from "@/lib/pricing";
+import { compressImage } from "@/lib/compress-image";
 
 type ReviewStepProps = {
   paymentMethod: PaymentMethod;
@@ -20,14 +22,7 @@ type ReviewStepProps = {
 
 const BANK_ACCOUNTS = SITE.bankAccounts;
 
-const INSTALLMENT_PLANS = [
-  { weeks: 2, interestRate: 3 },
-  { weeks: 4, interestRate: 6 },
-  { weeks: 6, interestRate: 9 },
-  { weeks: 8, interestRate: 12 },
-];
 
-const DEPOSIT_RATE = 0.3;
 
 const ReviewStep = ({
   paymentMethod,
@@ -49,13 +44,24 @@ const ReviewStep = ({
   const [submitting, setSubmitting] = useState(false);
   const [orderError, setOrderError] = useState("");
 
-  const selectedPlan =
-    INSTALLMENT_PLANS.find((plan) => plan.weeks === installmentWeeks) ?? INSTALLMENT_PLANS[1];
-  const installmentInterest = Math.round(total * (selectedPlan.interestRate / 100));
-  const installmentTotalPayable = total + installmentInterest;
-  const installmentDeposit = Math.round(installmentTotalPayable * DEPOSIT_RATE);
-  const installmentRemaining = installmentTotalPayable - installmentDeposit;
-  const installmentWeeklyPayment = Math.round(installmentRemaining / selectedPlan.weeks);
+  const breakdown = installmentBreakdown(total, installmentWeeks) ?? installmentBreakdown(total, 4)!;
+  const selectedPlan = breakdown.plan;
+  const installmentInterest = breakdown.interest;
+  const installmentTotalPayable = breakdown.totalPayable;
+  const installmentDeposit = breakdown.deposit;
+  const installmentRemaining = breakdown.remaining;
+  const installmentWeeklyPayment = breakdown.weeklyPayment;
+
+  const handleReceiptChange = async (file: File | null) => {
+    setOrderError("");
+    if (!file) return setReceiptFile(null);
+    try {
+      setReceiptFile(await compressImage(file));
+    } catch {
+      setReceiptFile(null);
+      setOrderError("We couldn't read that image. Try a screenshot in JPG or PNG format.");
+    }
+  };
 
   const requiresReceipt = paymentMethod === "bank-transfer" || paymentMethod === "installments";
   const canPlaceOrder =
@@ -63,7 +69,9 @@ const ReviewStep = ({
 
   const orderTotal = paymentMethod === "installments" ? installmentTotalPayable : total;
 
-  const submitOrder = async (): Promise<{ orderNumber: string } | { error: string }> => {
+  const submitOrder = async (
+    klumpReference?: string
+  ): Promise<{ orderNumber: string } | { error: string }> => {
     const formData = new FormData();
     formData.set("paymentMethod", paymentMethod);
     formData.set("fullName", delivery.fullName);
@@ -71,26 +79,16 @@ const ReviewStep = ({
     formData.set("phone", delivery.phone);
     formData.set("address", delivery.address);
     formData.set("city", delivery.city);
-    formData.set("subtotal", String(subtotal));
-    formData.set("deliveryFee", String(deliveryFee));
-    formData.set("total", String(orderTotal));
-    formData.set(
-      "items",
-      JSON.stringify(
-        items.map((item) => ({
-          id: item.id,
-          name: item.name,
-          image: item.image,
-          price: item.price,
-          qty: item.qty,
-        }))
-      )
-    );
+    // Only product ids and quantities are sent: the server looks up prices
+    // and recomputes every total itself.
+    formData.set("items", JSON.stringify(items.map((item) => ({ id: item.id, qty: item.qty }))));
+    formData.set("expectedTotal", String(orderTotal));
 
     if (paymentMethod === "installments") {
       formData.set("installmentWeeks", String(selectedPlan.weeks));
-      formData.set("installmentInterestRate", String(selectedPlan.interestRate));
-      formData.set("installmentDeposit", String(installmentDeposit));
+    }
+    if (klumpReference) {
+      formData.set("klumpReference", klumpReference);
     }
 
     if (receiptFile) {
@@ -152,7 +150,7 @@ const ReviewStep = ({
           );
           const result = await res.json();
           if (result?.data?.status === "successful") {
-            const outcome = await submitOrder();
+            const outcome = await submitOrder(data.reference ?? reference);
             if ("error" in outcome) {
               setOrderError(outcome.error);
               setKlumpStatus("failed");
@@ -228,7 +226,7 @@ const ReviewStep = ({
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={(e) => setReceiptFile(e.target.files?.[0] ?? null)}
+              onChange={(e) => handleReceiptChange(e.target.files?.[0] ?? null)}
             />
           </label>
         </div>
@@ -315,7 +313,7 @@ const ReviewStep = ({
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={(e) => setReceiptFile(e.target.files?.[0] ?? null)}
+              onChange={(e) => handleReceiptChange(e.target.files?.[0] ?? null)}
             />
           </label>
         </div>

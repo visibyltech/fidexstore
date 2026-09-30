@@ -38,7 +38,7 @@ export async function GET(
     installment_interest_rate: o.installment_interest_rate,
     installment_deposit: o.installment_deposit,
     receipt_filename: o.receipt_filename,
-    has_receipt: o.receipt_data != null,
+    has_receipt: o.has_receipt ?? o.receipt_data != null,
     created_at: o.created_at,
   };
   const items = [...(o.items ?? [])].sort((a, b) => a.id - b.id);
